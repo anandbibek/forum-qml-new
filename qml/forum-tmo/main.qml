@@ -40,7 +40,7 @@ PageStackWindow {
 
         colorThemeString: "color15-"
 
-        titleImage: "file:///opt/tmo/images/maemo.org.png"
+        titleImage: "file:///opt/forum-tmo/images/maemo.org.png"
         titleText: "- Talk"
     }
 

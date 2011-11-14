@@ -7,7 +7,7 @@ include(forum-qml.pri)
 
 # View header title image and splash image
 images.files = images/maemo.org.png
-images.path = /opt/tmo/images
+images.path = /opt/forum-tmo/images
 splash.files = images/forum-tmo-splash.jpg
 splash.path = /usr/share/themes/blanco/meegotouch/images/splash
 INSTALLS += images splash
