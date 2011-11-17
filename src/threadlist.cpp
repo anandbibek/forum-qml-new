@@ -131,10 +131,13 @@ void ThreadList::onReceived(QWebElement document)
         clear();
 
     // forum.meego.com
-    QWebElementCollection threads = document.findAll("table#threadslist > tbody > tr > td.alt1 > img");
+    QWebElementCollection threads = document.findAll("table.tborder tr > td.alt1 > img");
     foreach (QWebElement img, threads) {
         // Read / unread / hot / closed
         QWebElement td = img.parent();
+        if (!td.attribute("id").startsWith("td_threadstatusicon")) {
+            qDebug() << "False positive for thread?" << td.parent().toOuterXml();
+        }
         bool unread = false;
         QString status = img.attribute("src");
         if (status.endsWith("/thread.gif")) {
@@ -149,6 +152,8 @@ void ThreadList::onReceived(QWebElement document)
         } else if (status.endsWith("/thread_hot_new.gif")) {
             // Hot, unread thread
             unread = true;
+        } else if (status.endsWith("/thread_dot_hot.gif")) {
+            // Hot, own posts in this thread
         } else {
             qDebug() << "THREAD STATUS:" << status;
         }
