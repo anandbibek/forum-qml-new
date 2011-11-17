@@ -26,5 +26,10 @@ Menu {
             text: "Open webpage"
             onClicked: Qt.openUrlExternally(forumSession.url)
         }
+
+        MenuItem {
+            text: "About"
+            onClicked: pageStack.push(Qt.createComponent("AboutPage.qml"))
+        }
     }
 }

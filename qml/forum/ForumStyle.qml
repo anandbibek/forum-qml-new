@@ -14,4 +14,6 @@ Style {
 
     property string titleImage: ""
     property string titleText: "Forum"
+
+    property string legal: ""
 }
