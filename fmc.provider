@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE provider>
+<provider version="1.0" id="fmc">
+    <name>MeeGo User</name>
+    <description>Post to the forum.meego.com community forum and follow subscribed threads</description>
+    <short-description>Community user account</short-description>
+    <icon>icon-m-service-meego</icon>
+    <sign-up-link>http://meego.com/user/register</sign-up-link>
+    <account-setup>
+        <authsession>
+          <validate method="password" mechanism="password"/>
+          <method name="password">
+              <mechanism name="password"/>
+          </method>
+        </authsession>
+    </account-setup>
+</provider>

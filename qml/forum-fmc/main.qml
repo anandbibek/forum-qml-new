@@ -15,8 +15,8 @@ PageStackWindow {
 
     ForumSession {
         id: forumSession
-        provider: "tmo"
-        url: "http://talk.maemo.org"
+        provider: "fmc"
+        url: "http://forum.meego.com"
 
         onError: {
             errorDialog.message = message
@@ -31,17 +31,17 @@ PageStackWindow {
     ForumStyle {
         id: forumStyle
 
-        viewHeaderTextColor: "#ffffff"
-        viewHeaderBackgroundColor: "#424345"
+        viewHeaderTextColor: "#333333"
+        viewHeaderBackgroundColor: "#ffffff"
 
-        forumTitleTextColor: "#ea650a"
-        highlightTextColor: "#ea650a"
-        selectionColor: "#ea650a"
+        forumTitleTextColor: "#333333"
+        highlightTextColor: "#cc09ba"
+        selectionColor: "#cc09ba"
 
-        colorThemeString: "color15-"
+        colorThemeString: "color12-"
 
-        titleImage: "file:///opt/forum-tmo/images/maemo.org.png"
-        titleText: "- Talk"
+        titleImage: "file:///opt/forum-fmc/images/meego.png"
+        titleText: "Forum"
     }
 
     QueryDialog {
