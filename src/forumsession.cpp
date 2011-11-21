@@ -187,6 +187,17 @@ void ForumSession::onReceived(QNetworkReply *reply)
 
     // Parse elements found on every page
 
+    // Scan embedded JavaScript for security token
+    foreach (const QWebElement script, document.findAll("script")) {
+        static QRegExp securityTokenExpression("var SECURITYTOKEN = \"([-\\da-fgust]*)\"");
+        if (securityTokenExpression.indexIn(script.toInnerXml()) != -1) {
+            QString securityToken = securityTokenExpression.cap(1);
+            if (m_securityToken != securityToken)
+                m_securityToken = securityToken;
+            break;
+        }
+    }
+
     // For forum.meego.com
     const QWebElement a = document.findFirst("div#account-menu div div div ul.drupal_menu li a");
     if (!a.isNull()) {
@@ -215,19 +226,29 @@ void ForumSession::onReceived(QNetworkReply *reply)
         if (userName != m_userName)
             qDebug() << "User name differs:" << userName << "!=" << m_userName;
     }
+
     QWebElement form = document.findFirst("form[action=\"login.php?do=login\"]");
     if (!form.isNull()) {
         if (!m_userName.isEmpty())
             qDebug() << "Found login form --> logged out";
         userName = "";
-        m_securityToken = "guest";
+        if (m_securityToken != "guest") {
+            qDebug() << "SETTING SECURITY TOKEN TO \"guest\"";
+            m_securityToken = "guest";
+        }
     }
 
+#if 0
     // talk.maemo.org - Search form for security token
     form = document.findFirst("form[action=\"search.php?do=process\"]");
     if (!form.isNull()) {
-        m_securityToken = form.findFirst("input[name=\"securitytoken\"]").attribute("value");
+        QString securityToken = form.findFirst("input[name=\"securitytoken\"]").attribute("value");
+        if (m_securityToken != securityToken) {
+            m_securityToken = securityToken;
+            qDebug() << "SECURITY TOKEN CHANGED:" << securityToken;
+        }
     }
+#endif
 
     // talk.maemo.org - parse the active topic list
     const QWebElementCollection topics = document.findAll("ul.mrecent > li > h3 > a");
