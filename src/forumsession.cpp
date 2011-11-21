@@ -300,6 +300,14 @@ void ForumSession::onReceived(QNetworkReply *reply)
     } else if (url.startsWith(m_url + "/subscription.php")) {
         // Parse the thread list
         emit receivedThreadList(document);
+    } else if (url.startsWith(m_url + "/post_thanks.php")) {
+        QString postId = reply->url().queryItemValue("p");
+        QStringList thanks;
+        foreach (const QWebElement a, document.findAll("table tr td div a"))
+            thanks.append(a.toPlainText());
+
+        emit receivedThanks(postId, thanks);
+        disconnect(this, SIGNAL(receivedThanks(QString, QStringList)), 0, 0);
     }
 
     // Update login status
@@ -731,4 +739,40 @@ QObject* ForumSession::subscribedThreads(void)
     get(QUrl(m_url + "/subscription.php"));
 
     return m_subscriptions;
+}
+
+void ForumSession::thank(QObject* post)
+{
+    Post* p = qobject_cast<Post*>(post);
+    if (!p || m_securityToken.isEmpty())
+        return;
+
+    connect(this, SIGNAL(receivedThanks(QString, QStringList)),
+            p, SLOT(onThanksReceived(QString, QStringList)));
+
+    QUrl url("post_thanks.php");
+    url.addQueryItem("do", "post_thanks_add");
+    url.addQueryItem("using_ajax", "1");
+    url.addQueryItem("p", QString("%1").arg(p->postId()));
+    url.addQueryItem("securitytoken", m_securityToken);
+
+    get(url);
+}
+
+void ForumSession::unThank(QObject* post)
+{
+    Post* p = qobject_cast<Post*>(post);
+    if (!p || m_securityToken.isEmpty())
+        return;
+
+    connect(this, SIGNAL(receivedThanks(QString, QStringList)),
+            p, SLOT(onThanksReceived(QString, QStringList)));
+
+    QUrl url("post_thanks.php");
+    url.addQueryItem("do", "post_thanks_remove_user");
+    url.addQueryItem("using_ajax", "1");
+    url.addQueryItem("p", QString("%1").arg(p->postId()));
+    url.addQueryItem("securitytoken", m_securityToken);
+
+    get(url);
 }

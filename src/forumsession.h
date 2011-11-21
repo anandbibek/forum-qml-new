@@ -64,6 +64,8 @@ public:
     Q_INVOKABLE QObject* search(const QString& action);
     Q_INVOKABLE void signOn(void);
     Q_INVOKABLE QObject* subscribedThreads(void);
+    Q_INVOKABLE void thank(QObject* post);
+    Q_INVOKABLE void unThank(QObject* post);
 
 private:
     void setMissingCredentials(bool missingCredentials);
@@ -86,6 +88,7 @@ signals:
     void receivedNewPost(QWebElement document);
     void receivedPostList(QWebElement document, int postId);
     void receivedSearchResultThreadList(QWebElement document, int searchId);
+    void receivedThanks(const QString& postId, const QStringList& thanks);
     void receivedThreadList(QWebElement document);
 
 public slots:
