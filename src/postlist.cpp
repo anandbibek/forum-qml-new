@@ -210,11 +210,9 @@ void PostList::onReceived(QWebElement document, int postId)
         Post* post = new Post(url, poster, dateTime, html);
         post->setSection(section);
 
-        qDebug() << "POSTID:" << comment.attribute("id");
         static const QRegExp postIdExpression("post_message_(\\d+)");
         if (postIdExpression.exactMatch(comment.attribute("id"))) {
             post->setPostId(postIdExpression.cap(1).toInt());
-            qDebug() << "MATCH:" << post->postId();
 
             // Remember the post object the URL told us to jump to
             if (postId == post->postId())
