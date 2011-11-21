@@ -166,6 +166,7 @@ Sheet {
                             backgroundError: ""
                         }
                         placeholderText: "Enter forum post here"
+                        textFormat: Text.PlainText
                     }
                 }
 
