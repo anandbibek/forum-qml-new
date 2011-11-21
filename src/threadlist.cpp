@@ -179,10 +179,15 @@ void ThreadList::onReceived(QWebElement document)
             foreach (QWebElement a, div.findAll("a")) {
                 if (a.attribute("id").startsWith("thread_title_")) {
                     title = a.toPlainText();
+                    if (title.isEmpty()) {
+                        qDebug() << "Empty title:" << a.parent().toOuterXml();
+                    }
                     url = a.attribute("href");
                     QRegExp threadIdExpression("thread_title_(\\d+)");
                     if (threadIdExpression.exactMatch(a.attribute("id"))) {
                         threadId = threadIdExpression.cap(1).toInt();
+                    } else {
+                        qDebug() << "Failed to parse thread ID:" << a.toOuterXml();
                     }
                 }
             }
