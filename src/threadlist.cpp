@@ -285,9 +285,9 @@ void ThreadList::onReceived(QWebElement document)
      // thread->setForum(forum);
         thread->setLastPostUrl(lastPostUrl);
         thread->setUnread(unread);
+        thread->setAttachments(attachments);
+        thread->setThreadId(threadId);
         if (votes > 0) {
-            thread->setAttachments(attachments);
-            thread->setThreadId(threadId);
             thread->setVotes(votes);
             thread->setRatingValue(ratingValue);
         }
