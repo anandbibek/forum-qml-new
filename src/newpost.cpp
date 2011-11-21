@@ -41,7 +41,10 @@ void NewPost::setForumId(int forumId)
         emit forumIdChanged();
 
         // Generate a securityToken
-        QUrl url(QString("newthread.php?do=newthread&f=%1").arg(forumId));
+        QUrl url("newthread.php");
+        url.addQueryItem("do", "newthread");
+        url.addQueryItem("f", QString("%1").arg(forumId));
+
         QObject::connect(m_session, SIGNAL(receivedNewPost(QWebElement)),
                          this, SLOT(onReceived(QWebElement)));
         m_session->get(url);
@@ -61,7 +64,10 @@ void NewPost::setThreadId(int threadId)
         emit threadIdChanged();
 
         // Generate a securityToken
-        QUrl url(QString("newreply.php?do=newreply&t=%1").arg(threadId));
+        QUrl url("newreply.php");
+        url.addQueryItem("do", "newreply");
+        url.addQueryItem("t", QString("%1").arg(threadId));
+
         QObject::connect(m_session, SIGNAL(receivedNewPost(QWebElement)),
                          this, SLOT(onReceived(QWebElement)));
         m_session->get(url);
@@ -71,7 +77,10 @@ void NewPost::setThreadId(int threadId)
 void NewPost::onPostIdChanged(void)
 {
     // Generate a securityToken
-    QUrl url(QString("newreply.php?do=newreply&p=%1").arg(postId()));
+    QUrl url("newreply.php");
+    url.addQueryItem("do", "newreply");
+    url.addQueryItem("p", QString("%1").arg(postId()));
+
     QObject::connect(m_session, SIGNAL(receivedNewPost(QWebElement)),
                      this, SLOT(onReceived(QWebElement)));
     m_session->get(url);
@@ -146,70 +155,86 @@ void NewPost::onReceived(QWebElement document)
 void NewPost::requestPreview()
 {
     QUrl url;
-    if (m_threadId > 0)
-        url = QUrl(QString("newreply.php?do=newreply&t=%1").arg(m_threadId));
-    else if (m_forumId > 0)
-        url = QUrl(QString("newthread.php?do=newthread&f=%1").arg(m_forumId));
-    else
+    if (m_threadId > 0) {
+        url = QUrl("newreply.php");
+        url.addQueryItem("do", "newreply");
+        url.addQueryItem("t", QString("%1").arg(m_threadId));
+    } else if (m_forumId > 0) {
+        url = QUrl("newthread.php");
+        url.addQueryItem("do", "newthread");
+        url.addQueryItem("f", QString("%1").arg(m_forumId));
+    } else {
         return;
+    }
 
-    QByteArray data("subject=");
-    data.append(QUrl::toPercentEncoding(subject()));
-    data.append("&message=");
-    data.append(QUrl::toPercentEncoding(body())); // TODO: bbCode()
-    data.append("&wysiwyg=0");
-    data.append("&iconid=0");
-    data.append("&s=&securitytoken=");
-    data.append(m_securityToken);
-    if (m_threadId > 0)
-        data.append(QString("&t=%1&do=postreply").arg(m_threadId));
-    else if (m_forumId > 0)
-        data.append(QString("&f=%1&do=postthread").arg(m_forumId));
-    data.append("&posthash=");
-    data.append(m_postHash);
-    data.append(QString("&poststarttime=%1").arg(m_postStartTime));
-    data.append(QString("&loggedinuser=%1").arg(m_loggedInUser));
-    data.append("&preview=Preview+Post&parseurl=1&emailupdate=9999&polloptions=4");
+    QUrl data;
+    data.addQueryItem("subject", subject());
+    data.addQueryItem("message", body()); // TODO: bbCode()
+    data.addQueryItem("wysiwyg", "0");
+    data.addQueryItem("iconid", "0");
+    data.addQueryItem("s", "");
+    data.addQueryItem("securitytoken", m_securityToken);
+    if (m_threadId > 0) {
+        data.addQueryItem("t", QString("%1").arg(m_threadId));
+        data.addQueryItem("do", "postreply");
+    } else if (m_forumId > 0) {
+        data.addQueryItem("f", QString("%1").arg(m_forumId));
+        data.addQueryItem("do", "postthread");
+    }
+    data.addQueryItem("posthash", m_postHash);
+    data.addQueryItem("poststarttime", QString("%1").arg(m_postStartTime));
+    data.addQueryItem("loggedinuser", QString("%1").arg(m_loggedInUser));
+    data.addQueryItem("preview", "Preview+Post");
+    data.addQueryItem("parseurl", "1");
+    data.addQueryItem("emailupdate", "9999");
+    data.addQueryItem("polloptions", "4");
 
     QObject::connect(m_session, SIGNAL(receivedNewPost(QWebElement)),
                      this, SLOT(onReceived(QWebElement)));
-    m_session->post(url, data);
+    m_session->post(url, data.encodedQuery());
 }
 
 void NewPost::submit()
 {
     QUrl url;
-    if (m_threadId > 0)
-        url = QUrl(QString("newreply.php?do=newreply&t=%1").arg(m_threadId));
-    else if (m_forumId > 0)
-        url = QUrl(QString("newthread.php?do=newthread&f=%1").arg(m_forumId));
-    else
+    if (m_threadId > 0) {
+        url = QUrl("newreply.php");
+        url.addQueryItem("do", "newreply");
+        url.addQueryItem("t", QString("%1").arg(m_threadId));
+    } else if (m_forumId > 0) {
+        url = QUrl("newthread.php");
+        url.addQueryItem("do", "newthread");
+        url.addQueryItem("f", QString("%1").arg(m_forumId));
+    } else {
         return;
+    }
 
-    QByteArray data("subject=");
-    data.append(QUrl::toPercentEncoding(subject()));
-    data.append("&message=");
-    data.append(QUrl::toPercentEncoding(body())); // TODO: bbCode()
-    data.append("&wysiwyg=0");
-    data.append("&iconid=0");
-    data.append("&s=&securitytoken=");
-    data.append(m_securityToken);
+    QUrl data;
+    data.addQueryItem("subject", subject());
+    data.addQueryItem("message", body()); // TODO: bbCode()
+    data.addQueryItem("wysiwyg", "0");
+    data.addQueryItem("iconid", "0");
+    data.addQueryItem("s", "");
+    data.addQueryItem("securitytoken", m_securityToken);
+    if (m_threadId > 0) {
+        data.addQueryItem("t", QString("%1").arg(m_threadId));
+        data.addQueryItem("do", "postreply");
+    } else if (m_forumId > 0) {
+        data.addQueryItem("f", QString("%1").arg(m_forumId));
+        data.addQueryItem("do", "postthread");
+    }
+    data.addQueryItem("posthash", m_postHash);
+    data.addQueryItem("poststarttime", QString("%1").arg(m_postStartTime));
+    data.addQueryItem("loggedinuser", QString("%1").arg(m_loggedInUser));
     if (m_threadId > 0)
-        data.append(QString("&t=%1&do=postreply").arg(m_threadId));
-    else if (m_forumId > 0)
-        data.append(QString("&f=%1&do=postthread").arg(m_forumId));
-    data.append("&posthash=");
-    data.append(m_postHash);
-    data.append(QString("&poststarttime=%1").arg(m_postStartTime));
-    data.append(QString("&loggedinuser=%1").arg(m_loggedInUser));
-    data.append("&sbutton=");
-    if (m_threadId > 0)
-        data.append("Submit+Reply");
+        data.addQueryItem("sbutton", "Submit+Reply");
     else
-        data.append("Submit+New+Thread");
-    data.append("&parseurl=1&emailupdate=9999&polloptions=4");
+        data.addQueryItem("sbutton", "Submit+New+Thread");
+    data.addQueryItem("parseurl", "1");
+    data.addQueryItem("emailupdate", "9999");
+    data.addQueryItem("polloptions", "4");
 
     QObject::connect(m_session, SIGNAL(receivedNewPost(QWebElement)),
                      this, SLOT(onReceived(QWebElement)));
-    m_session->post(url, data);
+    m_session->post(url, data.encodedQuery());
 }

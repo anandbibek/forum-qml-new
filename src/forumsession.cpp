@@ -583,22 +583,22 @@ void ForumSession::login(void)
     request.setSslConfiguration(config);
 
     // Prepare login POSTDATA
-    QByteArray data;
+    QUrl data;
     if (m_url == "http://talk.maemo.org" || m_url == "http://forum.xda-developers.com") {
         QString passwordMd5 = QString(QCryptographicHash::hash(m_password.toUtf8(), QCryptographicHash::Md5).toHex());
 
-        data.append("vb_login_username=");
-        data.append(m_userName);
-        data.append("&vb_login_password=&s=&cookieuser=1&securitytoken=guest&do=login&vb_login_md5password=");
-        data.append(passwordMd5);
-        data.append("&vb_login_md5password_utf=");
-        data.append(passwordMd5);
+        data.addQueryItem("vb_login_username", m_userName);
+        data.addQueryItem("vb_login_password", "");
+        data.addQueryItem("s", "");
+        data.addQueryItem("cookieuser", "1");
+        data.addQueryItem("securitytoken", "guest");
+        data.addQueryItem("do", "login");
+        data.addQueryItem("vb_login_md5password", passwordMd5);
+        data.addQueryItem("vb_login_md5password_utf", passwordMd5);
     } else if (m_url == "http://forum.meego.com") {
-        data.append("name=");
-        data.append(m_userName);
-        data.append("&pass=");
-        data.append(m_password);
-        data.append("&form_id=user_login");
+        data.addQueryItem("name", m_userName);
+        data.addQueryItem("pass", m_password);
+        data.addQueryItem("form_id", "user_login");
     } else {
         qDebug() << "Login not implemented for" << m_url;
 
@@ -609,7 +609,7 @@ void ForumSession::login(void)
     }
 
     qDebug() << "Requesting" << url.toString() << "to login ...";
-    m_networkAccess.post(request, data);
+    m_networkAccess.post(request, data.encodedQuery());
 }
 
 void ForumSession::post(const QUrl& url, const QByteArray& data)
@@ -646,17 +646,29 @@ QObject* ForumSession::search(const QString& action)
     if (action == "getdaily" || action == "getnew") {
         QObject::connect(this, SIGNAL(receivedSearchResultThreadList(QWebElement, int)),
                          m_search, SLOT(onReceived(QWebElement, int)));
-        get(QUrl(m_url + "/search.php?do=" + action));
+
+        QUrl url("/search.php");
+        url.addQueryItem("do", action);
+
+        get(url);
     } else {
         QObject::connect(this, SIGNAL(receivedSearchResultThreadList(QWebElement, int)),
                          m_search, SLOT(onReceived(QWebElement, int)));
 
-        QByteArray data;
-        data.append("query=");
-        data.append(QUrl::toPercentEncoding(action));
-        data.append("&submit=GO&do=process&quicksearch=1&childforums=1&exactname=1&s=&securitytoken=" + m_securityToken);
+        QUrl url(m_url  + "/search.php");
+        url.addQueryItem("do", "process");
 
-        post(QUrl(m_url + "/search.php?do=process"), data);
+        QUrl data;
+        data.addQueryItem("query", action);
+        data.addQueryItem("submit", "GO");
+        data.addQueryItem("do", "process");
+        data.addQueryItem("quicksearch", "1");
+        data.addQueryItem("childforums", "1");
+        data.addQueryItem("exactname", "1");
+        data.addQueryItem("s", "");
+        data.addQueryItem("securitytoken", m_securityToken);
+
+        post(url, data.encodedQuery());
     }
 
     return m_search;
