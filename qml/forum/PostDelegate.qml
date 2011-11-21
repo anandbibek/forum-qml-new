@@ -40,7 +40,7 @@ Item {
 
         anchors { top: parent.top; left: parent.left; right: parent.right;
                   topMargin: 1.5 * UI.MARGIN_XLARGE }
-        height: poster.height + UI.MARGIN_XLARGE + body.height
+        height: childrenRect.height
         spacing: UI.MARGIN_XLARGE
 
         Item {
@@ -79,6 +79,20 @@ Item {
                 console.log("Clicked on link:" + link)
                 Qt.openUrlExternally(link);
             }
+        }
+
+        Label {
+            id: thanks
+            anchors { left: parent.left; right: parent.right;
+                      leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+
+            visible: model.thanks
+
+            horizontalAlignment: Text.AlignRight
+            text: "thanks: " + model.thanks
+            font.family: UI.FONT_FAMILY_LIGHT
+            font.pixelSize: 18
+            color: UI.LIST_SUBTITLE_COLOR
         }
     }
 }
