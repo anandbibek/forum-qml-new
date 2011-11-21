@@ -42,9 +42,19 @@ Page {
             TextField {
                 id: userField
                 width: parent.width
+                platformSipAttributes: SipAttributes {
+                    actionKeyLabel: "Next"
+                    actionKeyHighlighted: true
+                }
                 platformStyle: textFieldStyle
 
                 onTextChanged: if (text) errorHighlight = false
+
+                Keys.onPressed: {
+                    if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+                        passwordField.focus = true
+                    }
+                }
             }
         }
 
@@ -56,13 +66,25 @@ Page {
                 id: passwordField
                 width: parent.width
                 echoMode: TextInput.Password
+                platformSipAttributes: SipAttributes {
+                    actionKeyLabel: "Ready"
+                    actionKeyHighlighted: true
+                }
                 platformStyle: textFieldStyle
 
                 onTextChanged: if (text) errorHighlight = false
+
+                Keys.onPressed: {
+                    if (event.key == Qt.Key_Return || event.key == Qt.Key_Enter) {
+                        platformCloseSoftwareInputPanel()
+                        tryLogin()
+                    }
+                }
             }
         }
 
         Button {
+            id: loginButton
             anchors.horizontalCenter: parent.horizontalCenter
             enabled: (userField.text || passwordField.text) && !forumSession.busy
             text: "Login"
@@ -70,15 +92,7 @@ Page {
                 pressedBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-button" + __invertedString + "-background-pressed"
             }
 
-            onClicked: {
-                userField.errorHighlight = (!userField.text)
-                passwordField.errorHighlight = (!passwordField.text)
-                if (userField.text && passwordField.text) {
-                    forumSession.userName = userField.text
-                    forumSession.password = passwordField.text
-                    forumSession.login()
-                }
-            }
+            onClicked: tryLogin()
         }
     }
 
@@ -89,10 +103,33 @@ Page {
             platformIconId: "toolbar-back"
             onClicked: pageStack.pop()
         }
+
+        BusyIndicator {
+            anchors.centerIn: parent
+            running: visible
+            visible: forumSession.busy
+        }
     }
 
     Connections {
         target: forumSession
         onLoginSucceeded: pageStack.pop()
+    }
+
+    // Focus the username field (and pop up VKB) after the page stack animation finished
+    onStatusChanged: {
+        if (status == PageStatus.Active) {
+            userField.focus = true
+        }
+    }
+
+    function tryLogin() {
+        userField.errorHighlight = (!userField.text)
+        passwordField.errorHighlight = (!passwordField.text)
+        if (userField.text && passwordField.text) {
+            forumSession.userName = userField.text
+            forumSession.password = passwordField.text
+            forumSession.login()
+        }
     }
 }
