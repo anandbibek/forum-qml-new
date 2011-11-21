@@ -13,6 +13,7 @@ Thread::Thread(const QString url, const QString title, int replies, const QStrin
     m_ratingValue(0.0),
     m_replies(replies),
     m_section(section),
+    m_subscribed(false),
     m_threadId(-1),
     m_title(title),
     m_unread(true),
@@ -33,6 +34,7 @@ Thread::Thread(const Thread& other, QObject *parent) :
     m_ratingValue(other.m_ratingValue),
     m_replies(other.m_replies),
     m_section(other.m_section),
+    m_subscribed(false),
     m_threadId(other.m_threadId),
     m_title(other.m_title),
     m_unread(other.m_unread),
@@ -105,6 +107,11 @@ QString Thread::section() const
     return m_section;
 }
 
+bool Thread::subscribed() const
+{
+    return m_subscribed;
+}
+
 QString Thread::title() const
 {
     return m_title;
@@ -168,6 +175,14 @@ void Thread::setRatingValue(float ratingValue)
     if (m_ratingValue != ratingValue) {
         m_ratingValue = ratingValue;
         emit ratingValueChanged();
+    }
+}
+
+void Thread::setSubscribed(bool subscribed)
+{
+    if (m_subscribed != subscribed) {
+        m_subscribed = subscribed;
+        emit subscribedChanged();
     }
 }
 

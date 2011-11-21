@@ -18,6 +18,7 @@ class Thread : public QObject
     Q_PROPERTY(float ratingValue READ ratingValue WRITE setRatingValue NOTIFY ratingValueChanged)
     Q_PROPERTY(int replies READ replies)
     Q_PROPERTY(QString section READ section)
+    Q_PROPERTY(bool subscribed READ subscribed WRITE setSubscribed NOTIFY subscribedChanged)
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(int threadId READ threadId WRITE setThreadId)
     Q_PROPERTY(bool unread READ unread WRITE setUnread NOTIFY unreadChanged)
@@ -43,6 +44,7 @@ public:
     float ratingValue() const;
     int replies() const;
     QString section() const;
+    bool subscribed() const;
     QString title() const;
     int threadId() const;
     bool unread() const;
@@ -54,6 +56,7 @@ public:
     void setLastPostUrl(const QString lastPostUrl);
     void setOpenMode(OpenMode openMode);
     void setRatingValue(float ratingValue);
+    void setSubscribed(bool subscribed);
     void setThreadId(int threadId);
     void setUnread(bool unread);
     void setUrl(const QString url);
@@ -66,6 +69,7 @@ signals:
     void forumChanged(void);
     void modelChanged(void);
     void ratingValueChanged(void);
+    void subscribedChanged(void);
     void titleChanged(void);
     void unreadChanged(void);
     void votesChanged(void);
@@ -83,6 +87,7 @@ private:
     float m_ratingValue;
     int m_replies;
     QString m_section;
+    bool m_subscribed;
     int m_threadId;
     QString m_title;
     bool m_unread;
