@@ -172,6 +172,7 @@ void ThreadList::onReceived(QWebElement document)
         bool sticky = false;
         QString tags;
         int attachments = 0;
+        bool subscribed = false;
         td = td.nextSibling();
         QWebElement div = td.firstChild();
         if (div.tagName() == "DIV") {
@@ -199,6 +200,8 @@ void ThreadList::onReceived(QWebElement document)
                             QRegExp attachmentsExpression("(\\d+) Attachment\\(s\\)");
                             if (attachmentsExpression.exactMatch(img.attribute("alt")))
                                 attachments = attachmentsExpression.cap(1).toInt();
+                        } else if (img.attribute("src") == "silk/misc/subscribed.gif") {
+                            subscribed = true;
                         }
                     }
                 }
@@ -290,6 +293,7 @@ void ThreadList::onReceived(QWebElement document)
         thread->setLastPostUrl(lastPostUrl);
         thread->setUnread(unread);
         thread->setAttachments(attachments);
+        thread->setSubscribed(subscribed);
         thread->setThreadId(threadId);
         if (votes > 0) {
             thread->setVotes(votes);
