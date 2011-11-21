@@ -47,6 +47,11 @@ QString Post::subject() const
     return m_subject;
 }
 
+QString Post::thanks() const
+{
+    return m_thanks;
+}
+
 QString Post::url() const
 {
     return m_url;
@@ -76,6 +81,14 @@ void Post::setSection(const QString section)
 void Post::setSubject(const QString subject)
 {
     m_subject = subject;
+}
+
+void Post::setThanks(const QString thanks)
+{
+    if (m_thanks != thanks) {
+        m_thanks = thanks;
+        emit thanksChanged();
+    }
 }
 
 static QString cleanupWhitespace(QWebElement& body)
@@ -378,6 +391,14 @@ static QString smileyToBbCode(QString src)
         return "";
 }
 
+bool Post::thankedBy(const QString userName) const
+{
+    return m_thanks == userName ||
+           m_thanks.startsWith(userName + ",") ||
+           m_thanks.contains(" " + userName + ",") ||
+           m_thanks.endsWith(" " + userName);
+}
+
 QString Post::toBbCode() const
 {
     qDebug() << "M_BODY" << m_body.simplified();
@@ -401,4 +422,9 @@ QString Post::toBbCode() const
     }
 
     return result;
+}
+
+void Post::onThanksReceived(QString postId, QStringList thanks)
+{
+    setThanks(thanks.join(", "));
 }

@@ -23,7 +23,8 @@ public:
         PosterRole,
         DateTimeRole,
         BodyRole,
-        SectionRole
+        SectionRole,
+        ThanksRole
     };
     explicit PostList(ForumSession* session, QObject *parent = 0);
     ~PostList(void);
@@ -52,6 +53,7 @@ signals:
     void numPagesChanged();
 
 public slots:
+    void onPostChanged();
     void onReceived(QWebElement document, int postId);
 
 private:

@@ -20,6 +20,7 @@ PostList::PostList(ForumSession* session, QObject *parent) :
     roles[DateTimeRole] = "dateTime";
     roles[BodyRole] = "body";
     roles[SectionRole] = "section";
+    roles[ThanksRole] = "thanks";
     setRoleNames(roles);
 }
 
@@ -96,6 +97,8 @@ QVariant PostList::data(const QModelIndex& index, int role) const
         return post->body();
     else if (role == SectionRole)
         return post->section();
+    else if (role == ThanksRole)
+        return post->thanks();
 
     return QVariant();
 }
@@ -115,6 +118,17 @@ void PostList::clear(void)
         post->deleteLater();
     }
     endRemoveRows();
+}
+
+void PostList::onPostChanged()
+{
+    Post* post = qobject_cast<Post*>(sender());
+    if (!post)
+        return;
+
+    int row = m_posts.indexOf(post);
+    if (row >= 0)
+        dataChanged(index(row, 0), index(row, 0));
 }
 
 void PostList::onReceived(QWebElement document, int postId)
@@ -189,16 +203,16 @@ void PostList::onReceived(QWebElement document, int postId)
         QString html = Post::cleanupBody(comment);
 
         // SIG = div.nextSibling();
-#if 0
+
         // Thanks
+        QStringList thanks;
         QWebElement div = table.findFirst("div.thanks_postbit");
         if (!div.isNull()) {
             qDebug() << "Thanks:";
             foreach (QWebElement a, div.findAll("td > div > a")) {
-                qDebug() << a.toPlainText();
+                thanks.append(a.toPlainText());
             }
         }
-#endif
 
         // Remove comments
         QRegExp commentExpression("<\\!--.*-->");
@@ -208,6 +222,7 @@ void PostList::onReceived(QWebElement document, int postId)
         qDebug() << "BODY:" << html.simplified();
 
         Post* post = new Post(url, poster, dateTime, html);
+        post->setThanks(thanks.join(", "));
         post->setSection(section);
 
         static const QRegExp postIdExpression("post_message_(\\d+)");
@@ -287,8 +302,12 @@ void PostList::onReceived(QWebElement document, int postId)
     if (list.count() > 0) {
         if (page == m_firstPage) {
             beginInsertRows(QModelIndex(), 0, list.count() - 1);
-            while (!list.empty())
-                m_posts.prepend(list.takeLast());
+            while (!list.empty()) {
+                Post* post = list.takeLast();
+                connect(post, SIGNAL(thanksChanged()),
+                        this, SLOT(onPostChanged()));
+                m_posts.prepend(post);
+            }
         } else {
             beginInsertRows(QModelIndex(), m_posts.count(), m_posts.count() + list.count() - 1);
             m_posts.append(list);

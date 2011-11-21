@@ -13,6 +13,7 @@ class Post : public QObject
     Q_PROPERTY(int postId READ postId WRITE setPostId NOTIFY postIdChanged)
     Q_PROPERTY(QString section READ section WRITE setSection)
     Q_PROPERTY(QString subject READ subject WRITE setSubject)
+    Q_PROPERTY(QString thanks READ thanks WRITE setThanks NOTIFY thanksChanged)
     Q_PROPERTY(QString url READ url)
 public:
     explicit Post(QObject* parent = 0);
@@ -24,21 +25,26 @@ public:
     int postId() const;
     QString section() const;
     QString subject() const;
+    QString thanks() const;
     QString url() const;
 
     void setBody(const QString body);
     void setPostId(int postId);
     void setSection(const QString section);
     void setSubject(const QString subject);
+    void setThanks(const QString thanks);
 
     static QString cleanupBody(QWebElement& body);
+    Q_INVOKABLE bool thankedBy(const QString userName) const;
     Q_INVOKABLE QString toBbCode() const;
 
 signals:
     void bodyChanged(void);
     void postIdChanged(void);
+    void thanksChanged(void);
 
 public slots:
+    void onThanksReceived(QString postId, QStringList thanks);
 
 private:
     QString m_body;
@@ -47,6 +53,7 @@ private:
     int m_postId;
     QString m_section;
     QString m_subject;
+    QString m_thanks;
     QString m_url;
 };
 
