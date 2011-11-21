@@ -258,6 +258,16 @@ void PostList::onReceived(QWebElement document, int postId)
 
         QString html = Post::cleanupBody(body);
 
+        // Thanks
+        QStringList thanks;
+        QWebElement div = comment.parent().findFirst("div.thanks_postbit");
+        if (!div.isNull()) {
+            qDebug() << "Thanks:";
+            foreach (QWebElement a, div.findAll("td > div > a")) {
+                thanks.append(a.toPlainText());
+            }
+        }
+
         // Remove comments
         QRegExp commentExpression("<\\!--.*-->");
         commentExpression.setMinimal(true);
@@ -269,6 +279,7 @@ void PostList::onReceived(QWebElement document, int postId)
         section.sprintf("Page %d of %d", page, numPages);
 
         Post* post = new Post(url, poster, dateTime, html);
+        post->setThanks(thanks.join(", "));
         post->setSection(section);
         post->setSubject(threadTitle); // talk.maemo.org doesn't show individual post subjects
 
