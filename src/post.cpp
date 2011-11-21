@@ -278,6 +278,16 @@ static QString innerXmlToBbCode(QWebElement element)
                     }
                 } else
                     qDebug() << "Failed to parse quote:" << tag.toOuterXml();
+            }
+            // forum.meego.com
+            else if (!tag.findFirst("table > tbody > tr > td.alt2 > div > strong").isNull()) {
+                const QWebElement strong = tag.findFirst("table > tbody > tr > td.alt2 > div > strong");
+                const QString poster = strong.toPlainText();
+                const QWebElement quote = strong.parent().nextSibling();
+                if (quote.tagName() == "DIV")
+                    tag.replace("[quote=" + poster + "]" + innerXmlToBbCode(quote) + "[/quote]");
+                else
+                    qDebug() << "Failed to parse quote:" << tag.toOuterXml();
             } else {
                 qDebug() << "Unhandled div:" << tag.toOuterXml();
             }
