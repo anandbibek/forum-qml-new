@@ -152,8 +152,12 @@ void ThreadList::onReceived(QWebElement document)
         } else if (status.endsWith("/thread_hot_new.gif")) {
             // Hot, unread thread
             unread = true;
+        } else if (status.endsWith("/thread_dot.gif")) {
+            // Own posts in this thread
         } else if (status.endsWith("/thread_dot_hot.gif")) {
             // Hot, own posts in this thread
+        } else if (status.endsWith("/thread_dot_hot_new.gif")) {
+            // Hot, own posts in this unread thread
         } else {
             qDebug() << "THREAD STATUS:" << status;
         }
