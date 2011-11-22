@@ -29,6 +29,18 @@ Page {
         }
 
         ToolIcon {
+            platformIconId: busyIndicator.visible ? "" : "toolbar-refresh"
+            onClicked: forum.model.load(forum.model.firstPage)
+
+            BusyIndicator {
+                id: busyIndicator
+                anchors.centerIn: parent
+                running: visible
+                visible: forumSession.busy && forum.model.count > 0
+            }
+        }
+
+        ToolIcon {
             platformIconId: "toolbar-view-menu"
             anchors.right: (parent === undefined) ? undefined : parent.right
             onClicked: Qt.createComponent("ForumMenu.qml").createObject(root, {"forum": forum}).open()

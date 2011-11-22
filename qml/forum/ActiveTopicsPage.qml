@@ -27,9 +27,15 @@ Page {
         }
 
         ToolIcon {
-            platformIconId: "toolbar-refresh"
-            anchors.centerIn: parent
+            platformIconId: busyIndicator.visible ? "" : "toolbar-refresh"
             onClicked: forumSession.refresh()
+
+            BusyIndicator {
+                id: busyIndicator
+                anchors.centerIn: parent
+                running: visible
+                visible: forumSession.busy
+            }
         }
     }
 }

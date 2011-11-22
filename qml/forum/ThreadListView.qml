@@ -15,15 +15,6 @@ Item {
     ViewHeader {
         id: header
         z: 1
-
-        BusyIndicator {
-            anchors.right: parent.right
-            anchors.rightMargin: UI.DEFAULT_MARGIN
-            anchors.verticalCenter: parent.verticalCenter
-            platformStyle: BusyIndicatorStyle { inverted: true }
-            running: forumSession.busy
-            visible: forumSession.busy && threads.count > 0
-        }
     }
 
     ListView {
