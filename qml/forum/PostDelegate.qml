@@ -86,7 +86,7 @@ Item {
             anchors { left: parent.left; right: parent.right;
                       leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
-            visible: model.thanks
+            visible: (model.thanks === undefined) ? false : model.thanks
 
             horizontalAlignment: Text.AlignRight
             text: "thanks: " + model.thanks
