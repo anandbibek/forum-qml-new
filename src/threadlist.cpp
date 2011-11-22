@@ -108,6 +108,11 @@ void ThreadList::onReceived(QWebElement document)
         }
     }
     qDebug() << "Thread list page" << page << "of" << numPages << "(" << m_firstPage << "-" << m_lastPage << ")";
+    if (m_firstPage > 0 && page == m_firstPage) {
+        // This is a reload of the first page, force clearing the list
+        m_lastPage = m_firstPage;
+        emit lastPageChanged();
+    }
     if (m_firstPage == 0 || page == m_firstPage - 1) {
         m_firstPage = page;
         emit firstPageChanged();

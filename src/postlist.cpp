@@ -154,6 +154,11 @@ void PostList::onReceived(QWebElement document, int postId)
         section.sprintf("Page %d of %d", page, numPages);
 
     qDebug() << section << "(" << m_firstPage << "-" << m_lastPage << ")";
+    if (m_lastPage > 0 && page == m_lastPage) {
+        // This is a reload of the last page
+        m_firstPage = m_lastPage;
+        emit firstPageChanged();
+    }
     if (m_firstPage == 0 || page == m_firstPage - 1) {
         m_firstPage = page;
         emit firstPageChanged();
