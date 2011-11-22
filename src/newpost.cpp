@@ -99,8 +99,8 @@ void NewPost::onReceived(QWebElement document)
         //
         QRegExp actionExpression("newreply.php\\?do=postreply&t=(\\d+)");
         if (actionExpression.exactMatch(form.attribute("action"))) {
-            qDebug() << "setting thread id to %d";
             m_threadId = actionExpression.cap(1).toInt();
+            qDebug() << "setting thread id to" << m_threadId;
         }
 
         m_securityToken = document.findFirst("input[name=securitytoken]").attribute("value");
