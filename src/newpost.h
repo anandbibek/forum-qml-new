@@ -47,6 +47,7 @@ private:
     QString m_postHash;
     unsigned int m_postStartTime;
 
+    QString m_emailUpdate;
     int m_forumId;
     QString m_preview;
     QString m_securityToken;

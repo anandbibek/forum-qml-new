@@ -112,6 +112,12 @@ void NewPost::onReceived(QWebElement document)
         if (m_postHash.isEmpty())
             qDebug() << "Failed to parse post hash";
 
+        m_emailUpdate = form.findFirst("select[name=emailupdate] > option[selected=selected]").attribute("value");
+        if (m_emailUpdate.isEmpty()) {
+            qDebug() << "Failed to determine notification status - setting to 9999 (unsubscribed)";
+            m_emailUpdate = "9999";
+        }
+
         m_postStartTime = document.findFirst("input[name=poststarttime]").attribute("value").toInt();
         m_loggedInUser = document.findFirst("input[name=loggedinuser]").attribute("value").toInt();
     } else {
@@ -231,7 +237,7 @@ void NewPost::submit()
     else
         data.addQueryItem("sbutton", "Submit+New+Thread");
     data.addQueryItem("parseurl", "1");
-    data.addQueryItem("emailupdate", "9999");
+    data.addQueryItem("emailupdate", m_emailUpdate);
     data.addQueryItem("polloptions", "4");
 
     QObject::connect(m_session, SIGNAL(receivedNewPost(QWebElement)),
