@@ -10,7 +10,11 @@ Menu {
         MenuItem {
             text: "Quote and reply"
             visible: forumSession.sessionId
-            onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root.parent, {"post": post}).open()
+            onClicked: {
+                // root.parent is a Fader and vanishes after the menu is closed
+                // root.parent.parent is the appWindowContent item
+                Qt.createComponent("NewPostSheet.qml").createObject(root.parent.parent, {"post": post}).open()
+            }
         }
 
         MenuItem {
