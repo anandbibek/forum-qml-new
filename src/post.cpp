@@ -182,6 +182,11 @@ QString Post::cleanupBody(QWebElement& body)
         }
     }
 
+    // Replace all <strike> tags with <s>
+    QWebElementCollection strikes = body.findAll("strike");
+    foreach (QWebElement strike, strikes)
+        strike.replace("<s>" + strike.toInnerXml() + "</s>");
+
     // Clean up images
     QWebElementCollection images = body.findAll("img"); // .inlineimg
     foreach (QWebElement img, images) {
@@ -352,7 +357,7 @@ static QString innerXmlToBbCode(QWebElement element)
 #endif
         // TODO: Handle [noparse]
         // TODO: Handle [attach]
-        else if (tag.tagName() == "STRIKE") {
+        else if (tag.tagName() == "S") {
             tag.replace("[strike]" + innerXmlToBbCode(tag) + "[/strike]");
         } else if (tag.tagName() == "BODY") {
             tag.setInnerXml(innerXmlToBbCode(tag));
