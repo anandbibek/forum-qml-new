@@ -573,6 +573,11 @@ QString ForumSession::externalUrl(const QString url) const
     return u;
 }
 
+QString ForumSession::forumUrl(int forumId) const
+{
+    return QString(m_url + "/forumdisplay.php?f=%1").arg(forumId);
+}
+
 void ForumSession::get(const QUrl& url)
 {
     QUrl u;

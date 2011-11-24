@@ -57,6 +57,7 @@ public:
 
     Q_INVOKABLE QObject* createNewPost(void);
     Q_INVOKABLE QString externalUrl(const QString url) const;
+    QString forumUrl(int forumId) const;
     void get(const QUrl& url);
     Q_INVOKABLE void login(void);
     void post(const QUrl& url, const QByteArray& data);
