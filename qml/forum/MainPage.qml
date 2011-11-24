@@ -66,7 +66,11 @@ Page {
         }
 
         delegate: ForumDelegate {
-            onClicked: pageStack.push(Qt.createComponent("ForumPage.qml"), {"forum": forumSession.forums.get(index)});
+            onClicked: {
+                var forum = forumSession.forums.get(index)
+                if (forum.url)
+                    pageStack.push(Qt.createComponent("ForumPage.qml"), {"forum": forum});
+            }
             onPressAndHold: Qt.createComponent("ForumMenu.qml").createObject(root, {"forum": forumSession.forums.get(index)}).open()
         }
         model: forumSession.forums
