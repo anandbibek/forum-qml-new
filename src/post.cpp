@@ -258,7 +258,7 @@ static QString innerXmlToBbCode(QWebElement element)
             if (tag.hasClass("highlight"))
                 tag.replace("[highlight]" + innerXmlToBbCode(tag) + "[/highlight]");
         } else if (tag.tagName() == "DIV") {
-            if (tag.hasClass("align")) {
+            if (tag.hasAttribute("align")) {
                 const QString align = tag.attribute("align");
                 if (align == "left" || align == "center" || align == "right")
                     tag.replace("[" + align + "]" + innerXmlToBbCode(tag) + "[/" + align + "]");
