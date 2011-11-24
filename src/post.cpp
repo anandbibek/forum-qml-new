@@ -332,19 +332,25 @@ static QString innerXmlToBbCode(QWebElement element)
             } /* else
                 qDebug() << "Failed to parse link:" << tag.toOuterXml(); */
         } else if (tag.tagName() == "UL") {
+            QString list = "[list]\n";
             for (QWebElement li = tag.firstChild(); !li.isNull(); li = li.nextSibling()) {
-                if (li.tagName() != "LI")
+                qDebug() << "[*]" << li.tagName();
+                if (li.tagName() != "LI") {
+                    qDebug() << "[*] skipping" << li.tagName();
                     continue;
-                li.replace("[*]" + innerXmlToBbCode(li) + "\n");
+                }
+                list += "[*]" + innerXmlToBbCode(li) + "\n";
             }
-            tag.replace("[list]\n" + innerXmlToBbCode(tag) + "[/list]");
+            list += "[/list]";
+            tag.replace(list);
         } else if (tag.tagName() == "OL" && tag.attribute("type") == "1") {
+            QString list = "[list=1]\n";
             for (QWebElement li = tag.firstChild(); !li.isNull(); li = li.nextSibling()) {
                 if (li.tagName() != "LI")
                     continue;
-                li.replace("[*]" + innerXmlToBbCode(li) + "\n");
+                list += "[*]" + innerXmlToBbCode(li) + "\n";
             }
-            tag.replace("[list=1]\n" + innerXmlToBbCode(tag) + "[/list]");
+            tag.replace(list);
         }
 #if 0
         // FIXME - For whatever reason, this doesn't seem to work.
