@@ -13,6 +13,15 @@ Page {
 
         platformStyle: ViewHeaderStyle { titleImage: forumStyle.titleImage }
         text: forumStyle.titleText
+
+        BusyIndicator {
+            anchors.right: parent.right
+            anchors.rightMargin: UI.DEFAULT_MARGIN
+            anchors.verticalCenter: parent.verticalCenter
+            platformStyle: BusyIndicatorStyle { inverted: true }
+            running: visible
+            visible: forumSession.busy && forumList.count > 0
+        }
     }
 
     ListView {
