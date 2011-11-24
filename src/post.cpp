@@ -306,6 +306,9 @@ static QString innerXmlToBbCode(QWebElement element)
                     tag.replace("[quote=" + poster + "]" + innerXmlToBbCode(quote) + "[/quote]");
                 else
                     qDebug() << "Failed to parse quote:" << tag.toOuterXml();
+            } else if (!tag.findFirst("table > tbody > tr > td.alt2").isNull()) {
+                const QWebElement quote = tag.findFirst("table > tbody > tr > td.alt2");
+                tag.replace("[quote]" + innerXmlToBbCode(quote) + "[/quote]");
             } else {
                 qDebug() << "Unhandled div:" << tag.toOuterXml();
             }
