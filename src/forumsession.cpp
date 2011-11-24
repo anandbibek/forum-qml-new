@@ -5,6 +5,7 @@
 #endif
 
 #include "forumlist.h"
+#include "forumlistcache.h"
 #include "forumsession.h"
 #include "newpost.h"
 #include "searchresultthreadlist.h"
@@ -23,6 +24,7 @@ ForumSession::ForumSession(QObject *parent) :
     m_missingCredentials(false)
 {
     m_forums = new ForumList(this, this);
+    ForumListCache* cache = new ForumListCache(m_forums, this);
 
     // Disable JavaScript and loading of external objects
     m_webPage.settings()->setAttribute(QWebSettings::AutoLoadImages, false);
@@ -50,9 +52,10 @@ void ForumSession::maybeLogin()
         return;
 
     if (m_missingCredentials) {
-        // No credentials available, forum list empty, login as guest
-        if (m_forums->count() == 0)
+        // No credentials available, security token still empty, login as guest
+        if (m_securityToken.isEmpty()) {
             m_forums->load();
+        }
     } else {
         // Credentials available or still being looked for
         if (!m_userName.isEmpty() && !m_password.isEmpty()) {

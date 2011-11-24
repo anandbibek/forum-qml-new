@@ -27,8 +27,9 @@ CONFIG += qdeclarative-boostable
 
 # C++ source code files
 HEADERS += \
-    $$PWD/src/forumlist.h \
     $$PWD/src/forum.h \
+    $$PWD/src/forumlist.h \
+    $$PWD/src/forumlistcache.h \
     $$PWD/src/forumsession.h \
     $$PWD/src/threadlist.h \
     $$PWD/src/thread.h \
@@ -41,8 +42,9 @@ HEADERS += \
 
 SOURCES += \
     $$PWD/src/main.cpp \
-    $$PWD/src/forumlist.cpp \
     $$PWD/src/forum.cpp \
+    $$PWD/src/forumlist.cpp \
+    $$PWD/src/forumlistcache.cpp \
     $$PWD/src/forumsession.cpp \
     $$PWD/src/threadlist.cpp \
     $$PWD/src/thread.cpp \

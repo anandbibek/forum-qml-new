@@ -194,6 +194,11 @@ void ForumList::onReceived(const QWebElement& document)
     }
 
     // Add entries to the forum list model
+    addForums(list);
+}
+
+void ForumList::addForums(QList<Forum*>& list)
+{
     if (list.count() > 0) {
         beginInsertRows(QModelIndex(), 0, list.count() - 1);
         while (!list.empty())

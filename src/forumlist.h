@@ -30,6 +30,7 @@ public:
 
     void setUrl(QString url);
 
+    void addForums(QList<Forum*>& list);
     int count() const;
     QString url() const;
     Q_INVOKABLE QObject* get(int index) const;
@@ -50,6 +51,8 @@ private:
     ForumSession* m_session;
 
     QString m_url;
+
+    friend class ForumListCache;
 };
 
 #endif // FORUMLIST_H
