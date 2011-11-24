@@ -77,11 +77,10 @@ Page {
 
         Connections {
             target: forumSession.forums
-            onRowsInserted: {
-                forumList.hasSections = forumSession.forums.get(0).section
-                forumList.positionViewAtBeginning()
-            }
+            onRowsInserted: forumList.hasSections = forumSession.forums.get(0).section
         }
+
+        Component.onCompleted: forumList.hasSections = model.count > 0 && model.get(0).section
     }
 
     FastScroll {
