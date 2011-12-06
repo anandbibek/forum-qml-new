@@ -4,6 +4,7 @@
 #include "forumsession.h"
 #include "post.h"
 #include "postlist.h"
+#include "thread.h"
 
 PostList::PostList(ForumSession* session, QObject *parent) :
     QAbstractListModel(parent),
@@ -22,6 +23,9 @@ PostList::PostList(ForumSession* session, QObject *parent) :
     roles[SectionRole] = "section";
     roles[ThanksRole] = "thanks";
     setRoleNames(roles);
+
+    QObject::connect(m_session, SIGNAL(receivedPostList(QWebElement, int)),
+                     this, SLOT(onReceived(QWebElement, int)));
 }
 
 PostList::~PostList(void)
@@ -73,9 +77,6 @@ void PostList::setUrl(const QString url)
 {
     m_firstPage = 0;
     m_url = url;
-
-    QObject::connect(m_session, SIGNAL(receivedPostList(QWebElement, int)),
-                     this, SLOT(onReceived(QWebElement, int)));
 
     qDebug() << "Requesting" << url << "for post list ...";
     m_session->get(url);
@@ -133,10 +134,39 @@ void PostList::onPostChanged()
 
 void PostList::onReceived(QWebElement document, int postId)
 {
-    qDebug() << "Received post list";
+    Thread* thread = qobject_cast<Thread*>(QObject::parent());
 
-    QObject::disconnect(m_session, SIGNAL(receivedPostList(QWebElement, int)),
-                        this, SLOT(onReceived(QWebElement, int)));
+    qDebug() << "Received a post list";
+
+    // Extract threadId from the previous / next thread links
+    int threadId;
+    const QWebElement a = document.findFirst("div.smallfont[align=center] > strong + a + a");
+    if (!a.isNull()) {
+        if (a.previousSibling().toPlainText() == "Previous Thread" && a.toPlainText() == "Next Thread") {
+            QRegExp threadIdExpression("showthread.php\\?t=(\\d+).*");
+            if (threadIdExpression.exactMatch(a.attribute("href"))) {
+                threadId = threadIdExpression.cap(1).toInt();
+                if (m_threadId != threadId) {
+                    if (m_threadId != -1) {
+                        qDebug() << "Thread ID different:" << m_threadId << "!=" << threadId << "- ignoring.";
+                        return;
+                    } else {
+                        qDebug() << "Setting thread ID to" << threadId;
+                    }
+                    m_threadId = threadId;
+                    if (thread) {
+                        if (thread->threadId() == -1)
+                            thread->setThreadId(threadId);
+                        else if (thread->threadId() != threadId)
+                            qDebug() << "Parent thread ID != post list thread ID!";
+                    }
+                }
+            }
+        }
+    }
+    if (m_threadId == -1) {
+        qDebug() << "Could not determine threadId!";
+    }
 
     int page = 1;
     int numPages = 1;
@@ -189,6 +219,21 @@ void PostList::onReceived(QWebElement document, int postId)
         threadTitle = crumbs.toPlainText();
     }
     qDebug() << "THREAD TITLE:" << threadTitle;
+
+    // talk.maemo.org - extract subscription status from the thread tools menu
+    if (thread) {
+        const QWebElement img = document.findFirst("table.tborder > tbody > tr > td.alt1 > div > div > img[alt=Subscription]");
+        if (!img.isNull()) {
+            const QWebElement a = img.nextSibling();
+            if (a.tagName() == "A") {
+                const QString href = a.attribute("href");
+                if (href.startsWith("subscription.php?do=removesubscription"))
+                    thread->setSubscribed(true);
+                if (href.startsWith("subscription.php?do=addsubscription"))
+                    thread->setSubscribed(false);
+            }
+        }
+    }
 
     Post* jumpToPost = 0;
     QList<Post*> list;
@@ -336,26 +381,6 @@ void PostList::onReceived(QWebElement document, int postId)
     }
     emit countChanged();
     qDebug() << m_posts.count();
-
-    // Extract threadId from the previous / next thread links
-    int threadId;
-    const QWebElement a = document.findFirst("div.smallfont[align=center] > strong + a + a");
-    if (!a.isNull()) {
-        if (a.previousSibling().toPlainText() == "Previous Thread" && a.toPlainText() == "Next Thread") {
-            QRegExp threadIdExpression("showthread.php\\?t=(\\d+).*");
-            if (threadIdExpression.exactMatch(a.attribute("href"))) {
-                threadId = threadIdExpression.cap(1).toInt();
-                if (m_threadId != threadId) {
-                    if (m_threadId != -1)
-                        qDebug() << "Thread ID changed:" << m_threadId << "->" << threadId;
-                    m_threadId = threadId;
-                }
-            }
-        }
-    }
-    if (m_threadId == -1) {
-        qDebug() << "Could not determine threadId!";
-    }
 }
 
 QObject* PostList::get(int index) const
@@ -372,9 +397,6 @@ void PostList::load(int page)
     m_url = m_session->url() + m_url;
 
     qDebug() << "Requesting thread" << m_url << "for post list ...";
-
-    QObject::connect(m_session, SIGNAL(receivedPostList(QWebElement, int)),
-                     this, SLOT(onReceived(QWebElement, int)));
 
     m_session->get(QUrl(m_url));
 }
