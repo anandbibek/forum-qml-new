@@ -301,8 +301,41 @@ void ForumSession::onReceived(QNetworkReply *reply)
         // Empty search result
         emit receivedSearchResultThreadList(document, 0);
     } else if (url.startsWith(m_url + "/subscription.php")) {
-        // Parse the thread list
-        emit receivedThreadList(document);
+        if (url.startsWith(m_url + "/subscription.php?do=addsubscription")) {
+            // Right now we just acknowledge the subscription without email notification
+            QString threadId = document.findFirst("input[name=threadid]").attribute("value");
+
+            if (!threadId.isEmpty()) {
+                QUrl url(m_url + "/subscription.php");
+                url.addQueryItem("do", "doaddsubscription");
+                url.addQueryItem("threadid", threadId);
+
+                QUrl data;
+                data.addQueryItem("s", "");
+                data.addQueryItem("securitytoken", m_securityToken);
+                data.addQueryItem("do", "doaddsubscription");
+                data.addQueryItem("threadid", threadId);
+                data.addQueryItem("url", "index.php");
+             // QString emailUpdate = document.findFirst("select[name=emailupdate] > option[selected=selected]").attribute("value");
+                data.addQueryItem("emailupdate", "0"); // No email notification
+                QString folderId = document.findFirst("select[name=folderid] > option[selected=selected]").attribute("value");
+                data.addQueryItem("folderid", folderId); // Subscriptions
+                data.addQueryItem("submit", "Add Subscription");
+
+                post(url, data.encodedQuery());
+            }
+        } else if (url.startsWith(m_url + "/subscription.php?do=doaddsubscription&threadid=")) {
+            int threadId = url.mid(m_url.length() + 48).toInt();
+            emit subscriptionChanged(threadId, true);
+            disconnect(this, SIGNAL(subscriptionChanged(int, bool)));
+        } else if (url.startsWith(m_url + "/subscription.php?do=removesubscription&t=")) {
+            int threadId = url.mid(m_url.length() + 42).toInt();
+            emit subscriptionChanged(threadId, false);
+            disconnect(this, SIGNAL(subscriptionChanged(int, bool)));
+        } else {
+            // Parse the thread list
+            emit receivedThreadList(document);
+        }
     } else if (url.startsWith(m_url + "/post_thanks.php")) {
         QString postId = reply->url().queryItemValue("p");
         QStringList thanks;
@@ -737,6 +770,22 @@ void ForumSession::signOn(void)
 #endif // !defined(QT_SIMULATOR)
 }
 
+void ForumSession::subscribe(QObject* thread)
+{
+    Thread* t = qobject_cast<Thread*>(thread);
+    if (!t)
+        return;
+
+    connect(this, SIGNAL(subscriptionChanged(int, bool)),
+            t, SLOT(onSubscriptionChanged(int, bool)));
+
+    QUrl url("subscription.php");
+    url.addQueryItem("do", "addsubscription");
+    url.addQueryItem("t", QString("%1").arg(t->threadId()));
+
+    get(url);
+}
+
 QObject* ForumSession::subscribedThreads(void)
 {
     ThreadList* m_subscriptions = new ThreadList(this, this);
@@ -763,6 +812,22 @@ void ForumSession::thank(QObject* post)
     url.addQueryItem("using_ajax", "1");
     url.addQueryItem("p", QString("%1").arg(p->postId()));
     url.addQueryItem("securitytoken", m_securityToken);
+
+    get(url);
+}
+
+void ForumSession::unsubscribe(QObject* thread)
+{
+    Thread* t = qobject_cast<Thread*>(thread);
+    if (!t)
+        return;
+
+    connect(this, SIGNAL(subscriptionChanged(int, bool)),
+            t, SLOT(onSubscriptionChanged(int, bool)));
+
+    QUrl url("subscription.php");
+    url.addQueryItem("do", "removesubscription");
+    url.addQueryItem("t", QString("%1").arg(t->threadId()));
 
     get(url);
 }

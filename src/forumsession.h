@@ -64,8 +64,10 @@ public:
     Q_INVOKABLE void refresh(void);
     Q_INVOKABLE QObject* search(const QString& action);
     Q_INVOKABLE void signOn(void);
+    Q_INVOKABLE void subscribe(QObject* thread);
     Q_INVOKABLE QObject* subscribedThreads(void);
     Q_INVOKABLE void thank(QObject* post);
+    Q_INVOKABLE void unsubscribe(QObject* thread);
     Q_INVOKABLE void unThank(QObject* post);
 
 private:
@@ -91,6 +93,7 @@ signals:
     void receivedSearchResultThreadList(QWebElement document, int searchId);
     void receivedThanks(const QString& postId, const QStringList& thanks);
     void receivedThreadList(QWebElement document);
+    void subscriptionChanged(int threadId, bool subscribed);
 
 public slots:
     void maybeLogin(void);
