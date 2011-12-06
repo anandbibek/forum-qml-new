@@ -153,6 +153,12 @@ Page {
         id: postListMenu
         MenuLayout {
             MenuItem {
+                text: thread.subscribed ? "Unsubscribe" : "Subscribe"
+                visible: forumSession.sessionId
+                onClicked: thread.subscribed ? forumSession.unsubscribe(thread) : forumSession.subscribe(thread)
+            }
+
+            MenuItem {
                 text: "First page"
                 visible: thread.model.firstPage > 1
                 onClicked: thread.model.load(1)
