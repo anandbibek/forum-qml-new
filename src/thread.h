@@ -75,6 +75,7 @@ signals:
     void votesChanged(void);
 
 public slots:
+    void onSubscriptionChanged(int threadId, bool subscribed);
 
 private:
     int m_attachments;

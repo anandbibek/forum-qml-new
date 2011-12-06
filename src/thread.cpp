@@ -231,3 +231,9 @@ QObject* Thread::detachWithModel(void)
 
     return copy;
 }
+
+void Thread::onSubscriptionChanged(int threadId, bool subscribed)
+{
+    if (m_threadId == threadId)
+        setSubscribed(subscribed);
+}
