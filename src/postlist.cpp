@@ -183,6 +183,10 @@ void PostList::onReceived(QWebElement document, int postId)
     if (numPages > 1)
         section.sprintf("Page %d of %d", page, numPages);
 
+    // If this is the last page, mark the thread as read
+    if (thread && page == numPages)
+        thread->setUnread(false);
+
     qDebug() << section << "(" << m_firstPage << "-" << m_lastPage << ")";
     if (m_lastPage > 0 && page == m_lastPage) {
         // This is a reload of the last page

@@ -49,6 +49,7 @@ signals:
 
 public slots:
     void onReceived(QWebElement document);
+    void onThreadChanged();
 
 private:
     QObject* lastActiveThread;

@@ -330,6 +330,8 @@ void ThreadList::onReceived(QWebElement document)
             thread->setVotes(votes);
             thread->setRatingValue(ratingValue);
         }
+        connect(thread, SIGNAL(unreadChanged()),
+                this, SLOT(onThreadChanged()));
         thread->setParent(this);
         endInsertRows();
     }
@@ -427,6 +429,8 @@ void ThreadList::onReceived(QWebElement document)
             thread->setVotes(votes);
             thread->setRatingValue(ratingValue);
         }
+        connect(thread, SIGNAL(unreadChanged()),
+                this, SLOT(onThreadChanged()));
         thread->setParent(this);
         endInsertRows();
     }
@@ -443,6 +447,17 @@ void ThreadList::onReceived(QWebElement document)
         }
     }
 */
+}
+
+void ThreadList::onThreadChanged()
+{
+    Thread* thread = qobject_cast<Thread*>(sender());
+    if (!thread)
+        return;
+
+    int row = children().indexOf(thread);
+    if (row >= 0)
+        dataChanged(index(row, 0), index(row, 0));
 }
 
 void ThreadList::parseActiveTopics(const QWebElementCollection& topics)
