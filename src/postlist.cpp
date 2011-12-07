@@ -262,7 +262,6 @@ void PostList::onReceived(QWebElement document, int postId)
         QStringList thanks;
         QWebElement div = table.findFirst("div.thanks_postbit");
         if (!div.isNull()) {
-            qDebug() << "Thanks:";
             foreach (QWebElement a, div.findAll("td > div > a")) {
                 thanks.append(a.toPlainText());
             }
@@ -273,7 +272,7 @@ void PostList::onReceived(QWebElement document, int postId)
         commentExpression.setMinimal(true);
         html.replace(commentExpression, "");
 
-        qDebug() << "BODY:" << html.simplified();
+     // qDebug() << "BODY:" << html.simplified();
 
         Post* post = new Post(url, poster, dateTime, html);
         post->setThanks(thanks.join(", "));
@@ -316,7 +315,6 @@ void PostList::onReceived(QWebElement document, int postId)
         QStringList thanks;
         QWebElement div = comment.parent().findFirst("div.thanks_postbit");
         if (!div.isNull()) {
-            qDebug() << "Thanks:";
             foreach (QWebElement a, div.findAll("td > div > a")) {
                 thanks.append(a.toPlainText());
             }
@@ -327,7 +325,7 @@ void PostList::onReceived(QWebElement document, int postId)
         commentExpression.setMinimal(true);
         html.replace(commentExpression, "");
 
-        qDebug() << "BODY:" << html.simplified();
+     // qDebug() << "BODY:" << html.simplified();
 
         QString section;
         section.sprintf("Page %d of %d", page, numPages);
