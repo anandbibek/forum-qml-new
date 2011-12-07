@@ -1,6 +1,7 @@
 #include <QtWebKit>
 
 #include "post.h"
+#include "postlist.h"
 
 Post::Post(QObject* parent) :
     QObject(parent),
@@ -229,6 +230,27 @@ QString Post::cleanupBody(QWebElement& body)
     // TODO: Parse "ul.midcom_toolbar" for reply link and thanks
 
     return cleanupWhitespace(body);
+}
+
+void Post::release()
+{
+    if (m_taken)
+        m_taken = false;
+
+    // If this post is not parented to a post list, delete it
+    PostList* postList = qobject_cast<PostList*>(parent());
+    if (!postList)
+        deleteLater();
+}
+
+void Post::take()
+{
+    m_taken = true;
+}
+
+bool Post::taken()
+{
+    return m_taken;
 }
 
 static QString innerXmlToBbCode(QWebElement element)

@@ -116,7 +116,11 @@ void PostList::clear(void)
     beginRemoveRows(QModelIndex(), 0, m_posts.count());
     while (!m_posts.empty()) {
         Post* post = m_posts.takeFirst();
-        post->deleteLater();
+        if (post->taken()) {
+         // post->setParent(m_session);
+        } else {
+            post->deleteLater();
+        }
     }
     endRemoveRows();
 }

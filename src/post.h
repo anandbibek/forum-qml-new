@@ -35,6 +35,9 @@ public:
     void setThanks(const QString thanks);
 
     static QString cleanupBody(QWebElement& body);
+    Q_INVOKABLE void release();
+    Q_INVOKABLE void take();
+    bool taken();
     Q_INVOKABLE bool thankedBy(const QString userName) const;
     Q_INVOKABLE QString toBbCode() const;
 
@@ -55,6 +58,8 @@ private:
     QString m_subject;
     QString m_thanks;
     QString m_url;
+
+    bool m_taken;
 };
 
 #endif // POST_H

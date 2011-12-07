@@ -26,6 +26,7 @@ Sheet {
 
     Component.onCompleted: {
         if (post) {
+            post.take()
             if (thread)
                 forumLabel.text = "New reply to thread <span style='color:" + forumStyle.highlightTextColor + "'>" + thread.title + "</span>"
             else
@@ -50,6 +51,8 @@ Sheet {
 
     Component.onDestruction: {
         newPost.destroy()
+        if (post)
+            post.release()
     }
 
     TextFieldStyle {
