@@ -18,7 +18,7 @@ Page {
             anchors.right: parent.right
             anchors.rightMargin: UI.DEFAULT_MARGIN
             anchors.verticalCenter: parent.verticalCenter
-            platformStyle: BusyIndicatorStyle { inverted: true }
+            platformStyle: BusyIndicatorStyle { inverted: platformStyle.textColor == "#ffffff" }
             running: visible
             visible: forumSession.busy && forumList.count > 0
         }
