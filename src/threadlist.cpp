@@ -135,6 +135,17 @@ void ThreadList::onReceived(QWebElement document)
     if (m_firstPage == m_lastPage)
         clear();
 
+    // forum.meego.com - Extract forum name from breadcrumb bar
+    QString forum;
+    const QWebElement span = document.findFirst(".drupal_breadcrumb .drupal_separator");
+    if (!span.isNull()) {
+        forum = span.parent().toPlainText();
+        if (forum.startsWith("Forum"))
+            // User Control Panel -> Subscriptions doesn't contain valid forum information
+            if (!forum.startsWith("User Control Panel"))
+                forum = forum.mid(5);
+    }
+
     // forum.meego.com
     QWebElementCollection threads = document.findAll("table.tborder tr > td.alt1 > img");
     foreach (QWebElement img, threads) {
@@ -265,7 +276,7 @@ void ThreadList::onReceived(QWebElement document)
         QString date;
         QString time;
         QString lastPostUrl;
-        td = td.nextSibling();
+        td = td.nextSibling(); // Last Post column
         QRegExp repliesExpression("Replies: ([,\\d]+), Views: ([,\\d]+)");
         if (repliesExpression.exactMatch(td.attribute("title"))) {
             replies = repliesExpression.cap(1).replace(",", "").toInt();
@@ -288,6 +299,16 @@ void ThreadList::onReceived(QWebElement document)
 
         Q_UNUSED(views);
 
+        td = td.nextSibling(); // Replies column
+        td = td.nextSibling(); // Views column
+
+        td = td.nextSibling(); // Forum column
+        if (!td.isNull()) {
+            const QWebElement a = td.firstChild();
+            if (a.tagName() == "A")
+                forum = a.toPlainText();
+        }
+
         QString section = (sticky && m_stickySection) ? "Sticky" : date;
         QString dateTime;
         if (date == "Today")
@@ -299,7 +320,7 @@ void ThreadList::onReceived(QWebElement document)
 
         beginInsertRows(QModelIndex(), children().count(), children().count());
         Thread* thread = new Thread(url, title, replies, threadStarter, section, dateTime);
-     // thread->setForum(forum);
+        thread->setForum(forum);
         thread->setLastPostUrl(lastPostUrl);
         thread->setUnread(unread);
         thread->setAttachments(attachments);
@@ -360,7 +381,6 @@ void ThreadList::onReceived(QWebElement document)
         int replies = a.toPlainText().replace(",", "").toInt();
 
         // Forum this post was posted into
-        QString forum;
         a = a.nextSibling();
         if (a.tagName() == "A")
             forum = a.toPlainText();
