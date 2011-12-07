@@ -212,24 +212,25 @@ void Thread::setVotes(int votes)
     }
 }
 
-QObject* Thread::detachWithModel(void)
+void Thread::release()
 {
-    // Load create the model, if needed
-    model();
+    if (m_taken)
+        m_taken = false;
 
-    // Attach the model to a copy of the thread
-    Thread* copy = new Thread(*this);
-    m_model->setParent(copy);
-    m_model = 0;
-
-    // Parent the copy directly to the forumSession,
-    // so that QtDeclarative doesn't destroy it when
-    // the window becomes inactive
+    // If this thread is not parented to a thread list, delete it
     ThreadList* threadList = qobject_cast<ThreadList*>(parent());
-    if (threadList)
-        copy->setParent(threadList->forumSession());
+    if (!threadList)
+        deleteLater();
+}
 
-    return copy;
+void Thread::take()
+{
+    m_taken = true;
+}
+
+bool Thread::taken()
+{
+    return m_taken;
 }
 
 void Thread::onSubscriptionChanged(int threadId, bool subscribed)

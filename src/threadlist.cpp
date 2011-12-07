@@ -507,9 +507,17 @@ void ThreadList::clear(void) {
         return;
     beginRemoveRows(QModelIndex(), 0, children().count());
     while (!children().empty()) {
-        QObject* thread = children().at(0);
-        thread->setParent(0);
-        thread->deleteLater();
+        Thread* thread = qobject_cast<Thread*>(children().at(0));
+        if (!thread)
+            continue;
+        if (thread->taken()) {
+            // Parent to forum session, so the thread is kept around
+            // even when the QML context gets destroyed temporarily
+            thread->setParent(m_session);
+        } else {
+            thread->setParent(0);
+            thread->deleteLater();
+        }
     }
     endRemoveRows();
 }

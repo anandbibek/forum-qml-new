@@ -148,9 +148,6 @@ Page {
         if (openMode)
             thread.openMode = openMode
 
-        // Detach the PostList with a copy of the Thread in case the thread in the list
-        // is destroyed while PostListPage is still opened (which happens for Active Topics)
-
-        pageStack.push(Qt.createComponent("ThreadPage.qml"), {"thread": thread.detachWithModel()});
+        pageStack.push(Qt.createComponent("ThreadPage.qml"), {"thread": thread});
     }
 }

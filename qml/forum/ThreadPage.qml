@@ -118,10 +118,7 @@ Page {
     tools: ToolBarLayout {
         ToolIcon {
             platformIconId: "toolbar-back"
-            onClicked: {
-                thread.destroy(250) // delay until page finished sliding out
-                pageStack.pop()
-            }
+            onClicked: pageStack.pop()
         }
 
         ToolIcon {
@@ -177,4 +174,8 @@ Page {
             }
         }
     }
+
+    // Make sure the thread doesn't get deleted while the thread page is opened
+    Component.onCompleted: thread.take()
+    Component.onDestruction: thread.release()
 }

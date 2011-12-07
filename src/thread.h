@@ -62,7 +62,9 @@ public:
     void setUrl(const QString url);
     void setVotes(int votes);
 
-    Q_INVOKABLE QObject* detachWithModel(void);
+    Q_INVOKABLE void release();
+    Q_INVOKABLE void take();
+    bool taken();
 
 signals:
     void attachmentsChanged(void);
@@ -94,6 +96,8 @@ private:
     bool m_unread;
     QString m_url;
     int m_votes;
+
+    bool m_taken;
 };
 
 #endif // THREAD_H
