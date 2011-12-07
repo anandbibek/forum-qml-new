@@ -158,6 +158,29 @@ void NewPost::onReceived(QWebElement document)
     }
 }
 
+static QByteArray toHtml(QString str) {
+    QByteArray result;
+    for (QString::const_iterator i = str.begin(); i != str.end(); i++) {
+        char c = i->toLatin1();
+        if (c) {
+            // Unreserved characters as per RFC 3986
+            if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c == '-' || c == '_' || c =='.' || c == '~')) {
+                result.append(c);
+            } else {
+                // Percent encoding of reserved and other Latin 1 characters
+                result.append('%');
+                result.append(QString(*i).toLatin1().toHex());
+            }
+        } else {
+            // Percent encoded HTML encoding of other Unicode characters
+            result.append("%26%23");
+            result.append(QString("%1").arg(i->unicode()).toLatin1());
+            result.append("%3B");
+        }
+    }
+    return result;
+}
+
 void NewPost::requestPreview()
 {
     QUrl url;
@@ -175,7 +198,7 @@ void NewPost::requestPreview()
 
     QUrl data;
     data.addQueryItem("subject", subject());
-    data.addQueryItem("message", body()); // TODO: bbCode()
+    data.addEncodedQueryItem("message", toHtml(body())); // TODO: bbCode()
     data.addQueryItem("wysiwyg", "0");
     data.addQueryItem("iconid", "0");
     data.addQueryItem("s", "");
@@ -217,7 +240,7 @@ void NewPost::submit()
 
     QUrl data;
     data.addQueryItem("subject", subject());
-    data.addQueryItem("message", body()); // TODO: bbCode()
+    data.addEncodedQueryItem("message", toHtml(body())); // TODO: bbCode()
     data.addQueryItem("wysiwyg", "0");
     data.addQueryItem("iconid", "0");
     data.addQueryItem("s", "");
