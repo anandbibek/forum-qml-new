@@ -26,16 +26,11 @@ Page {
             onClicked: pageStack.pop()
         }
 
-        ToolIcon {
-            platformIconId: busyIndicator.visible ? "" : "toolbar-refresh"
+        BusyToolIcon {
+            anchors.centerIn: parent
+            platformIconId: "toolbar-refresh"
+            busy: forumSession.busy
             onClicked: forumSession.refresh()
-
-            BusyIndicator {
-                id: busyIndicator
-                anchors.centerIn: parent
-                running: visible
-                visible: forumSession.busy
-            }
         }
     }
 }

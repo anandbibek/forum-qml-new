@@ -127,16 +127,10 @@ Page {
             onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root, {"thread": thread}).open()
         }
 
-        ToolIcon {
-            platformIconId: busyIndicator.visible ? "" : "toolbar-refresh"
+        BusyToolIcon {
+            platformIconId: "toolbar-refresh"
+            busy: forumSession.busy && thread.model.count > 0
             onClicked: thread.model.load(thread.model.lastPage)
-
-            BusyIndicator {
-                id: busyIndicator
-                anchors.centerIn: parent
-                running: visible
-                visible: forumSession.busy && thread.model.count > 0
-            }
         }
 
         ToolIcon {
