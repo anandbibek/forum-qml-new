@@ -264,28 +264,24 @@ void ForumSession::onReceived(QNetworkReply *reply)
     }
 
     // Depending on URL, jump to parsing the contained forum list, thread list, or post list
-    QString url = reply->url().toString();
+    const QUrl& url = reply->url();
+    QString path = reply->url().path();
 
-    qDebug() << "REPLY URL:" << url;
+    qDebug() << "REPLY URL:" << url.toString();
 
-    if (url == m_url || url.startsWith(m_url + "/index.php")) {
+    if (path.isEmpty() || path == "/index.php") {
         // Parse the forum list
         emit receivedForumList(document);
-    } else if (url.startsWith(m_url + "/forumdisplay.php")) {
+    } else if (path == "/forumdisplay.php") {
         // Parse the thread list
         emit receivedThreadList(document);
-    } else if (url.startsWith(m_url + "/showthread.php")) {
+    } else if (path == "/showthread.php") {
         int postId = -1;
-        QRegExp postIdExpression("p=(\\d+)#post(\\d+)");
-        if (postIdExpression.indexIn(url) != -1) {
-            postId = postIdExpression.cap(1).toInt();
-            if (postId != postIdExpression.cap(2).toInt())
-                qDebug() << "Failed to parse postId in URL:" << url << "- assuming postId =" << postId;
-        }
-
+        if (url.hasQueryItem("p"))
+            postId = url.queryItemValue("p").toInt();
         // Parse the post list
         emit receivedPostList(document, postId);
-    } else if (url.startsWith(m_url + "/newthread.php") || url.startsWith(m_url + "/newreply.php")) {
+    } else if (path == "/newthread.php" || path == "/newreply.php") {
         QWebElement div = document.findFirst("table.tborder div.panel > div > blockquote > p");
         if (!div.isNull()) {
             qDebug() << "Error message:" << div.toPlainText();
@@ -293,15 +289,21 @@ void ForumSession::onReceived(QNetworkReply *reply)
         } else {
             emit receivedNewPost(document);
         }
-    } else if (url.startsWith(m_url + "/search.php?searchid=")) {
-        int searchId = url.mid(m_url.length() + 21, -1).toInt();
-        // Parse search result
-        emit receivedSearchResultThreadList(document, searchId);
-    } else if (url == m_url + "/search.php?do=process") {
-        // Empty search result
-        emit receivedSearchResultThreadList(document, 0);
-    } else if (url.startsWith(m_url + "/subscription.php")) {
-        if (url.startsWith(m_url + "/subscription.php?do=addsubscription")) {
+    } else if (path == "/search.php") {
+        if (url.hasQueryItem("searchid")) {
+            int searchId = url.queryItemValue("searchid").toInt();
+            // Parse search result
+            emit receivedSearchResultThreadList(document, searchId);
+        } else if (url.queryItemValue("do") == "process") {
+            // Empty search result
+            emit receivedSearchResultThreadList(document, 0);
+        } else {
+            qDebug() << "Unknown search result";
+        }
+        disconnect(this, SIGNAL(receivedSearchResultThreadList(QWebElement, int)));
+    } else if (path == "/subscription.php") {
+        const QString mode = url.queryItemValue("do");
+        if (mode == "addsubscription") {
             // Right now we just acknowledge the subscription without email notification
             QString threadId = document.findFirst("input[name=threadid]").attribute("value");
 
@@ -324,20 +326,20 @@ void ForumSession::onReceived(QNetworkReply *reply)
 
                 post(url, data.encodedQuery());
             }
-        } else if (url.startsWith(m_url + "/subscription.php?do=doaddsubscription&threadid=")) {
-            int threadId = url.mid(m_url.length() + 48).toInt();
+        } else if (mode == "doaddsubscription") {
+            int threadId = url.queryItemValue("threadid").toInt();
             emit subscriptionChanged(threadId, true);
             disconnect(this, SIGNAL(subscriptionChanged(int, bool)));
-        } else if (url.startsWith(m_url + "/subscription.php?do=removesubscription&t=")) {
-            int threadId = url.mid(m_url.length() + 42).toInt();
+        } else if (mode == "removesubscription") {
+            int threadId = url.queryItemValue("t").toInt();
             emit subscriptionChanged(threadId, false);
             disconnect(this, SIGNAL(subscriptionChanged(int, bool)));
         } else {
             // Parse the thread list
             emit receivedThreadList(document);
         }
-    } else if (url.startsWith(m_url + "/post_thanks.php")) {
-        QString postId = reply->url().queryItemValue("p");
+    } else if (path == "/post_thanks.php") {
+        QString postId = url.queryItemValue("p");
         QStringList thanks;
         foreach (const QWebElement a, document.findAll("table tr td div a"))
             thanks.append(a.toPlainText());
