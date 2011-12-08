@@ -16,3 +16,5 @@ var COLOR_SECONDARY_FOREGROUND = "#8c8c8c"; // Secondary text
 
 //Common UI layouts
 var DEFAULT_MARGIN = 16;
+var CORNER_MARGINS = 22;
+var LIST_ITEM_HEIGHT_DEFAULT = 80;

@@ -24,6 +24,11 @@ Page {
             running: visible
             visible: forumSession.busy && forumList.count > 0
         }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: Qt.createComponent("ForumSelectionDialog.qml").createObject(root, {"selectedIndex": 0}).open()
+        }
     }
 
     ListView {
