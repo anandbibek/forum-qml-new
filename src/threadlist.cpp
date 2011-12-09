@@ -514,6 +514,7 @@ void ThreadList::parseActiveTopics(const QWebElementCollection& topics)
         thread->setParent(this);
     }
     endInsertRows();
+    emit countChanged();
 }
 
 void ThreadList::clear(void) {
@@ -535,6 +536,7 @@ void ThreadList::clear(void) {
         }
     }
     endRemoveRows();
+    emit countChanged();
 }
 
 QObject* ThreadList::get(int index) const
