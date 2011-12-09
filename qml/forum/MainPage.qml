@@ -5,6 +5,7 @@ import "UIConstants.js" as UI
 
 Page {
     id: root
+    objectName: "MainPage"
     anchors.margins: UI.DEFAULT_MARGIN
 
     ViewHeader {

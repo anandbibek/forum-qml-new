@@ -4,6 +4,7 @@ import "UIConstants.js" as UI
 
 Page {
     id: root
+    objectName: "SubscriptionsPage"
     anchors.margins: UI.DEFAULT_MARGIN
 
     ThreadListView {
