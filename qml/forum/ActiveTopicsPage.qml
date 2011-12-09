@@ -9,12 +9,11 @@ Page {
 
     tools: forumTools
 
-    property alias threads: threadListView.threads
-
     ThreadListView {
         id: threadListView
 
         title: "Active Topics"
+        threads: forumSession.activeTopics
         showForum: true
     }
 

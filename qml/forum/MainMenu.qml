@@ -5,15 +5,7 @@ Menu {
     MenuLayout {
         MenuItem {
             text: forumSession.sessionId ? "New posts" : "Today's posts"
-            onClicked: {
-                if (forumSession.sessionId) {
-                    var threads = forumSession.search("getnew")
-                    pageStack.push(Qt.createComponent("NewPostsPage.qml"), {"threads": threads, "title": text})
-                } else {
-                    var threads = forumSession.search("getdaily")
-                    pageStack.push(Qt.createComponent("TodaysPostsPage.qml"), {"threads": threads, "title": text})
-                }
-            }
+            onClicked: pageStack.push(Qt.createComponent(forumSession.sessionId ? "NewPostsPage.qml" : "TodaysPostsPage.qml"))
         }
 
         MenuItem {

@@ -111,7 +111,7 @@ Page {
         ToolIcon {
             platformIconId: "toolbar-history"
             opacity: forumSession.activeTopics != null ? 1 : 0
-            onClicked: pageStack.push(Qt.createComponent("ActiveTopicsPage.qml"), {"threads": forumSession.activeTopics})
+            onClicked: pageStack.push(Qt.createComponent("ActiveTopicsPage.qml"))
         }
 
         ToolIcon {

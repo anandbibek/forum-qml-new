@@ -34,8 +34,6 @@ Page {
         }
     }
 
-    Component.onCompleted: threadListView.threads = forumSession.subscribedThreads()
-
     SelectionDialog {
         id: folderDialog
 
@@ -45,5 +43,13 @@ Page {
         }
 
         Component.onCompleted: selectedIndex = 0
+    }
+
+    Component.onCompleted: {
+        if (forumSession.sessionId) {
+            threadListView.threads = forumSession.subscribedThreads()
+        } else {
+            forumSession.sessionIdChanged.connect(function() { threadListView.threads = forumSession.subscribedThreads() })
+        }
     }
 }

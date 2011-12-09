@@ -9,12 +9,12 @@ Page {
 
     tools: forumTools
 
-    property alias title: threadListView.title
     property alias threads: threadListView.threads
 
     ThreadListView {
         id: threadListView
 
+        title: "New Posts"
         showForum: true
     }
 
@@ -31,6 +31,14 @@ Page {
             platformIconId: "toolbar-refresh"
             busy: forumSession.busy && threads.count > 0
             onClicked: threads.load(threads.firstPage)
+        }
+    }
+
+    Component.onCompleted: {
+        if (forumSession.sessionId) {
+            threadListView.threads = forumSession.search("getnew")
+        } else {
+            forumSession.sessionIdChanged.connect(function() { threadListView.threads = forumSession.search("getnew") })
         }
     }
 }

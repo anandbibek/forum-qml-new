@@ -5,16 +5,17 @@ import "UIConstants.js" as UI
 
 Page {
     id: root
+    objectName: "TodaysPostsPage"
     anchors.margins: UI.DEFAULT_MARGIN
 
     tools: forumTools
 
-    property alias title: threadListView.title
     property alias threads: threadListView.threads
 
     ThreadListView {
         id: threadListView
 
+        title: "Today's Posts"
         showForum: true
     }
 
@@ -33,4 +34,6 @@ Page {
             onClicked: threads.load(threads.firstPage)
         }
     }
+
+    Component.onCompleted: threads = forumSession.search("getdaily")
 }
