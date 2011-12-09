@@ -16,7 +16,7 @@ QT += webkit
 CONFIG += webkit
 
 CONFIG += link_pkgconfig
-PKGCONFIG += accounts-qt AccountSetup libsignon-qt
+PKGCONFIG += accounts-qt AccountSetup gq-gconf libsignon-qt
 
 # No use for QtMobility (yet)
 # CONFIG += mobility
@@ -31,6 +31,7 @@ HEADERS += \
     $$PWD/src/forumlist.h \
     $$PWD/src/forumlistcache.h \
     $$PWD/src/forumsession.h \
+    $$PWD/src/gconfitemqmlproxy.h \
     $$PWD/src/threadlist.h \
     $$PWD/src/thread.h \
     $$PWD/src/post.h \
@@ -46,6 +47,7 @@ SOURCES += \
     $$PWD/src/forumlist.cpp \
     $$PWD/src/forumlistcache.cpp \
     $$PWD/src/forumsession.cpp \
+    $$PWD/src/gconfitemqmlproxy.cpp \
     $$PWD/src/threadlist.cpp \
     $$PWD/src/thread.cpp \
     $$PWD/src/post.cpp \
