@@ -38,7 +38,7 @@ Item {
 
         footer: Button {
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: threads.count > 0 && threads.lastPage < threads.numPages
+            visible: !!threads && threads.count > 0 && threads.lastPage < threads.numPages
             enabled: !forumSession.busy
             text: "Older threads"
             onClicked: threads.load(threads.lastPage + 1)
@@ -47,14 +47,14 @@ Item {
 
     FastScroll {
         listView: threadList
-        visible: threads != null && threads.count > 0
+        visible: !!threads && threads.count > 0
     }
 
     BusyIndicator {
         anchors.centerIn: threadList
         platformStyle: BusyIndicatorStyle { size: "large" }
         running: forumSession.busy
-        visible: forumSession.busy && threads.count == 0
+        visible: forumSession.busy && (!threads || threads.count == 0)
     }
 
     function openThread(thread, openMode) {
