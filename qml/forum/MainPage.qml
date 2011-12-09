@@ -1,6 +1,7 @@
 import QtQuick 1.1
 import com.nokia.meego 1.0
 import "../components"
+import Forum 1.0
 import "UIConstants.js" as UI
 
 Page {
@@ -124,6 +125,40 @@ Page {
             platformIconId: "toolbar-view-menu"
             anchors.right: (parent === undefined) ? undefined : parent.right
             onClicked: Qt.createComponent("MainMenu.qml").createObject(root).open()
+        }
+    }
+
+    GConfItem {
+       id: defaultPage
+       key: "/apps/forum-qml/settings/defaultPage"
+       defaultValue: "MainPage"
+    }
+
+    // Once the toolbar is changed to MainPage.tools, maybe push defaultPage from settings
+    property bool __firstTime: true
+    Connections {
+        target: pageStack.toolBar
+        onToolsChanged: {
+            if (__firstTime && tools == root.tools) {
+                __firstTime = false
+
+                if (defaultPage.value == "ActiveTopicsPage")
+                    pageStack.push(Qt.createComponent("ActiveTopicsPage.qml"), null, true)
+                else if (defaultPage.value == "TodaysPostsPage")
+                    appWindow.pageStack.push(Qt.createComponent("TodaysPostsPage.qml"), null, true)
+                else if (defaultPage.value == "NewPostsPage")
+                    appWindow.pageStack.push(Qt.createComponent("NewPostsPage.qml"), null, true)
+                else if (defaultPage.value == "SubscriptionsPage")
+                    pageStack.push(Qt.createComponent("SubscriptionsPage.qml"), null, true)
+            }
+        }
+    }
+
+    Connections {
+        target: pageStack
+        onCurrentPageChanged: {
+            if (!__firstTime && pageStack.currentPage.objectName)
+                defaultPage.value = pageStack.currentPage.objectName
         }
     }
 }
