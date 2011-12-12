@@ -32,7 +32,8 @@ Sheet {
             else
                 forumLabel.text = "New reply to <span style='color:" + forumStyle.highlightTextColor + "'>" + post.poster + "</span>"
             topicField.text = "Re: " + post.subject
-            bodyArea.text = "[quote=" + post.poster + "]" + post.toBbCode() + "[/quote]"
+            var body ="[quote=" + post.poster + (post.postId ? (";" + post.postId + "]") : "]") + post.toBbCode() + "[/quote]"
+            bodyArea.text = body
             newPost = forumSession.createNewPost()
             newPost.postId = post.postId
             if (thread)
