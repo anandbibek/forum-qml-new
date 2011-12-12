@@ -26,7 +26,6 @@ Sheet {
 
     Component.onCompleted: {
         if (post) {
-            post.take()
             if (thread)
                 forumLabel.text = "New reply to thread <span style='color:" + forumStyle.highlightTextColor + "'>" + thread.title + "</span>"
             else
@@ -38,6 +37,7 @@ Sheet {
             newPost.postId = post.postId
             if (thread)
                 newPost.threadId = thread.model.threadId
+            post = null
         } else if (thread) {
             forumLabel.text = "New reply to thread <span style='color:" + forumStyle.highlightTextColor + "'>" + thread.title + "</span>"
             topicField.text = "Re: " + thread.title
@@ -48,12 +48,6 @@ Sheet {
             newPost = forumSession.createNewPost()
             newPost.forumId = forum.forumId
         }
-    }
-
-    Component.onDestruction: {
-        newPost.destroy()
-        if (post)
-            post.release()
     }
 
     TextFieldStyle {
