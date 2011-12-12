@@ -22,7 +22,10 @@ Page {
             onClicked: {
                 console.debug(thread.model.get(index).toBbCode())
             }
-            onPressAndHold: Qt.createComponent("PostMenu.qml").createObject(root, {"post": thread.model.get(index), "parentPage": root}).open()
+            onPressAndHold: {
+                if (forumSession.sessionId)
+                    Qt.createComponent("PostMenu.qml").createObject(root, {"post": thread.model.get(index), "parentPage": root}).open()
+            }
         }
 
         model: thread.model
