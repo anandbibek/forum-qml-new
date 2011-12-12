@@ -191,6 +191,9 @@ Sheet {
         }
     ]
 
+    onAccepted: newPost.destroy()
+    onRejected: newPost.destroy()
+
     QueryDialog {
         id: errorDialog
         titleText: "Error message received"
