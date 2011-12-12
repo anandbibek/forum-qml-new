@@ -592,7 +592,6 @@ void ForumSession::setUserName(const QString userName)
 
 QObject* ForumSession::createNewPost(void)
 {
-    qDebug() << "Create new post";
     return new NewPost(this, this);
 }
 
