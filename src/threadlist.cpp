@@ -177,6 +177,7 @@ void ThreadList::onReceived(QWebElement document)
             // Hot, own posts in this thread
         } else if (status.endsWith("/thread_dot_hot_new.gif")) {
             // Hot, own posts in this unread thread
+            unread = true;
         } else {
             qDebug() << "THREAD STATUS:" << status;
         }
