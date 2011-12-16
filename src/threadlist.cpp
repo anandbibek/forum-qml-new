@@ -140,10 +140,13 @@ void ThreadList::onReceived(QWebElement document)
     const QWebElement span = document.findFirst(".drupal_breadcrumb .drupal_separator");
     if (!span.isNull()) {
         forum = span.parent().toPlainText();
-        if (forum.startsWith("Forum"))
+        if (forum.startsWith("Forum")) {
             // User Control Panel -> Subscriptions doesn't contain valid forum information
-            if (!forum.startsWith("User Control Panel"))
+            if (!forum.startsWith("ForumUser Control Panel"))
                 forum = forum.mid(5);
+            else
+                forum = "";
+        }
     }
 
     // forum.meego.com
