@@ -155,6 +155,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
                 qDebug() << "Login message does not match:" << strong.toPlainText();
             }
         } else {
+            // maemo.org - Talk error message
             QWebElement div = document.findFirst("table.tborder div.panel > div > div");
             if (!div.isNull()) {
                 QString message = div.toPlainText();
@@ -162,12 +163,21 @@ void ForumSession::onReceived(QNetworkReply *reply)
 
                 emit loginFailed(message);
             } else {
-                qDebug() << "================================================================================";
-                qDebug() << html;
-                qDebug() << "================================================================================";
-                qDebug() << "Unknown error. Dumped page";
+                // MeeGo Forum error message
+                div = document.findFirst("div.messages");
+                if (!div.isNull()) {
+                    QString message = div.toPlainText();
+                    qDebug() << "Error message:" << message;
 
-                emit loginFailed("Unknown error");
+                    emit loginFailed(message);
+                } else {
+                    qDebug() << "================================================================================";
+                    qDebug() << html;
+                    qDebug() << "================================================================================";
+                    qDebug() << "Unknown error. Dumped page";
+
+                    emit loginFailed("Unknown error");
+                }
             }
         }
 
