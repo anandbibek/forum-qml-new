@@ -194,8 +194,11 @@ void ThreadList::onReceived(QWebElement document)
         int attachments = 0;
         bool subscribed = false;
         td = td.nextSibling();
+        // Find the first direct child <div>
         QWebElement div = td.firstChild();
-        if (div.tagName() == "DIV") {
+        while (!div.isNull() && div.tagName() != "DIV")
+            div = div.nextSibling();
+        if (!div.isNull()) {
             foreach (QWebElement a, div.findAll("a")) {
                 if (a.attribute("id").startsWith("thread_title_")) {
                     title = a.toPlainText();
