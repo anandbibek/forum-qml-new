@@ -39,14 +39,14 @@ Item {
     }
 
     onListViewChanged: {
-        if (listView && listView.model) {
-            internal.initDirtyObserver();
-        } else if (listView) {
-            listView.modelChanged.connect(function() {
-                if (listView.model) {
-                    internal.initDirtyObserver();
-                }
-            });
+        if (listView) {
+            if (listView.model)
+                internal.initDirtyObserver();
+                listView.modelChanged.connect(function() {
+                    if (listView.model) {
+                        internal.initDirtyObserver();
+                    }
+                });
         }
         __updatePageMargin()
     }
