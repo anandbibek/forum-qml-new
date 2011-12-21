@@ -1,7 +1,9 @@
 # Folders containing QML code to be shipped with the application
 fmc.source = qml/forum-fmc
 fmc.target = qml
-DEPLOYMENTFOLDERS += fmc
+tmo.source = qml/forum-tmo
+tmo.target = qml
+DEPLOYMENTFOLDERS += fmc tmo
 
 include(forum-qml.pri)
 
