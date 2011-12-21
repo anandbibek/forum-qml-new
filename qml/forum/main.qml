@@ -14,13 +14,14 @@ PageStackWindow {
 
     initialPage: MainPage { }
 
-    Component.onCompleted: loadForumStyle()
+    Component.onCompleted: {
+        loadForumStyle()
+        if (!forumSession.provider)
+            Qt.createComponent("ForumSelectionDialog.qml").createObject(initialPage, {"selectedIndex": 0}).open()
+    }
 
-    ForumSession {
-        id: forumSession
-        provider: "fmc"
-        url: "http://forum.meego.com"
-
+    Connections {
+        target: forumSession
         onError: {
             errorDialog.message = message
             errorDialog.open();
@@ -40,7 +41,7 @@ PageStackWindow {
     }
 
     function loadForumStyle() {
-        var style = Qt.createComponent("../forum-" + forumSession.provider + "/ForumStyle.qml")
+        var style = Qt.createComponent(forumSession.provider ? ("../forum-" + forumSession.provider + "/ForumStyle.qml") : "ForumStyle.qml")
         forumStyle = style.createObject(appWindow)
     }
 }

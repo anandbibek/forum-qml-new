@@ -14,8 +14,20 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     QCoreApplication::setApplicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName());
 
-    // Export the ForumSession and Thread classes
-    qmlRegisterType<ForumSession>("Forum", 1, 0, "ForumSession");
+    ForumSession forumSession;
+    // FIXME - parse forum provider files
+    if (QCoreApplication::arguments().contains("--fmc")) {
+        forumSession.setProvider("fmc");
+        forumSession.setUrl("http://forum.meego.com");
+    } else if (QCoreApplication::arguments().contains("--tmo")) {
+        forumSession.setProvider("tmo");
+        forumSession.setUrl("http://talk.maemo.org");
+    }
+
+    // Export the forum session
+    viewer->rootContext()->setContextProperty("forumSession", &forumSession);
+
+    // Export the GConfItem and Thread classes
     qmlRegisterType<GConfItemQmlProxy>("Forum", 1, 0, "GConfItem");
     qmlRegisterType<ForumProviderList>("Forum", 1, 0, "ForumProviderList");
     qmlRegisterUncreatableType<Thread>("Forum", 1, 0, "Thread", "Thread object creation is handled by the thread list model");
