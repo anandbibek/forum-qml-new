@@ -555,6 +555,30 @@ void ForumSession::setLoginUrl(const QString loginUrl)
     }
 }
 
+void ForumSession::reset(void)
+{
+    // Clear login credentials, security token and session id
+    setUserName("");
+    setPassword("");
+    setMissingCredentials(false);
+    m_securityToken = "";
+    m_sessionId = "";
+
+    // Delete active topics list
+    delete m_activeTopics;
+    m_activeTopics = 0;
+    emit activeTopicsChanged();
+
+    // Clear forum list
+    if (m_forums) {
+        delete m_forums;
+        m_forums = 0;
+        emit forumsChanged();
+    }
+    m_forums = new ForumList(this, this);
+    emit forumsChanged();
+}
+
 void ForumSession::setMissingCredentials(bool missingCredentials)
 {
     if (m_missingCredentials != missingCredentials) {
@@ -574,6 +598,20 @@ void ForumSession::setProvider(const QString provider)
 {
     if (m_provider != provider) {
         m_provider = provider;
+
+        if (provider == "fmc") {
+            setUrl("http://forum.meego.com");
+        } else if (provider == "tmo") {
+            setUrl("http://talk.maemo.org");
+        } else if (provider == "nokia") {
+            setUrl("http://www.developer.nokia.com/Community/Discussion/");
+        } else if (provider == "xda") {
+            setUrl("http://forum.xda-developers.com");
+        }
+
+        // Reset the forum session
+        reset();
+
         emit providerChanged();
     }
 }

@@ -71,6 +71,7 @@ public:
     Q_INVOKABLE void unThank(QObject* post);
 
 private:
+    void reset(void);
     void setMissingCredentials(bool missingCredentials);
 
 signals:
