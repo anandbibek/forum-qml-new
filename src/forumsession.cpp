@@ -25,7 +25,7 @@ ForumSession::ForumSession(QObject *parent) :
     m_missingCredentials(false)
 {
     m_forums = new ForumList(this, this);
-    ForumListCache* cache = new ForumListCache(m_forums, this);
+ // ForumListCache* cache = new ForumListCache(m_forums, this);
 
     // Disable JavaScript and loading of external objects
     m_webPage.settings()->setAttribute(QWebSettings::AutoLoadImages, false);
