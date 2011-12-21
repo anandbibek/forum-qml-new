@@ -20,6 +20,7 @@ ForumSession::ForumSession(QObject *parent) :
     m_identity(0),
 #endif
     m_activeTopics(0),
+    m_busy(false),
     // This helps to prevent a guest login until credentials are proven to be missing
     m_missingCredentials(false)
 {
