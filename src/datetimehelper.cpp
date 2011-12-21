@@ -34,29 +34,29 @@ QString DateTimeHelper::parseDate(const QString date)
             int day = dateExpression.cap(1).toInt();
             QString month = dateExpression.cap(2);
             int m;
-            if (month == "Jan")
+            if (month == "Jan" || month == "January")
                 m = 1;
-            else if (month == "Feb")
+            else if (month == "Feb" || month == "February")
                 m = 2;
-            else if (month == "Mar")
+            else if (month == "Mar" || month == "March")
                 m = 3;
-            else if (month == "Apr")
+            else if (month == "Apr" || month == "April")
                 m = 4;
             else if (month == "May")
                 m = 5;
-            else if (month == "Jun")
+            else if (month == "Jun" || month == "June")
                 m = 6;
-            else if (month == "Jul")
+            else if (month == "Jul" || month == "July")
                 m = 7;
-            else if (month == "Aug")
+            else if (month == "Aug" || month == "August")
                 m = 8;
-            else if (month == "Sep")
+            else if (month == "Sep" || month == "September")
                 m = 9;
-            else if (month == "Oct")
+            else if (month == "Oct" || month == "October")
                 m = 10;
-            else if (month == "Nov")
+            else if (month == "Nov" || month == "November")
                 m = 11;
-            else if (month == "Dec")
+            else if (month == "Dec" || month == "December")
                 m = 12;
             else {
                 qDebug() << "Failed to parse date string:" << date;
