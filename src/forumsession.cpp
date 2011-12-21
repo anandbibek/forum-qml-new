@@ -121,7 +121,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
     }
 
     // Now handle the contents
-    const QString html = QString::fromLatin1(reply->readAll().constData());
+    const QByteArray html = reply->readAll().constData();
 
     if (html.isEmpty())
     {
@@ -131,7 +131,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
         emit busyChanged();
         return;
     }
-    m_webPage.mainFrame()->setHtml(html);
+    m_webPage.mainFrame()->setContent(html);
     const QWebElement document = m_webPage.mainFrame()->documentElement();
 
     if (reply->url() == (m_loginUrl.startsWith("http") ? QUrl(m_loginUrl)
