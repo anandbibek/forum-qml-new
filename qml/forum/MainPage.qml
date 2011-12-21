@@ -69,6 +69,7 @@ Page {
             Button {
                 id: loginButton
                 anchors.horizontalCenter: parent.horizontalCenter
+                platformStyle: ButtonStyle { pressedBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-button-background-pressed" }
                 text: "Login"
                 onClicked: {
                     if (forumSession.canSignOn)

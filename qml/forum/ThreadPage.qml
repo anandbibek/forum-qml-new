@@ -46,6 +46,7 @@ Page {
                 id: olderButton
                 anchors.top: viewHeader.bottom
                 anchors.horizontalCenter: parent.horizontalCenter
+                platformStyle: ButtonStyle { pressedBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-button-background-pressed" }
 
                 enabled: !forumSession.busy
                 visible: thread.model.count > 0 && thread.model.firstPage > 1
@@ -62,6 +63,7 @@ Page {
                 id: newerButton
                 y: UI.MARGIN_XLARGE / 2
                 anchors.horizontalCenter: parent.horizontalCenter
+                platformStyle: ButtonStyle { pressedBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-button-background-pressed" }
 
                 enabled: !forumSession.busy
                 visible: thread.model.count > 0 && thread.model.lastPage < thread.model.numPages

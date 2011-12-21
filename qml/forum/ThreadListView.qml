@@ -38,6 +38,7 @@ Item {
 
         footer: Button {
             anchors.horizontalCenter: parent.horizontalCenter
+            platformStyle: ButtonStyle { pressedBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-button-background-pressed" }
             visible: !!threads && threads.count > 0 && threads.lastPage < threads.numPages
             enabled: !forumSession.busy
             text: "Older threads"
