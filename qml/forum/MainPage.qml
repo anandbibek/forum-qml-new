@@ -16,6 +16,13 @@ Page {
         platformStyle: ViewHeaderStyle { titleImage: forumStyle.titleImage }
         text: forumStyle.titleText
 
+        Image {
+            anchors.right: parent.right
+            anchors.rightMargin: UI.DEFAULT_MARGIN
+            anchors.verticalCenter: parent.verticalCenter
+            source: "image://theme/meegotouch-combobox-indicator" + (forumStyle.viewHeaderTextColor == "#ffffff" ? "-inverted" : "")
+        }
+
         BusyIndicator {
             anchors.right: parent.right
             anchors.rightMargin: UI.DEFAULT_MARGIN
