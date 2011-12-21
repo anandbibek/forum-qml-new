@@ -273,7 +273,7 @@ void ThreadList::onReceived(QWebElement document)
                 Q_UNUSED(date);
 #endif
             } else {
-                qDebug() << div.toPlainText();
+                qDebug() << "Failed to parse poster:" << div.toOuterXml().simplified();
             }
         }
 
@@ -289,7 +289,7 @@ void ThreadList::onReceived(QWebElement document)
             replies = repliesExpression.cap(1).replace(",", "").toInt();
             views = repliesExpression.cap(2).replace(",", "").toInt();
         } else {
-            qDebug() << td.attribute("title");
+            qDebug() << "Failed to parse replies:" << td.toOuterXml().simplified();
         }
         div = td.firstChild();
         if (div.tagName() == "DIV") {
@@ -299,7 +299,7 @@ void ThreadList::onReceived(QWebElement document)
                 time = DateTimeHelper::parseTime(dateTimeExpression.cap(2));
                 // Skip last poster
             } else {
-                qDebug() << div.toPlainText();
+                qDebug() << "Failed to parse date:" << div.toOuterXml().simplified();
             }
             lastPostUrl = div.findFirst("a.nound img.inlineimg").parent().attribute("href");
         }
