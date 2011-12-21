@@ -65,13 +65,23 @@ void ForumList::clear(void)
 
 static Forum* parseForum(QWebElement& a)
     {
-    QString url = a.attribute("href");
+    QUrl url(a.attribute("href"));
     int forumId;
+    if (url.path() != "forumdisplay.php")
+        qDebug() << "Unexpected forum URL path:" << url.path();
+    if (url.hasQueryItem("f")) {
+        forumId = url.queryItemValue("f").toInt();
+    } else {
+        if (url.queryItems().count() > 0 && url.queryItems().at(0).second == "") {
+            qDebug() << "ID: " << url.queryItems().at(0).first.toInt();
+        }
+    }
     static QRegExp urlExpression("forumdisplay.php\\?(s=[a-f\\d]+&|)f=(\\d+)");
-    if (urlExpression.exactMatch(url)) {
+    if (urlExpression.exactMatch(url.toString())) {
         forumId = urlExpression.cap(2).toInt();
     } else {
         qDebug() << "Failed to parse forum URL:" << a.parent().toInnerXml().simplified();
+        qDebug() << url.queryItems();
         forumId = -1;
     }
     QString title = a.toPlainText();
@@ -83,7 +93,7 @@ static Forum* parseForum(QWebElement& a)
         qDebug() << "Failed to parse forum subtitle:" << a.parent().toInnerXml().simplified();
     }
     // Create the forum object, further information is optional
-    Forum *forum = new Forum(url, forumId, title, subtitle);
+    Forum *forum = new Forum(url.toString(), forumId, title, subtitle);
 
     // Current number of viewers
     QWebElement span = a.nextSibling();
@@ -104,19 +114,28 @@ void ForumList::onReceived(const QWebElement& document)
     QString categoryTitleTag;
     QString skipCategory;
     QString forumListTag;
+    QString forumTitleTags;
     if (m_session->url() == "http://talk.maemo.org") {
         categoryTags = "div.forum_category";
         categoryTitleTag = "h1 > a";
         skipCategory = "Old";
         forumListTag = "div.main_forum";
+        forumTitleTags = "h3 > a";
     }
     if (m_session->url() == "http://forum.xda-developers.com") {
         categoryTags = "div.forumbox";
         categoryTitleTag = "h2 > a";
         skipCategory = "What's Going On?";
         forumListTag = "ol.forumlist";
+        forumTitleTags = "h3 > a";
     }
-
+    if (m_session->url() == "http://www.developer.nokia.com/Community/Discussion/") {
+        categoryTags = "ol#forums > li";
+        categoryTitleTag = "div.forumhead > h2 > span.forumtitle > a";
+        skipCategory = "Archive (Read Only)";
+        forumListTag = "ol.childforum";
+        forumTitleTags = "h2.forumtitle > a";
+    }
     QList<Forum*> list;
 
     // talk.maemo.org, forum.xda-developer.com
@@ -136,7 +155,7 @@ void ForumList::onReceived(const QWebElement& document)
                 break;
 
             QWebElement div = category.findFirst(forumListTag);
-            QWebElementCollection forums = div.findAll("h3 > a");
+            QWebElementCollection forums = div.findAll(forumTitleTags);
             foreach (QWebElement a, forums) {
                 // URL, title, subtitle, and current number of viewers
                 Forum* forum = parseForum(a);

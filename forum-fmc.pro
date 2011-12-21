@@ -3,7 +3,11 @@ fmc.source = qml/forum-fmc
 fmc.target = qml
 tmo.source = qml/forum-tmo
 tmo.target = qml
-DEPLOYMENTFOLDERS += fmc tmo
+nokia.source = qml/forum-nokia
+nokia.target = qml
+xda.source = qml/forum-xda
+xda.target = qml
+DEPLOYMENTFOLDERS += fmc tmo nokia xda
 
 include(forum-qml.pri)
 

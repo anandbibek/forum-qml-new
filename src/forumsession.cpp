@@ -280,7 +280,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
 
     qDebug() << "REPLY URL:" << url.toString();
 
-    if (path.isEmpty() || path == "/index.php") {
+    if (path.isEmpty() || path == "/index.php" || url.toString() == m_url) {
         // Parse the forum list
         emit receivedForumList(document);
     } else if (path == "/forumdisplay.php") {

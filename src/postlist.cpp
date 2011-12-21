@@ -142,11 +142,22 @@ void PostList::onReceived(QWebElement document, int postId)
 
     qDebug() << "Received a post list";
 
+    QString nextThreadTag;
+    QString pagesTag;
+    if (m_session->provider() == "xda") {
+        nextThreadTag = "div#pagination > ul > li.last > a";
+        pagesTag = "div#toppage div#hpagination span.verthorz small";
+    } else {
+        // fmc, tmo
+        nextThreadTag = "div.smallfont[align=center] > strong + a + a";
+        pagesTag = "div.pagenav td.vbmenu_control";
+    }
+
     // Extract threadId from the previous / next thread links
     int threadId;
-    const QWebElement a = document.findFirst("div.smallfont[align=center] > strong + a + a");
+    const QWebElement a = document.findFirst(nextThreadTag);
     if (!a.isNull()) {
-        if (a.previousSibling().toPlainText() == "Previous Thread" && a.toPlainText() == "Next Thread") {
+        if (a.toPlainText() == "Next Thread") {
             QRegExp threadIdExpression("showthread.php\\?t=(\\d+).*");
             if (threadIdExpression.exactMatch(a.attribute("href"))) {
                 threadId = threadIdExpression.cap(1).toInt();
@@ -175,8 +186,7 @@ void PostList::onReceived(QWebElement document, int postId)
     int page = 1;
     int numPages = 1;
     QString section;
-    // forum.meego.com, talk.maemo.org
-    const QWebElement td = document.findFirst("div.pagenav td.vbmenu_control");
+    const QWebElement td = document.findFirst(pagesTag);
     if (!td.isNull()) {
         QRegExp pageExpression("Page (\\d+) of (\\d+)");
         if (pageExpression.exactMatch(td.toPlainText())) {
@@ -217,7 +227,26 @@ void PostList::onReceived(QWebElement document, int postId)
 
     if (m_firstPage == m_lastPage)
         clear();
+/*
+    <div id="breadcrumbs">
+    <div id="breadcontainer">
+    <ul style="width:55%;">
+    <li><a href="index.php" accesskey="1"><img src="http://media.xda-developers.com/images/icons/breadcrumbs-home.png" alt="Home"/></a><span><img src="http://media.xda-developers.com/images/icons/breadcrumbs-arrow.png" alt="Arrow"/></span></li>
 
+
+        <li><a href="forumdisplay.php?f=240">General discussion</a><span><img src="http://media.xda-developers.com/images/icons/breadcrumbs-arrow.png" alt="Arrow"/></span></li>
+
+
+        <li><a href="forumdisplay.php?f=263">About xda-developers.com</a><span><img src="http://media.xda-developers.com/images/icons/breadcrumbs-arrow.png" alt="Arrow"/></span></li>
+
+
+    <li>
+     [FAQ] User signature?
+
+    </li>
+    </ul>
+    </div>
+                */
     // Extract thread title from the breadcrumb bar
     QString threadTitle;
     QWebElement crumbs = document.findFirst("div#breadcrumb");
@@ -296,19 +325,35 @@ void PostList::onReceived(QWebElement document, int postId)
         list.append(post);
     }
 
-    // talk.maemo.org
-    foreach (QWebElement comment, document.findAll("div.mfcomment")) {
-        QString url = "showpost.php?p=" + comment.attribute("id").replace("post", "");
+    // talk.maemo.org, forum.xda-developer.com
+    QString commentTags;
+    QString posterTag;
+    QString postDateTag;
+    QString bodyTag;
+    if (m_session->provider() == "tmo") {
+        commentTags = "div.mfcomment";
+        posterTag = "div.username > img + span > a";
+        postDateTag = "div.postdate";
+        bodyTag = "div.postdetails";
+    } else /* if (m_session->provider() == "xda") */ {
+        commentTags = "div.post";
+        posterTag = "div.post-author > div > img + a";
+        postDateTag = "div.post-date";
+        bodyTag = "div.post-message";
+    }
+
+    foreach (QWebElement comment, document.findAll(commentTags)) {
+        QString url = "showpost.php?p=" + comment.attribute("id").replace("edit", "").replace("post", "");
      // qDebug() << "AVATAR:" << comment.findFirst("div.useravatar > a > img.photo").attribute("alt");
 
-        QString poster = comment.findFirst("div.username > img + span > a").toPlainText();
-        QString dateTime = DateTimeHelper::parseDateTime(comment.findFirst("div.postdate").toPlainText());
+        QString poster = comment.findFirst(posterTag).toPlainText();
+        QString dateTime = DateTimeHelper::parseDateTime(comment.findFirst(postDateTag).toPlainText());
 
         QString userStats = comment.findFirst("div.userstats").toPlainText();
         Q_UNUSED(userStats);
 
         // Find the post body
-        QWebElement body = comment.findFirst("div.postdetails");
+        QWebElement body = comment.findFirst(bodyTag);
 
         // Remove attachments fieldset
         QWebElement fieldset = body.findFirst("div > fieldset.fieldset").parent().takeFromDocument();
@@ -339,7 +384,7 @@ void PostList::onReceived(QWebElement document, int postId)
         post->setSection(section);
         post->setSubject(threadTitle); // talk.maemo.org doesn't show individual post subjects
 
-        static const QRegExp postIdExpression("post(\\d+)");
+        static const QRegExp postIdExpression("[a-z]+(\\d+)");
         if (postIdExpression.exactMatch(comment.attribute("id"))) {
             post->setPostId(postIdExpression.cap(1).toInt());
 

@@ -96,10 +96,17 @@ void ThreadList::onReceived(QWebElement document)
     QObject::disconnect(m_session, SIGNAL(receivedThreadList(QWebElement)),
                         this, SLOT(onReceived(QWebElement)));
 
+    QString pagesTag;
+    if (m_session->provider() == "xda")
+        pagesTag = "div#hpagination span small";
+    else
+        // fmc, tmo
+        pagesTag = "div.pagenav table tr td.vbmenu_control";
+
     // Parse page information
     int page = 1;
     int numPages = 1;
-    QWebElement td = document.findFirst("td.vbmenu_control");
+    QWebElement td = document.findFirst(pagesTag);
     if (!td.isNull()) {
         QRegExp pageExpression("Page (\\d+) of (\\d+)");
         if (pageExpression.exactMatch(td.toPlainText())) {
@@ -149,8 +156,21 @@ void ThreadList::onReceived(QWebElement document)
         }
     }
 
-    // forum.meego.com
-    QWebElementCollection threads = document.findAll("table.tborder tr > td.alt1 > img");
+    QString threadsTag;
+    QString posterPattern;
+    if (m_session->provider() == "xda") {
+        // forum.xda-developers.com
+        threadsTag = "tbody > tr.threadbit-tr > td:first-child > img";
+        posterPattern = "Originally Posted By: (.*)";
+    } else if (m_session->provider() == "fmc") {
+        // forum.meego.com
+        threadsTag = "table.tborder tr > td.alt1 > img";
+        posterPattern = "(.*) @ (\\d{2}-\\d{2}-\\d{2,4})";
+    }
+    QRegExp posterExpression(posterPattern);
+
+    // forum.meego.com, forum.xda-developers.com
+    QWebElementCollection threads = document.findAll(threadsTag);
     foreach (QWebElement img, threads) {
         // Read / unread / hot / closed
         QWebElement td = img.parent();
@@ -158,24 +178,27 @@ void ThreadList::onReceived(QWebElement document)
             qDebug() << "False positive for thread?" << td.parent().toOuterXml();
         }
         bool unread = false;
-        QString status = img.attribute("src");
-        if (status.endsWith("/thread.gif")) {
+        QString src = img.attribute("src");
+        if (src.endsWith(".gif") || src.endsWith(".png"))
+            src = src.mid(0, src.length() - 4);
+        QString status = src;
+        if (status.endsWith("/thread")) {
             // Read thread
-        } else if (status.endsWith("/thread_new.gif")) {
+        } else if (status.endsWith("/thread_new")) {
             // Unread thread
             unread = true;
-        } else if (status.endsWith("/thread_hot.gif")) {
+        } else if (status.endsWith("/thread_hot")) {
             // Hot thread
-        } else if (status.endsWith("/thread_hot_lock.gif")) {
+        } else if (status.endsWith("/thread_hot_lock")) {
             // Hot, closed thread
-        } else if (status.endsWith("/thread_hot_new.gif")) {
+        } else if (status.endsWith("/thread_hot_new")) {
             // Hot, unread thread
             unread = true;
-        } else if (status.endsWith("/thread_dot.gif")) {
+        } else if (status.endsWith("/thread_dot")) {
             // Own posts in this thread
-        } else if (status.endsWith("/thread_dot_hot.gif")) {
+        } else if (status.endsWith("/thread_dot_hot")) {
             // Hot, own posts in this thread
-        } else if (status.endsWith("/thread_dot_hot_new.gif")) {
+        } else if (status.endsWith("/thread_dot_hot_new")) {
             // Hot, own posts in this unread thread
             unread = true;
         } else {
@@ -185,15 +208,23 @@ void ThreadList::onReceived(QWebElement document)
         // Thread icon
         td = td.nextSibling();
 
+        // Title or sticky icon column
+        bool sticky = false;
+        td = td.nextSibling();
+        if (!td.attribute("id").startsWith("td_threadtitle")) {
+            // forum.xda-developers.com has an additional column for the sticky icon
+            if (td.firstChild().tagName() == "IMG" && td.firstChild().attribute("alt") == "Sticky Thread")
+                sticky = true;
+            td = td.nextSibling();
+        }
+
         // Title, Tags, Attachments
         QString title;
         QString url;
         int threadId = -1;
-        bool sticky = false;
         QString tags;
         int attachments = 0;
         bool subscribed = false;
-        td = td.nextSibling();
         // Find the first direct child <div>
         QWebElement div = td.firstChild();
         while (!div.isNull() && div.tagName() != "DIV")
@@ -265,7 +296,6 @@ void ThreadList::onReceived(QWebElement document)
                 }
             }
 
-            QRegExp posterExpression("(.*) @ (\\d{2}-\\d{2}-\\d{2,4})");
             if (posterExpression.exactMatch(div.toPlainText())) {
                 threadStarter = posterExpression.cap(1);
 #if 0
@@ -277,13 +307,29 @@ void ThreadList::onReceived(QWebElement document)
             }
         }
 
+        // Last Post or Rating column
+        td = td.nextSibling();
+        if (!td.hasAttribute("title")) {
+            // forum.xda-developers.com has an additional column for the rating
+            const QWebElement span = td.firstChild();
+            if (span.attribute("style") == "float:right") {
+                QRegExp ratingExpression("Thread Rating: ([,\\d]+) votes, ([\\.\\d]+) average.");
+                if (ratingExpression.exactMatch(span.findFirst("img.inlineimg").attribute("alt"))) {
+                    votes = ratingExpression.cap(1).replace(",", "").toInt();
+                    ratingValue = ratingExpression.cap(2).toFloat();
+                } else {
+                    qDebug() << div.findFirst("span[style=float:right]").toOuterXml();
+                }
+            }
+            td = td.nextSibling();
+        }
+
         // Replies, Views, Last Post
         int replies = 0;
         int views;
         QString date;
         QString time;
         QString lastPostUrl;
-        td = td.nextSibling(); // Last Post column
         QRegExp repliesExpression("Replies: ([,\\d]+), Views: ([,\\d]+)");
         if (repliesExpression.exactMatch(td.attribute("title"))) {
             replies = repliesExpression.cap(1).replace(",", "").toInt();
@@ -293,13 +339,13 @@ void ThreadList::onReceived(QWebElement document)
         }
         div = td.firstChild();
         if (div.tagName() == "DIV") {
-            QRegExp dateTimeExpression("(Today|Yesterday|\\d{2}-\\d{2}-\\d{2,4}) (\\d{2}:\\d{2}( [AP]M|))\\s*by (.*)\\s*");
+            QRegExp dateTimeExpression("(Today|Yesterday|\\d{2}-\\d{2}-\\d{2,4}|\\d+[tsnr][htd] [A-Z][a-z]+ \\d{4}) (\\d{2}:\\d{2}( [AP]M|))\\s*by (.*)\\s*");
             if (dateTimeExpression.exactMatch(div.toPlainText())) {
                 date = DateTimeHelper::parseDate(dateTimeExpression.cap(1));
                 time = DateTimeHelper::parseTime(dateTimeExpression.cap(2));
                 // Skip last poster
             } else {
-                qDebug() << "Failed to parse date:" << div.toOuterXml().simplified();
+                qDebug() << "Failed to parse date:" << div.toPlainText();
             }
             lastPostUrl = div.findFirst("a.nound img.inlineimg").parent().attribute("href");
         }
