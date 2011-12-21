@@ -51,6 +51,9 @@ int ForumList::rowCount(const QModelIndex& parent) const
 
 void ForumList::clear(void)
 {
+    if (children().count() == 0)
+        return;
+
     beginRemoveRows(QModelIndex(), 0, children().count());
     while (!children().empty()) {
         QObject* forum = children().at(0);
