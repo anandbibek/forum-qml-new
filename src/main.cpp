@@ -34,7 +34,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 
     viewer->setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
 
-    viewer->setMainQmlFile("qml/" + QCoreApplication::applicationName() + "/main.qml");
+    viewer->setMainQmlFile("qml/forum/main.qml");
     viewer->showExpanded();
 
     return app->exec();
