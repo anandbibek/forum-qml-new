@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Name=Talk
+Exec=/usr/bin/invoker --single-instance --type=d --splash=/usr/share/themes/blanco/meegotouch/images/splash/forum-tmo-splash.jpg -s /opt/forum-fmc/bin/forum-fmc --tmo
+Icon=/usr/share/icons/hicolor/80x80/apps/forum-tmo80.png
+X-Window-Icon=
+X-HildonDesk-ShowInToolbar=true
+X-Osso-Type=application/x-executable

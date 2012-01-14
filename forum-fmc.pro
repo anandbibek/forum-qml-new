@@ -19,9 +19,9 @@ splash.path = /usr/share/themes/blanco/meegotouch/images/splash
 INSTALLS += images splash
 
 # Account provider definition and icon
-provider.files = fmc.provider
+provider.files = fmc.provider tmo.provider
 provider.path = /usr/share/accounts/providers
-providericon.files = images/icon-m-service-meego.png
+providericon.files = images/icon-m-service-meego.png images/icon-m-service-maemo.png
 providericon.path = /usr/share/themes/blanco/meegotouch/icons
 INSTALLS += provider providericon
 
@@ -29,3 +29,9 @@ INSTALLS += provider providericon
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
+unix {
+    !isEmpty(MEEGO_VERSION_MAJOR) {
+        desktopfile.files += forum-tmo_harmattan.desktop
+        icon.files += forum-tmo80.png
+    }
+}
