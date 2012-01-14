@@ -25,6 +25,11 @@ providericon.files = images/icon-m-service-meego.png images/icon-m-service-maemo
 providericon.path = /usr/share/themes/blanco/meegotouch/icons
 INSTALLS += provider providericon
 
+# Application settings
+settings.files = forumsettings.xml
+settings.path = /usr/share/duicontrolpanel/uidescriptions
+INSTALLS += settings
+
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()

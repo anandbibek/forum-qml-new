@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=ControlPanelApplet
+Name=Forums
+X-logical-id=decl_forum_1
+X-translation-catalog=duisettings,common
+Icon=
+X-Maemo-Service=com.nokia.DuiControlPanel
+X-Maemo-Method=com.nokia.DuiControlPanelIf.appletPage
+X-Maemo-Object-Path=/
+X-Maemo-Fixed-Args=Forums
+
+[DUI]
+X-DUIApplet-Applet=libdeclarative.so
+
+[DCP]
+Category=Applications
+Order=10
+Part=forumsettings.xml

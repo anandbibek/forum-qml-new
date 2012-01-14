@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<settings>
+  <selection key="/apps/forum-qml/settings/openThreadsAt" title="Open threads at">
+    <option title="First post" >1</option>
+    <option title="Unread" >2</option>
+    <option title="Last post" >3</option>
+  </selection>
+  <boolean key="/apps/forum-qml/settings/useDefaultPage" title="Remember start page">
+  </boolean>
+</settings>
