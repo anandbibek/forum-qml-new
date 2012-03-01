@@ -1,5 +1,6 @@
 #include "forum.h"
 #include "forumlist.h"
+#include "forumsession.h"
 #include "threadlist.h"
 
 Forum::Forum(const QString url, int forumId, const QString title, const QString subtitle, QObject *parent) :
@@ -104,6 +105,13 @@ void Forum::setViewing(int viewing)
 
 void Forum::markRead(void)
 {
-    // TODO: QString("forumdisplay.php?do=markread&f=%1").arg(forumId);
+    // MeeGo Forum: YAHOO.util.Connect.asyncRequest("POST","ajax.php?do=markread&f="+this.forumid
+
+    ForumList* forumList = qobject_cast<ForumList*>(parent());
+    if (forumList)
+        forumList->forumSession()->markRead(this);
+
     setUnread(false);
+    if (m_model)
+        m_model->markAllRead();
 }
