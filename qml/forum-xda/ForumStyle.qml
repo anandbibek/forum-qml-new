@@ -12,7 +12,7 @@ Style {
 
     property string colorThemeString: "color18-"
 
-    property string titleImage: "file:///opt/forum-xda/images/xda-developers.png"
+    property string titleImage: "file:///opt/forum-qml/images/xda-developers.png"
     property string titleText: " Forum"
 
     property string legal: 'This program is free software: you can redistribute it and/or modify ' +
@@ -30,5 +30,5 @@ Style {
                            '<a href="http://www.gnu.org/licenses" style="color:#ed9507">http://www.gnu.org/licenses</a><br /><br />' +
 
                            'The source code of this program can be downloaded from Gitorious: ' +
-                           '<a href="https://gitorious.org/forum-qml/forum-xda" style="color:#ed9507">https://gitorious.org/forum-qml/forum-xda</a><br /><br />'
+                           '<a href="https://gitorious.org/forum-qml/forum-xda" style="color:#ed9507">https://gitorious.org/forum-qml</a><br /><br />'
 }

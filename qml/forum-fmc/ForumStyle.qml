@@ -12,7 +12,7 @@ Style {
 
     property string colorThemeString: "color12-"
 
-    property string titleImage: "file:///opt/forum-fmc/images/meego.png"
+    property string titleImage: "file:///opt/forum-qml/images/meego.png"
     property string titleText: "Forum"
 
     property string legal: 'This program is free software: you can redistribute it and/or modify ' +
@@ -35,5 +35,5 @@ Style {
                            '<a href="http://linuxfoundation.org" style="color:#cc09ba">The&nbsp;Linux&nbsp;Foundation</a>.<br /><br />' +
 
                            'The source code of this program can be downloaded from Gitorious: ' +
-                           '<a href="https://gitorious.org/forum-qml/forum-fmc" style="color:#cc09ba">https://gitorious.org/forum-qml/forum-fmc</a><br /><br />'
+                           '<a href="https://gitorious.org/forum-qml" style="color:#cc09ba">https://gitorious.org/forum-qml</a><br /><br />'
 }
