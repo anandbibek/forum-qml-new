@@ -442,12 +442,8 @@ void ForumSession::querySignOnCredentials(void)
     }
 
 #ifndef QT_SIMULATOR
-    if (m_account) {
-        delete m_account;
-        m_account = 0;
-    }
-
     // Find an account for provider, enabled or otherwise
+    m_account = 0;
     Accounts::Manager m_manager;
     Accounts::AccountIdList accounts = m_manager.accountList();
     foreach (Accounts::AccountId id, accounts) {
