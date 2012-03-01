@@ -39,11 +39,16 @@ Item {
     Label {
         id: titleLabel
         anchors {
-            baseline: parent.bottom
-            baselineOffset: (screen.currentOrientation == Screen.Portrait ||
-                             screen.currentOrientation == Screen.InvertedPortrait)
-                            ? -UI.HEADER_DEFAULT_BOTTOM_SPACING_PORTRAIT
-                            : -UI.HEADER_DEFAULT_BOTTOM_SPACING_LANDSCAPE
+            top: parent.top
+            bottom: parent.bottom
+            topMargin: (screen.currentOrientation == Screen.Portrait ||
+                        screen.currentOrientation == Screen.InvertedPortrait)
+                            ? UI.HEADER_DEFAULT_TOP_SPACING_PORTRAIT
+                            : UI.HEADER_DEFAULT_TOP_SPACING_LANDSCAPE
+            bottomMargin: (screen.currentOrientation == Screen.Portrait ||
+                           screen.currentOrientation == Screen.InvertedPortrait)
+                            ? UI.HEADER_DEFAULT_BOTTOM_SPACING_PORTRAIT
+                            : UI.HEADER_DEFAULT_BOTTOM_SPACING_LANDSCAPE
             left: titleImage.visible ? titleImage.right : parent.left
             right: parent.right
             leftMargin: UI.DEFAULT_MARGIN
