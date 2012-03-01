@@ -155,29 +155,33 @@ void PostList::onReceived(QWebElement document, int postId)
 
     // Extract threadId from the previous / next thread links
     int threadId;
-    const QWebElement a = document.findFirst(nextThreadTag);
+    QWebElement a = document.findFirst(nextThreadTag);
+    if (a.isNull()) {
+        // The above doesn't work for forum.meego.com subscriptions, so check the First page link
+        a = document.findFirst("div.pagenav > table > tbody > tr > td > a");
+    }
     if (!a.isNull()) {
-        if (a.toPlainText() == "Next Thread") {
-            QRegExp threadIdExpression("showthread.php\\?t=(\\d+).*");
-            if (threadIdExpression.exactMatch(a.attribute("href"))) {
-                threadId = threadIdExpression.cap(1).toInt();
-                if (m_threadId != threadId) {
-                    if (m_threadId != -1) {
-                        qDebug() << "Thread ID different:" << m_threadId << "!=" << threadId << "- ignoring.";
-                        return;
-                    } else {
-                        qDebug() << "Setting thread ID to" << threadId;
-                    }
-                    m_threadId = threadId;
-                    if (thread) {
-                        if (thread->threadId() == -1)
-                            thread->setThreadId(threadId);
-                        else if (thread->threadId() != threadId)
-                            qDebug() << "Parent thread ID != post list thread ID!";
-                    }
+        QRegExp threadIdExpression("showthread.php\\?t=(\\d+).*");
+        if (threadIdExpression.exactMatch(a.attribute("href"))) {
+            threadId = threadIdExpression.cap(1).toInt();
+            if (m_threadId != threadId) {
+                if (m_threadId != -1) {
+                    qDebug() << "Thread ID different:" << m_threadId << "!=" << threadId << "- ignoring.";
+                    return;
+                } else {
+                    qDebug() << "Setting thread ID to" << threadId;
+                }
+                m_threadId = threadId;
+                if (thread) {
+                    if (thread->threadId() == -1)
+                        thread->setThreadId(threadId);
+                    else if (thread->threadId() != threadId)
+                        qDebug() << "Parent thread ID != post list thread ID!";
                 }
             }
         }
+    } else {
+        qDebug() << document.toInnerXml();
     }
     if (m_threadId == -1) {
         qDebug() << "Could not determine threadId!";
