@@ -142,6 +142,12 @@ Page {
     }
 
     GConfItem {
+       id: useDefaultPage
+       key: "/apps/forum-qml/settings/useDefaultPage"
+       defaultValue: true
+    }
+
+    GConfItem {
        id: defaultPage
        key: "/apps/forum-qml/settings/defaultPage"
        defaultValue: "MainPage"
@@ -152,7 +158,7 @@ Page {
     Connections {
         target: pageStack.toolBar
         onToolsChanged: {
-            if (__firstTime && tools == root.tools) {
+            if (__firstTime && tools == root.tools && useDefaultPage.value == true) {
                 __firstTime = false
 
                 if (defaultPage.value == "ActiveTopicsPage")
