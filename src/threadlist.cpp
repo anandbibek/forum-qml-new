@@ -615,3 +615,12 @@ ForumSession* ThreadList::forumSession() const
 {
     return m_session;
 }
+
+void ThreadList::markAllRead(void)
+{
+    foreach(QObject* child, children()) {
+        Thread* thread = qobject_cast<Thread*>(child);
+        if (thread)
+            thread->setUnread(false);
+    }
+}

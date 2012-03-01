@@ -39,6 +39,7 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     void parseActiveTopics(const QWebElementCollection& topics);
     ForumSession* forumSession() const;
+    void markAllRead(void);
 
     Q_INVOKABLE void clear(void);
     Q_INVOKABLE QObject* get(int index) const;
