@@ -1,5 +1,6 @@
 import QtQuick 1.1
 import com.nokia.meego 1.0
+import "../components"
 import "UIConstants.js" as UI
 
 Sheet {
@@ -17,6 +18,7 @@ Sheet {
         onPreviewChanged: {
             model.body = "<html>" + newPost.preview + "</html>"
             previewDelegate.opacity = 1
+            divider.expanded = true
         }
         onErrorMessage: {
             errorDialog.message = message
@@ -50,12 +52,6 @@ Sheet {
         }
     }
 
-    TextFieldStyle {
-        id: textFieldStyle
-        selectionColor: forumStyle.selectionColor
-        backgroundSelected: "image://theme/" + forumStyle.colorThemeString + "meegotouch-textedit-background-selected"
-    }
-
     buttons: [
         BusyIndicator {
             anchors.centerIn: parent
@@ -76,14 +72,14 @@ Sheet {
                 disabledBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-sheet-button-accent"+__invertedString+"-background-disabled"
             }
 
-            text: postSwitch.checked ? "Post" : "Preview"
+            text: (actionPanel.selectedIndex == 1) ? "Post" : "Preview"
 
             enabled: newPost != null && !forumSession.busy
 
             onClicked: {
                 newPost.subject = topicField.text
                 newPost.body = bodyArea.text
-                if (postSwitch.checked) {
+                if (actionPanel.selectedIndex == 1) {
                     newPost.submit();
                     accept();
                 } else {
@@ -106,17 +102,18 @@ Sheet {
                 id: column
                 anchors { left: parent.left; right: parent.right }
                 height: childrenRect.height
-                spacing: UI.DEFAULT_MARGIN
 
                 Label {
                     id: forumLabel
-                    anchors.left: parent.left
-                    anchors.right: parent.right
+                    anchors { left: parent.left; right: parent.right }
+                    font.pixelSize: UI.FONT_LSMALL
+                    font.family: "Nokia Pure Text Light"
                 }
 
                 PostDelegate {
                     id: previewDelegate
                     opacity: 0
+                    visible: divider.expanded
 
                     QtObject {
                         id: model
@@ -128,60 +125,50 @@ Sheet {
                     onClicked: destroy()
                 }
 
-                move: Transition {
-                    NumberAnimation {
-                        properties: "y"
-                        easing.type: Easing.OutExpo
-                        duration: 150
+                ComboPanel {
+                    id: actionPanel
+                    title: "Action:"
+                    visible: divider.expanded
+                    selectedIndex: 0
+                    model: ListModel {
+                        ListElement { name: "Preview" }
+                        ListElement { name: "Post" }
                     }
                 }
 
-                TextField {
+                TextPanel {
                     id: topicField
-                    anchors { left: parent.left; right: parent.right }
-                    height: 51
-
-                    platformStyle: textFieldStyle
+                    selectionColor: forumStyle.selectionColor
+                    title: "Topic:"
                     placeholderText: "Enter topic here"
                 }
 
-                Rectangle {
-                    color: "white"
-                    anchors { left: parent.left; right: parent.right;
-                              leftMargin: -UI.DEFAULT_MARGIN; rightMargin: -UI.DEFAULT_MARGIN }
-                    height: bodyArea.height
-
-                    TextArea {
-                        id: bodyArea
-                        anchors { left: parent.left; right: parent.right }
-
-                        platformStyle: TextFieldStyle {
-                            selectionColor: forumStyle.selectionColor
-
-                            background: ""
-                            backgroundSelected: ""
-                            backgroundDisabled: ""
-                            backgroundError: ""
-                        }
-                        placeholderText: "Enter forum post here"
-                        textFormat: Text.PlainText
-                    }
+                RecipientDivider {
+                    id: divider
+                    anchors { leftMargin: -16; rightMargin: -16 }
                 }
 
-                Row {
-                    spacing: UI.DEFAULT_MARGIN
+                TextArea {
+                    id: bodyArea
+                    anchors { left: parent.left; right: parent.right;
+                              leftMargin: -UI.DEFAULT_MARGIN ; rightMargin: -UI.DEFAULT_MARGIN }
 
-                    Switch {
-                        id: postSwitch
-                        checked: false
-                        platformStyle: SwitchStyle {
-                            switchOn: "image://theme/" + forumStyle.colorThemeString + "meegotouch-switch-on"+__invertedString
-                        }
+                    platformStyle: TextFieldStyle {
+                        selectionColor: forumStyle.selectionColor
+
+                        background: ""
+                        backgroundSelected: ""
+                        backgroundDisabled: ""
+                        backgroundError: ""
                     }
+                    placeholderText: "Enter forum post here"
+                    textFormat: Text.PlainText
 
-                    Label {
-                        anchors.verticalCenter: parent.verticalCenter
-                        text: "Enable posting"
+                    Rectangle {
+                        anchors { top: parent.top; left: parent.left; right: parent.right }
+                        height: Math.max(parent.height, parent.height + flickable.height - column.height + 16)
+                        color: "white"
+                        z: -1
                     }
                 }
             }
@@ -199,5 +186,21 @@ Sheet {
         titleText: "Error message received"
         icon: "image://theme/icon-l-error"
         acceptButtonText: "Ok"
+    }
+
+    Transition {
+        id: columnTransition
+        NumberAnimation {
+            properties: "y"
+            duration: 600
+            easing.type: Easing.OutBack
+        }
+    }
+
+    onStatusChanged: {
+        if (status == DialogStatus.Open) {
+            topicField.forceActiveFocus();
+            column.move = columnTransition
+        }
     }
 }
