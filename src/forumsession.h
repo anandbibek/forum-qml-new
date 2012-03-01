@@ -69,6 +69,7 @@ public:
     Q_INVOKABLE void thank(QObject* post);
     Q_INVOKABLE void unsubscribe(QObject* thread);
     Q_INVOKABLE void unThank(QObject* post);
+    Q_INVOKABLE void markRead(QObject* forum);
 
 private:
     void reset(void);

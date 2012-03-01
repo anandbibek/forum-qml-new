@@ -284,8 +284,16 @@ void ForumSession::onReceived(QNetworkReply *reply)
         // Parse the forum list
         emit receivedForumList(document);
     } else if (path == "/forumdisplay.php") {
-        // Parse the thread list
-        emit receivedThreadList(document);
+        if (url.queryItemValue("do") == "markread") {
+            QWebElement error = document.findFirst("td.panelsurround > div.panel > div > div");
+            if (!error.isNull()) {
+                qDebug() << "Error:" << error.toPlainText().simplified();
+            }
+            // else emit markedForumRead
+        } else {
+            // Parse the thread list
+            emit receivedThreadList(document);
+        }
     } else if (path == "/showthread.php") {
         int postId = -1;
         if (url.hasQueryItem("p"))
@@ -899,3 +907,18 @@ void ForumSession::unThank(QObject* post)
 
     get(url);
 }
+
+void ForumSession::markRead(QObject* forum)
+{
+    Forum* f = qobject_cast<Forum*>(forum);
+    if (!f || m_securityToken.isEmpty())
+        return;
+
+    QUrl url("forumdisplay.php");
+    url.addQueryItem("do", "markread");
+    url.addQueryItem("f", QString("%1").arg(f->forumId()));
+    url.addQueryItem("markreadhash", m_securityToken);
+
+    get(url);
+}
+
