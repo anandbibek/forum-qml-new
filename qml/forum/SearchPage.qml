@@ -1,5 +1,5 @@
 import QtQuick 1.1
-import com.nokia.meego 1.0
+import com.nokia.meego 1.1
 import "../components"
 import "UIConstants.js" as UI
 
@@ -22,7 +22,7 @@ Page {
             height: 50
 
             platformSipAttributes: SipAttributes {
-                actionKeyLabel: "Ready"
+                actionKeyLabel: "Search"
                 actionKeyHighlighted: true
              // actionKeyEnabled: true
             }

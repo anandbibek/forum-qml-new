@@ -1,5 +1,5 @@
 import QtQuick 1.1
-import com.nokia.meego 1.0
+import com.nokia.meego 1.1
 import "../components" 1.0
 import "../forum/UIConstants.js" as UI
 
@@ -13,7 +13,7 @@ Page {
         z: 1
 
         platformStyle: ViewHeaderStyle { titleImage: forumStyle.titleImage }
-        text: forumStyle.titleText + " 0.0.6"
+        text: forumStyle.titleText + " 0.1.0"
     }
 
     Flickable {
@@ -35,7 +35,7 @@ Page {
                 horizontalAlignment: Text.Center
                 text: "Copyright (c) 2011 Philipp Zabel<br />" +
                       "&lt;<a href='mailto:Philipp Zabel <philipp.zabel@gmail.com>' style='color:" + UI.COLOR_SECONDARY_FOREGROUND + "'>philipp.zabel@gmail.com</a>&gt;"
-                + "Copyright (c) 2013 Anand Bibek<br />" +
+                + "<br />Copyright (c) 2013 Anand Bibek<br />" +
                       "&lt;<a href='mailto:Anand Bibek <ananda.bibek@gmail.com>' style='color:" + UI.COLOR_SECONDARY_FOREGROUND + "'>ananda.bibek@gmail.com</a>&gt;"
                 onLinkActivated: Qt.openUrlExternally(link)
             }

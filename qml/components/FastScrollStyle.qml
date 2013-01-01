@@ -1,5 +1,5 @@
 import QtQuick 1.1
-import com.nokia.meego 1.0 // for Style
+import com.nokia.meego 1.1 // for Style
 import "UIConstants.js" as UI
 
 Style {

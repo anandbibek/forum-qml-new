@@ -1,5 +1,5 @@
 import QtQuick 1.1
-import com.nokia.meego 1.0
+import com.nokia.meego 1.1
 import "../components"
 import Forum 1.0
 import "UIConstants.js" as UI
@@ -117,10 +117,9 @@ Page {
 
     tools: ToolBarLayout {
         ToolIcon {
-            platformIconId: "toolbar-add"
-            opacity: 0
-            enabled: false
-            onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root).open()
+            platformIconId: "toolbar-directory"
+            visible: forumSession.sessionId
+            onClicked: pageStack.push(Qt.createComponent("SubscriptionsPage.qml"))
         }
 
 
