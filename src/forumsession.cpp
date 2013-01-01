@@ -14,18 +14,18 @@
 
 ForumSession::ForumSession(QObject *parent) :
     QObject(parent),
-#ifndef QT_SIMULATOR
+    #ifndef QT_SIMULATOR
     m_account(0),
     m_accountSetup(0),
     m_identity(0),
-#endif
+    #endif
     m_activeTopics(0),
     m_busy(false),
     // This helps to prevent a guest login until credentials are proven to be missing
     m_missingCredentials(false)
 {
     m_forums = new ForumList(this, this);
- // ForumListCache* cache = new ForumListCache(m_forums, this);
+    // ForumListCache* cache = new ForumListCache(m_forums, this);
 
     // Disable JavaScript and loading of external objects
     m_webPage.settings()->setAttribute(QWebSettings::AutoLoadImages, false);
@@ -35,6 +35,9 @@ ForumSession::ForumSession(QObject *parent) :
 
     connect(&m_networkAccess, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(onReceived(QNetworkReply*)));
+
+    connect(&m_webPage, SIGNAL(loadFinished(bool)),
+            this, SLOT(webElementFunc(bool)));
 
     // Find an active account and query credentials from signond once the provider is set
     connect(this, SIGNAL(providerChanged()),
@@ -110,8 +113,6 @@ void ForumSession::onReceived(QNetworkReply *reply)
         }
         return;
     }
-
-    QString userName = m_userName;
     QString sessionId;
 
     // Check out cookies
@@ -131,11 +132,31 @@ void ForumSession::onReceived(QNetworkReply *reply)
         emit busyChanged();
         return;
     }
+
+    rep_url = reply->url();
+    path = reply->url().path();
     m_webPage.mainFrame()->setContent(html);
+
+}
+
+/*====================== BROKE APART THE FUNCTION =========================*/
+
+void ForumSession::webElementFunc(bool status)
+{
+    if(!status) {
+        qDebug() << "ERROR: ";
+        qDebug() << "Loading QWebPage failed";
+        m_busy = false;
+        emit busyChanged();
+        return;
+    }
+
+    QString userName = m_userName;
+
     const QWebElement document = m_webPage.mainFrame()->documentElement();
 
-    if (reply->url() == (m_loginUrl.startsWith("http") ? QUrl(m_loginUrl)
-                                                       : QUrl(m_url + "/" + m_loginUrl))) {
+    if (rep_url == (m_loginUrl.startsWith("http") ? QUrl(m_loginUrl)
+                : QUrl(m_url + "/" + m_loginUrl))) {
         // This is a reply to the login POST request
 
         // For talk.maemo.org: The first <form name="postvarform"> element
@@ -143,7 +164,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
         if (form.attribute("name") == "postvarform") {
             QRegExp urlExpression(m_url + "/index.php\\?s=([a-f\\d]+)");
             if (urlExpression.exactMatch(form.attribute("action"))) {
-                sessionId = urlExpression.cap(1);
+                c_sessionId = urlExpression.cap(1);
             } else {
                 qDebug() << "Form action URL does not match:" << form.attribute("action");
             }
@@ -173,9 +194,9 @@ void ForumSession::onReceived(QNetworkReply *reply)
                     emit loginFailed(message);
                 } else {
                     qDebug() << "================================================================================";
-                    qDebug() << html;
+                    qDebug() << document.toPlainText();
                     qDebug() << "================================================================================";
-                    qDebug() << "Unknown error. Dumped page";
+                    qDebug() << "197, forumsession.cpp :: Unknown error. Dumped page";
 
                     emit loginFailed("Unknown error");
                 }
@@ -215,7 +236,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
     // For forum.meego.com
     const QWebElement a = document.findFirst("div#account-menu div div div ul.drupal_menu li a");
     if (!a.isNull()) {
-     // QString userPageUrl = a.attribute("href");
+        // QString userPageUrl = a.attribute("href");
 
         QRegExp userNameExpression("My account \\((.+)\\)");
         if (userNameExpression.exactMatch(a.toPlainText())) {
@@ -234,7 +255,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
     // For talk.maemo.org
     const QWebElement a2 = document.findFirst("div#muser-login div.welcomemember a");
     if (!a2.isNull()) {
-     // QString userPageUrl = a2.attribute("href");
+        // QString userPageUrl = a2.attribute("href");
 
         userName = a2.toPlainText();
         if (userName != m_userName)
@@ -275,16 +296,16 @@ void ForumSession::onReceived(QNetworkReply *reply)
     }
 
     // Depending on URL, jump to parsing the contained forum list, thread list, or post list
-    const QUrl& url = reply->url();
-    QString path = reply->url().path();
+    // const QUrl& url = reply->url();
+    // QString path = reply->url().path();
 
-    qDebug() << "REPLY URL:" << url.toString();
+    qDebug() << "REPLY URL:" << rep_url.toString();
 
-    if (path.isEmpty() || path == "/index.php" || url.toString() == m_url) {
+    if (path.isEmpty() || path == "/index.php" || rep_url.toString() == m_url) {
         // Parse the forum list
         emit receivedForumList(document);
     } else if (path == "/forumdisplay.php") {
-        if (url.queryItemValue("do") == "markread") {
+        if (rep_url.queryItemValue("do") == "markread") {
             QWebElement error = document.findFirst("td.panelsurround > div.panel > div > div");
             if (!error.isNull()) {
                 qDebug() << "Error:" << error.toPlainText().simplified();
@@ -296,8 +317,8 @@ void ForumSession::onReceived(QNetworkReply *reply)
         }
     } else if (path == "/showthread.php") {
         int postId = -1;
-        if (url.hasQueryItem("p"))
-            postId = url.queryItemValue("p").toInt();
+        if (rep_url.hasQueryItem("p"))
+            postId = rep_url.queryItemValue("p").toInt();
         // Parse the post list
         emit receivedPostList(document, postId);
     } else if (path == "/newthread.php" || path == "/newreply.php") {
@@ -309,11 +330,11 @@ void ForumSession::onReceived(QNetworkReply *reply)
             emit receivedNewPost(document);
         }
     } else if (path == "/search.php") {
-        if (url.hasQueryItem("searchid")) {
-            int searchId = url.queryItemValue("searchid").toInt();
+        if (rep_url.hasQueryItem("searchid")) {
+            int searchId = rep_url.queryItemValue("searchid").toInt();
             // Parse search result
             emit receivedSearchResultThreadList(document, searchId);
-        } else if (url.queryItemValue("do") == "process") {
+        } else if (rep_url.queryItemValue("do") == "process") {
             // Empty search result
             emit receivedSearchResultThreadList(document, 0);
         } else {
@@ -321,7 +342,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
         }
         disconnect(this, SIGNAL(receivedSearchResultThreadList(QWebElement, int)));
     } else if (path == "/subscription.php") {
-        const QString mode = url.queryItemValue("do");
+        const QString mode = rep_url.queryItemValue("do");
         if (mode == "addsubscription") {
             // Right now we just acknowledge the subscription without email notification
             QString threadId = document.findFirst("input[name=threadid]").attribute("value");
@@ -337,7 +358,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
                 data.addQueryItem("do", "doaddsubscription");
                 data.addQueryItem("threadid", threadId);
                 data.addQueryItem("url", "index.php");
-             // QString emailUpdate = document.findFirst("select[name=emailupdate] > option[selected=selected]").attribute("value");
+                // QString emailUpdate = document.findFirst("select[name=emailupdate] > option[selected=selected]").attribute("value");
                 data.addQueryItem("emailupdate", "0"); // No email notification
                 QString folderId = document.findFirst("select[name=folderid] > option[selected=selected]").attribute("value");
                 data.addQueryItem("folderid", folderId); // Subscriptions
@@ -346,11 +367,11 @@ void ForumSession::onReceived(QNetworkReply *reply)
                 post(url, data.encodedQuery());
             }
         } else if (mode == "doaddsubscription") {
-            int threadId = url.queryItemValue("threadid").toInt();
+            int threadId = rep_url.queryItemValue("threadid").toInt();
             emit subscriptionChanged(threadId, true);
             disconnect(this, SIGNAL(subscriptionChanged(int, bool)));
         } else if (mode == "removesubscription") {
-            int threadId = url.queryItemValue("t").toInt();
+            int threadId = rep_url.queryItemValue("t").toInt();
             emit subscriptionChanged(threadId, false);
             disconnect(this, SIGNAL(subscriptionChanged(int, bool)));
         } else {
@@ -358,7 +379,7 @@ void ForumSession::onReceived(QNetworkReply *reply)
             emit receivedThreadList(document);
         }
     } else if (path == "/post_thanks.php") {
-        QString postId = url.queryItemValue("p");
+        QString postId = rep_url.queryItemValue("p");
         QStringList thanks;
         foreach (const QWebElement a, document.findAll("table tr td div a"))
             thanks.append(a.toPlainText());
@@ -368,15 +389,15 @@ void ForumSession::onReceived(QNetworkReply *reply)
     }
 
     // Update login status
-    if (!userName.isEmpty() && !sessionId.isEmpty() && m_sessionId != sessionId) {
-        m_sessionId = sessionId;
+    if (!userName.isEmpty() && !c_sessionId.isEmpty() && m_sessionId != c_sessionId) {
+        m_sessionId = c_sessionId;
         emit sessionIdChanged();
         emit loginSucceeded();
 
         qDebug() << "Logged into" << m_url << "as" << userName << "- session id" << m_sessionId;
     }
-    if ((userName.isEmpty() || sessionId.isEmpty()) && m_sessionId != "") {
-        qDebug() << userName << sessionId;
+    if ((userName.isEmpty() || c_sessionId.isEmpty()) && m_sessionId != "") {
+        qDebug() << userName << c_sessionId;
         m_sessionId = "";
         emit sessionIdChanged();
 

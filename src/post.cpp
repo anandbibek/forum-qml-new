@@ -94,6 +94,18 @@ void Post::setThanks(const QString thanks)
 
 static QString cleanupWhitespace(QWebElement& body)
 {
+//    hacky workaround to pass all img src separately
+
+//    QString imgSrc = "";
+//    QWebElementCollection images = body.findAll("img"); // .inlineimg
+//    foreach (QWebElement img, images) {
+//        // Only append the "src" attribute
+//            if (img.attribute("src").startsWith("http://")) {
+//                imgSrc += img.attribute("src") + "//##thisstringneedstobeunique##//";
+//                img.parent().removeFromDocument();
+//            }
+//    }
+
     if (body.findFirst("pre").isNull()) {
         return body.toInnerXml().simplified();
     } else {
@@ -203,7 +215,7 @@ QString Post::cleanupBody(QWebElement& body)
 #if 0   // FIXME - QML Label doesn't support max-width style
         // Restrict width to fit in portrait mode
         if (img.attribute("src").startsWith("http://")) {
-            img.setAttribute("style", "max-width:448px");
+            img.setAttribute("style", "max-width:400px");
         }
 #endif
     }

@@ -103,6 +103,7 @@ public slots:
     void onAccountSetupFinished(void);
 #endif
     void onReceived(QNetworkReply *reply);
+    void webElementFunc(bool status);
 #ifndef QT_SIMULATOR
     void onSignOnError(const SignOn::Error& error);
     void onSignOnIdentityInfo(const SignOn::IdentityInfo& info);
@@ -131,6 +132,10 @@ private:
     QString m_sessionId;
     QString m_url;
     QString m_userName;
+
+    QUrl rep_url;
+    QString path;
+    QString c_sessionId;
 };
 
 #endif // FORUMSESSION_H

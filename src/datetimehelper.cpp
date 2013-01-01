@@ -67,10 +67,10 @@ QString DateTimeHelper::parseDate(const QString date)
         }
         static QRegExp euDateExpression("(\\d\\d)-(\\d\\d)-(\\d\\d)");
         if (euDateExpression.exactMatch(date)) {
-            int day = euDateExpression.cap(1).toInt();
-            int month = euDateExpression.cap(2).toInt();
+            int month = euDateExpression.cap(1).toInt();
+            int day = euDateExpression.cap(2).toInt();
             int year = 2000 + euDateExpression.cap(3).toInt();
-            return QDate(year, month, day).toString("dd.MM.yy");
+            return QDate(year, month, day).toString("dd MMM yy");
         }
         static QRegExp usDateExpression("(\\d\\d)-(\\d\\d)-(\\d{4})");
         if (usDateExpression.exactMatch(date)) {
@@ -81,7 +81,7 @@ QString DateTimeHelper::parseDate(const QString date)
         }
     }
 
-    qDebug() << "Failed to parse date string:" << date;
+    qDebug() << "2>Failed to parse date string:" << date;
     return date;
 }
 
@@ -95,6 +95,6 @@ QString DateTimeHelper::parseTime(const QString time)
         QTime t = QTime::fromString(time, "hh:mm AP");
         return t.toString("hh:mm");
     }
-    qDebug() << "Failed to parse time string:" << time;
+    qDebug() << "3>Failed to parse time string:" << time;
     return time;
 }

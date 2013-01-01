@@ -117,7 +117,7 @@ void PostList::clear(void)
     while (!m_posts.empty()) {
         Post* post = m_posts.takeFirst();
         if (post->taken()) {
-         // post->setParent(m_session);
+            // post->setParent(m_session);
         } else {
             post->deleteLater();
         }
@@ -231,7 +231,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
     if (m_firstPage == m_lastPage)
         clear();
-/*
+    /*
     <div id="breadcrumbs">
     <div id="breadcontainer">
     <ul style="width:55%;">
@@ -285,11 +285,11 @@ void PostList::onReceived(QWebElement document, int postId)
         QString url;
 
         QWebElement a = table.findFirst("a.bigusername");
-     // a.attribute("href") == "member.php?u=(\\d+)"
+        // a.attribute("href") == "member.php?u=(\\d+)"
         QString poster = a.toPlainText();
         QString dateTime = DateTimeHelper::parseDateTime(table.findFirst("td.thead > div.normal").nextSibling().toPlainText());
 
-     // a.nextSibling().attribute("alt").endsWith("is offline")
+        // a.nextSibling().attribute("alt").endsWith("is offline")
 
         QString html = Post::cleanupBody(comment);
 
@@ -309,7 +309,7 @@ void PostList::onReceived(QWebElement document, int postId)
         commentExpression.setMinimal(true);
         html.replace(commentExpression, "");
 
-     // qDebug() << "BODY:" << html.simplified();
+        // qDebug() << "BODY:" << html.simplified();
 
         Post* post = new Post(url, poster, dateTime, html);
         post->setThanks(thanks.join(", "));
@@ -348,7 +348,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
     foreach (QWebElement comment, document.findAll(commentTags)) {
         QString url = "showpost.php?p=" + comment.attribute("id").replace("edit", "").replace("post", "");
-     // qDebug() << "AVATAR:" << comment.findFirst("div.useravatar > a > img.photo").attribute("alt");
+        // qDebug() << "AVATAR:" << comment.findFirst("div.useravatar > a > img.photo").attribute("alt");
 
         QString poster = comment.findFirst(posterTag).toPlainText();
         QString dateTime = DateTimeHelper::parseDateTime(comment.findFirst(postDateTag).toPlainText());
@@ -378,7 +378,7 @@ void PostList::onReceived(QWebElement document, int postId)
         commentExpression.setMinimal(true);
         html.replace(commentExpression, "");
 
-     // qDebug() << "BODY:" << html.simplified();
+        // qDebug() << "BODY:" << html.simplified();
 
         QString section;
         section.sprintf("Page %d of %d", page, numPages);

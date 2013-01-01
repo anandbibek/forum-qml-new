@@ -31,9 +31,9 @@ PKGCONFIG += accounts-qt AccountSetup gq-gconf libsignon-qt
 CONFIG += qdeclarative-boostable
 
 # View header title image and splash image
-images.files = images/meego.png
-images.path = /opt/forum-fmc/images
-splash.files = images/forum-fmc-splash.jpg
+images.files = images/meego.png images/maemo.org.png
+images.path = /opt/forum-qml/images
+splash.files = images/forum-tmo-splash.jpg images/forum-fmc-splash.jpg
 splash.path = /usr/share/themes/blanco/meegotouch/images/splash
 INSTALLS += images splash
 
@@ -55,8 +55,8 @@ qtcAddDeployment()
 
 unix {
     !isEmpty(MEEGO_VERSION_MAJOR) {
-        desktopfile.files += forum-tmo_harmattan.desktop
-        icon.files += forum-tmo80.png
+        desktopfile.files += forum-tmo_harmattan.desktop forum-fmc_harmattan.desktop
+        icon.files += forum-tmo80.png forum-fmc80.png
     }
 }
 
@@ -93,3 +93,12 @@ SOURCES += \
     src/datetimehelper.cpp \
     src/newpost.cpp \
     src/searchresultthreadlist.cpp
+
+OTHER_FILES += \
+    qtc_packaging/debian_harmattan/rules \
+    qtc_packaging/debian_harmattan/README \
+    qtc_packaging/debian_harmattan/manifest.aegis \
+    qtc_packaging/debian_harmattan/copyright \
+    qtc_packaging/debian_harmattan/control \
+    qtc_packaging/debian_harmattan/compat \
+    qtc_packaging/debian_harmattan/changelog

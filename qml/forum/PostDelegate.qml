@@ -1,5 +1,6 @@
 import QtQuick 1.0
 import com.nokia.meego 1.0
+import QtWebKit 1.0
 import "../components/constants.js" as UI
 
 Item {
@@ -65,6 +66,7 @@ Item {
             }
         }
 
+
         Label {
             id: body
             anchors { left: parent.left; right: parent.right;
@@ -74,12 +76,35 @@ Item {
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: UI.FONT_LIGHT_SIZE
             clip: true
-
+            smooth: true
             onLinkActivated: {
                 console.log("Clicked on link:" + link)
                 Qt.openUrlExternally(link);
             }
         }
+
+
+//Too much memory intensive, although improves smooth scrooling
+//        WebView {
+//            id: body
+//            anchors { left: parent.left; right: parent.right;
+//                      leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+
+//            html: " <html><head>"
+//                  + "</head><body bgcolor=\"#f4f5f5\"><font color=\"#000000\">"
+//                  + model.body
+//                  + "</body></html>"
+//            //font.family: UI.FONT_FAMILY_LIGHT
+//            //font.pixelSize: UI.FONT_LIGHT_SIZE
+//            clip: true
+//            settings.minimumFontSize : 16
+//            settings.defaultFontSize: 22
+//            settings.standardFontFamily: UI.FONT_FAMILY_LIGHT
+//            preferredWidth: width
+//            preferredHeight: 5
+//            settings.javascriptEnabled: false
+//            settings.pluginsEnabled: false
+//        }
 
         Label {
             id: thanks

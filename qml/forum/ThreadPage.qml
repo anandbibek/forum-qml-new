@@ -14,6 +14,7 @@ Page {
         id: postList
 
         anchors.fill: parent
+        cacheBuffer: postList.contentHeight
 
         section.delegate: SectionHeader { }
         section.property: "section"
