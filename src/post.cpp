@@ -9,9 +9,10 @@ Post::Post(QObject* parent) :
 {
 }
 
-Post::Post(const QString url, const QString poster, const QString dateTime, const QString body, QObject *parent) :
+Post::Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, QObject *parent) :
     QObject(parent),
     m_body(body),
+    m_img(img),
     m_dateTime(dateTime),
     m_poster(poster),
     m_postId(-1),
@@ -22,6 +23,11 @@ Post::Post(const QString url, const QString poster, const QString dateTime, cons
 QString Post::body() const
 {
     return m_body;
+}
+
+QString Post::img() const
+{
+    return m_img;
 }
 
 QString Post::dateTime() const {
@@ -94,23 +100,29 @@ void Post::setThanks(const QString thanks)
 
 static QString cleanupWhitespace(QWebElement& body)
 {
-//    hacky workaround to pass all img src separately
+    //    hacky workaround to pass all img src separately
 
-//    QString imgSrc = "";
-//    QWebElementCollection images = body.findAll("img"); // .inlineimg
-//    foreach (QWebElement img, images) {
-//        // Only append the "src" attribute
-//            if (img.attribute("src").startsWith("http://")) {
-//                imgSrc += img.attribute("src") + "//##thisstringneedstobeunique##//";
-//                img.parent().removeFromDocument();
-//            }
-//    }
+    QString imgSrc = "##splitMarker##";
+    QWebElementCollection images = body.findAll("img"); // .inlineimg
+    foreach (QWebElement img, images) {
+        // Only append the "src" attribute
+        if (img.attribute("src").startsWith("http://")) {
+            if(imgSrc!="##splitMarker##")
+                imgSrc += "|";
+            imgSrc += img.attribute("src");
+            img.takeFromDocument();
+        }
+    }
+
+
+    if(imgSrc=="##splitMarker##")
+        imgSrc = "";
 
     if (body.findFirst("pre").isNull()) {
-        return body.toInnerXml().simplified();
+        return body.toInnerXml().simplified()  + imgSrc;
     } else {
         // TODO: Remove excess whitespace outside of <pre> tags
-        return body.toInnerXml();
+        return body.toInnerXml() + imgSrc;
     }
 }
 
@@ -212,12 +224,12 @@ QString Post::cleanupBody(QWebElement& body)
         // Replace smileys with local icons
         replaceSmiley(img);
 
-#if 0   // FIXME - QML Label doesn't support max-width style
-        // Restrict width to fit in portrait mode
-        if (img.attribute("src").startsWith("http://")) {
-            img.setAttribute("style", "max-width:400px");
-        }
-#endif
+        //#if 0   // FIXED - QML Label doesn't support max-width style
+        //        // Restrict width to fit in portrait mode
+        //        if (img.attribute("src").startsWith("http://")) {
+        //            img.setAttribute("style", "max-width:400px");
+        //        }
+        //#endif
     }
 
     // Clean up code tags
@@ -269,7 +281,7 @@ static QString innerXmlToBbCode(QWebElement element)
 {
     static const QRegExp postExpression("showthread.php?p=(\\d+)#post(\\d+)");
 
- // qDebug() << element.tagName() << ":" << element.toOuterXml().simplified().replace("<br>", "<br>\n");
+    // qDebug() << element.tagName() << ":" << element.toOuterXml().simplified().replace("<br>", "<br>\n");
 
     QWebElement next;
     for (QWebElement tag = element.firstChild(); !tag.isNull(); tag = next) {
@@ -394,7 +406,7 @@ static QString innerXmlToBbCode(QWebElement element)
                 qDebug() << "replacing image " + tag.toOuterXml() + " with :)";
                 tag.replace(":)");
             } else {
-             // tag.replace("[img]" + tag.attribute("src") + "[/img]");
+                // tag.replace("[img]" + tag.attribute("src") + "[/img]");
             }
         }
 #endif
@@ -417,8 +429,8 @@ static QString smileyToBbCode(QString src)
     else if (src == "sad")
         return ":(";
     // There is no local equivalent for the :confused: emoticon
- // else if (src == "XXX")
- //     return ":confused";
+    // else if (src == "XXX")
+    //     return ":confused";
     else if (src == "angry")
         return ":mad:";
     else if (src == "tongue")
@@ -442,9 +454,9 @@ static QString smileyToBbCode(QString src)
 bool Post::thankedBy(const QString userName) const
 {
     return m_thanks == userName ||
-           m_thanks.startsWith(userName + ",") ||
-           m_thanks.contains(" " + userName + ",") ||
-           m_thanks.endsWith(" " + userName);
+            m_thanks.startsWith(userName + ",") ||
+            m_thanks.contains(" " + userName + ",") ||
+            m_thanks.endsWith(" " + userName);
 }
 
 QString Post::toBbCode() const
@@ -475,4 +487,5 @@ QString Post::toBbCode() const
 void Post::onThanksReceived(QString postId, QStringList thanks)
 {
     setThanks(thanks.join(", "));
+    Q_UNUSED(postId)
 }

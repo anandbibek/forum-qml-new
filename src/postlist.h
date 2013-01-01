@@ -23,6 +23,7 @@ public:
         PosterRole,
         DateTimeRole,
         BodyRole,
+        ImgRole,
         SectionRole,
         ThanksRole
     };

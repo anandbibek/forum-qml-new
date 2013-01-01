@@ -10,6 +10,8 @@ Item {
     signal pressAndHold
     property alias pressed: mouseArea.pressed
 
+    property string imgModel : model.img.replace(" ","")
+
     property int titleSize: UI.LIST_TILE_SIZE
     property int titleWeight: Font.Bold
     property color titleColor: theme.inverted ? UI.LIST_TITLE_COLOR_INVERTED : UI.LIST_TITLE_COLOR
@@ -20,39 +22,42 @@ Item {
 
     height: column.height + 3 * UI.MARGIN_XLARGE
     width: parent.width
+    scale: mouseArea.pressed? 0.98 : 1.00
+
 
     BorderImage {
         id: background
         anchors { fill: parent; topMargin: UI.MARGIN_XLARGE / 2; bottomMargin: UI.MARGIN_XLARGE / 2 }
 
-        source: "image://theme/meegotouch-list-background"
+        source: mouseArea.pressed? "image://theme/meegotouch-list-background-pressed" : "image://theme/meegotouch-list-background"
         border { left: 21; right: 21; top: 21; bottom: 21 }
     }
+
 
     MouseArea {
         id: mouseArea;
         anchors.fill: parent
-        onClicked: root.clicked()
-        onPressAndHold: root.pressAndHold()
+        onClicked: console.log(">>"+imgModel+ "<<")//root.clicked()
+        onPressAndHold:  root.pressAndHold()
     }
 
     Column {
         id: column
 
         anchors { top: parent.top; left: parent.left; right: parent.right;
-                  topMargin: 1.5 * UI.MARGIN_XLARGE }
+            topMargin: 1.5 * UI.MARGIN_XLARGE }
         height: childrenRect.height
         spacing: UI.MARGIN_XLARGE
 
         Item {
             anchors { left: parent.left; right: parent.right;
-                      leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+                leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
             height: poster.height
 
             Label {
                 id: poster
                 text: model.poster
-                font.family: UI.FONT_FAMILY
+                font.family: UI.FONT_FAMILY_BOLD
                 font.pixelSize: UI.FONT_LIGHT_SIZE
                 color: UI.LIST_SUBTITLE_COLOR
             }
@@ -70,7 +75,7 @@ Item {
         Label {
             id: body
             anchors { left: parent.left; right: parent.right;
-                      leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+                leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
             text: model.body
             font.family: UI.FONT_FAMILY_LIGHT
@@ -83,33 +88,71 @@ Item {
             }
         }
 
+        Repeater {
+            id:repItem
+            anchors { left: parent.left; right: parent.right; }
+            model: if(imgModel != "") imgModel.split("|");
+            MouseArea {
+                property bool check: true
+                anchors { left: parent.left; right: parent.right;
+                    leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+                height: check? UI.LIST_ITEM_HEIGHT : childrenRect.height
+                onClicked: check = !check
+                onPressAndHold: {
+                    Qt.openUrlExternally(modelData);
+                }
+                clip: true
+                Behavior on height {
+                    NumberAnimation{ easing.type: Easing.OutBack}
+                }
 
-//Too much memory intensive, although improves smooth scrooling
-//        WebView {
-//            id: body
-//            anchors { left: parent.left; right: parent.right;
-//                      leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+                BusyIndicator{
+                    anchors.centerIn: parent
+                    visible: running
+                    running: img.status != Image.Ready
+                    implicitHeight : 32
+                }
 
-//            html: " <html><head>"
-//                  + "</head><body bgcolor=\"#f4f5f5\"><font color=\"#000000\">"
-//                  + model.body
-//                  + "</body></html>"
-//            //font.family: UI.FONT_FAMILY_LIGHT
-//            //font.pixelSize: UI.FONT_LIGHT_SIZE
-//            clip: true
-//            settings.minimumFontSize : 16
-//            settings.defaultFontSize: 22
-//            settings.standardFontFamily: UI.FONT_FAMILY_LIGHT
-//            preferredWidth: width
-//            preferredHeight: 5
-//            settings.javascriptEnabled: false
-//            settings.pluginsEnabled: false
-//        }
+                Image{
+                    id: img
+                    source: modelData
+                    sourceSize.width: parent.width
+                    asynchronous: true
+                    opacity: progress
+                    width: parent.width
+                    fillMode: Image.PreserveAspectFit
+                }
+            }
+        }
+
+
+
+        //Too much memory intensive, although improves smooth scrooling
+        //        WebView {
+        //            id: body
+        //            anchors { left: parent.left; right: parent.right;
+        //                      leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+
+        //            html: " <html><head>"
+        //                  + "</head><body bgcolor=\"#f4f5f5\"><font color=\"#000000\">"
+        //                  + model.body
+        //                  + "</body></html>"
+        //            clip: true
+        //            settings.minimumFontSize : 16
+        //            settings.defaultFontSize: 22
+        //            settings.standardFontFamily: UI.FONT_FAMILY_LIGHT
+        //            preferredWidth: width
+        //            preferredHeight: 5
+        //            settings.javascriptEnabled: false
+        //            settings.pluginsEnabled: false
+        //        }
+
+
 
         Label {
             id: thanks
             anchors { left: parent.left; right: parent.right;
-                      leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+                leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
             visible: (model.thanks === undefined) ? false : model.thanks
 

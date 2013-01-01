@@ -70,7 +70,7 @@ QString DateTimeHelper::parseDate(const QString date)
             int month = euDateExpression.cap(1).toInt();
             int day = euDateExpression.cap(2).toInt();
             int year = 2000 + euDateExpression.cap(3).toInt();
-            return QDate(year, month, day).toString("dd MMM yy");
+            return QDate(year, month, day).toString("dd.MM.yy");
         }
         static QRegExp usDateExpression("(\\d\\d)-(\\d\\d)-(\\d{4})");
         if (usDateExpression.exactMatch(date)) {

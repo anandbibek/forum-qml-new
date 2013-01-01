@@ -20,6 +20,7 @@ PostList::PostList(ForumSession* session, QObject *parent) :
     roles[PosterRole] = "poster";
     roles[DateTimeRole] = "dateTime";
     roles[BodyRole] = "body";
+    roles[ImgRole] = "img";
     roles[SectionRole] = "section";
     roles[ThanksRole] = "thanks";
     setRoleNames(roles);
@@ -96,6 +97,8 @@ QVariant PostList::data(const QModelIndex& index, int role) const
         return post->dateTime();
     else if (role == BodyRole)
         return post->body();
+    else if (role == ImgRole)
+        return post->img();
     else if (role == SectionRole)
         return post->section();
     else if (role == ThanksRole)
@@ -291,7 +294,12 @@ void PostList::onReceived(QWebElement document, int postId)
 
         // a.nextSibling().attribute("alt").endsWith("is offline")
 
-        QString html = Post::cleanupBody(comment);
+        QStringList temp = (Post::cleanupBody(comment)).split("##splitMarker##");
+
+        QString html = temp.at(0);
+        QString img = " ";
+        if(temp.length()>1)
+            img = temp.at(1);
 
         // SIG = div.nextSibling();
 
@@ -311,7 +319,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
         // qDebug() << "BODY:" << html.simplified();
 
-        Post* post = new Post(url, poster, dateTime, html);
+        Post* post = new Post(url, poster, dateTime, html, img);
         post->setThanks(thanks.join(", "));
         post->setSection(section);
 
@@ -359,10 +367,33 @@ void PostList::onReceived(QWebElement document, int postId)
         // Find the post body
         QWebElement body = comment.findFirst(bodyTag);
 
-        // Remove attachments fieldset
-        QWebElement fieldset = body.findFirst("div > fieldset.fieldset").parent().takeFromDocument();
+        // Remove attachments fieldset ?? NO!!
+        //FIXME - fmc attachment isn't working
+        QWebElement fieldset = body.findFirst("div > fieldset.fieldset").parent();//.takeFromDocument();
 
-        QString html = Post::cleanupBody(body);
+        // Parse attachments
+        if (!fieldset.isNull()) {
+            foreach (QWebElement a, fieldset.findAll("td a")) {
+                QString href = a.attribute("href");
+                if (href.startsWith("attachment.php?")) {
+                    if (m_session->provider() == "tmo")
+                        href = "http://talk.maemo.org/" + href;
+                    a.setAttribute("href",href);
+                    // TODO: "(name:.*) (([\\.\\d]+) KB, (\\d+) views)"
+                    //qDebug() << "ATTACHMENT:" << a.parent().toPlainText() << href;
+                }
+            }
+            foreach (QWebElement a, fieldset.findAll("td img")) {
+                a.setAttribute("src","image://theme/icon-s-email-attachment");
+            }
+        }
+
+        QStringList temp = (Post::cleanupBody(body)).split("##splitMarker##");
+
+        QString html = temp.at(0);
+        QString img = " ";
+        if(temp.length()>1)
+            img = temp.at(1);
 
         // Thanks
         QStringList thanks;
@@ -383,7 +414,7 @@ void PostList::onReceived(QWebElement document, int postId)
         QString section;
         section.sprintf("Page %d of %d", page, numPages);
 
-        Post* post = new Post(url, poster, dateTime, html);
+        Post* post = new Post(url, poster, dateTime, html, img);
         post->setThanks(thanks.join(", "));
         post->setSection(section);
         post->setSubject(threadTitle); // talk.maemo.org doesn't show individual post subjects
@@ -399,17 +430,6 @@ void PostList::onReceived(QWebElement document, int postId)
             qDebug() << "Failed to parse postId:" << comment.toOuterXml().simplified();
         }
 
-        // Parse attachments
-        if (!fieldset.isNull()) {
-            // qDebug() << "REMOVED FIELDSET:" << fieldset.toOuterXml();
-            foreach (QWebElement a, fieldset.findAll("td a")) {
-                QString href = a.attribute("href");
-                if (href.startsWith("attachment.php?")) {
-                    // TODO: "(name:.*) (([\\.\\d]+) KB, (\\d+) views)"
-                    qDebug() << "ATTACHMENT:" << a.parent().toPlainText() << href;
-                }
-            }
-        }
 
         list.append(post);
     }

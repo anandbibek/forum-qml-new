@@ -123,6 +123,7 @@ Page {
             onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root).open()
         }
 
+
         ToolIcon {
             platformIconId: "toolbar-history"
             opacity: forumSession.activeTopics != null ? 1 : 0

@@ -25,7 +25,7 @@ Item {
         anchors.top: header.bottom
         anchors.topMargin: UI.DEFAULT_MARGIN
         anchors.bottom: parent.bottom
-        cacheBuffer: contentHeight
+        cacheBuffer: 4000
 
         section.delegate: SectionHeader { }
         section.property: "section"
