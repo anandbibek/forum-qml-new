@@ -10,7 +10,9 @@
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QScopedPointer<QApplication> app(createApplication(argc, argv));
-    QScopedPointer<QmlApplicationViewer> viewer(QmlApplicationViewer::create());
+    QScopedPointer<QmlApplicationViewer> viewer(QmlApplicationViewer::create()); 
+    viewer->setAttribute(Qt::WA_NoSystemBackground);
+    viewer->setAutoFillBackground(false);
 
     QCoreApplication::setApplicationName(QFileInfo(QCoreApplication::applicationFilePath()).fileName());
 

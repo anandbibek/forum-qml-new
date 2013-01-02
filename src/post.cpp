@@ -106,7 +106,7 @@ static QString cleanupWhitespace(QWebElement& body)
     QWebElementCollection images = body.findAll("img"); // .inlineimg
     foreach (QWebElement img, images) {
         // Only append the "src" attribute
-        if (img.attribute("src").startsWith("http://")) {
+        if (img.attribute("src").startsWith("http")) {
             if(imgSrc!="##splitMarker##")
                 imgSrc += "|";
             imgSrc += img.attribute("src");
@@ -468,6 +468,9 @@ QString Post::toBbCode() const
     QWebPage page;
     page.mainFrame()->setHtml(m_body);
     const QWebElement body = page.mainFrame()->documentElement().findFirst("body");
+
+    //Clean attachments
+    body.findFirst("div > fieldset.fieldset").parent().takeFromDocument();
 
     // Handle <br> and <img> tags manually, QtWebKit won't let us above
     QString result = innerXmlToBbCode(body).replace(QRegExp("<br> ?"), "\n");

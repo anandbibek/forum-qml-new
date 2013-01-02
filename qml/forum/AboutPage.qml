@@ -13,7 +13,7 @@ Page {
         z: 1
 
         platformStyle: ViewHeaderStyle { titleImage: forumStyle.titleImage }
-        text: forumStyle.titleText + " 0.1.0"
+        text: forumStyle.titleText + " 0.1.2"
     }
 
     Flickable {

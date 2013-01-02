@@ -33,7 +33,7 @@ CONFIG += qdeclarative-boostable
 # View header title image and splash image
 images.files = images/meego.png images/maemo.org.png
 images.path = /opt/forum-qml/images
-splash.files = images/forum-tmo-splash.jpg images/forum-fmc-splash.jpg
+splash.files = images/forum-tmo-splash.png images/forum-fmc-splash.png
 splash.path = /usr/share/themes/blanco/meegotouch/images/splash
 INSTALLS += images splash
 

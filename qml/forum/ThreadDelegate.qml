@@ -12,7 +12,7 @@ Item {
 
     property Style platformStyle: ThreadDelegateStyle { }
 
-    height: UI.LIST_ITEM_HEIGHT
+    height: column.height +  UI.LIST_ITEM_SPACING //UI.LIST_ITEM_HEIGHT
     width: parent.width
 
     BorderImage {
@@ -29,6 +29,7 @@ Item {
     }
 
     Column {
+        id : column
         anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter }
         anchors.leftMargin: root.platformStyle.showUnread ? 13 : 0 // 13px is the same as in the email program
 
@@ -41,12 +42,14 @@ Item {
                 id: mainText
                 anchors.left: parent.left
                 anchors.right: attachmentIcon.visible ? attachmentIcon.left : repliesBubble.left
+                anchors.rightMargin: 8
 
                 color: root.platformStyle.titleColor
-                font.pixelSize: root.platformStyle.titleSize
+                font.pixelSize: 24// root.platformStyle.titleSize
                 font.weight: root.platformStyle.titleWeight
                 text: model.title
                 elide: Text.ElideRight
+                maximumLineCount: 2
             }
 
             Image {
@@ -78,7 +81,7 @@ Item {
         Item {
             anchors.left: parent.left
             anchors.right: parent.right
-            height: subText.height
+            height: subText.paintedHeight
 
             Label {
                 id: subText

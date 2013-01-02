@@ -10,7 +10,7 @@ Item {
     signal pressAndHold
     property alias pressed: mouseArea.pressed
 
-    property string imgModel : model.img.replace(" ","")
+    property string imgModel : model.img
 
     property int titleSize: UI.LIST_TILE_SIZE
     property int titleWeight: Font.Bold
@@ -20,7 +20,7 @@ Item {
     property int bodyWeight: Font.Light
     property color bodyColor: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
 
-    height: column.height + 3 * UI.MARGIN_XLARGE
+    height: column.height + 4 * UI.MARGIN_XLARGE
     width: parent.width
     scale: mouseArea.pressed? 0.98 : 1.00
 
@@ -29,7 +29,7 @@ Item {
         id: background
         anchors { fill: parent; topMargin: UI.MARGIN_XLARGE / 2; bottomMargin: UI.MARGIN_XLARGE / 2 }
 
-        source: mouseArea.pressed? "image://theme/meegotouch-list-background-pressed" : "image://theme/meegotouch-list-background"
+        source: "image://theme/meegotouch-list"+(theme.inverted?"-inverted":"")+"-background"
         border { left: 21; right: 21; top: 21; bottom: 21 }
     }
 
@@ -37,7 +37,7 @@ Item {
     MouseArea {
         id: mouseArea;
         anchors.fill: parent
-        onClicked: console.log(">>"+imgModel+ "<<")//root.clicked()
+        onClicked: console.log(">>"+model.body+ "<<")//root.clicked()
         onPressAndHold:  root.pressAndHold()
     }
 
@@ -59,7 +59,7 @@ Item {
                 text: model.poster
                 font.family: UI.FONT_FAMILY_BOLD
                 font.pixelSize: UI.FONT_LIGHT_SIZE
-                color: UI.LIST_SUBTITLE_COLOR
+                color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
             }
             Label {
                 id: dateTime
@@ -67,7 +67,7 @@ Item {
                 anchors.right: parent.right
                 font.family: UI.FONT_FAMILY_LIGHT
                 font.pixelSize: 18
-                color: UI.LIST_SUBTITLE_COLOR
+                color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
             }
         }
 
@@ -80,8 +80,6 @@ Item {
             text: model.body
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: UI.FONT_LIGHT_SIZE
-            clip: true
-            smooth: true
             onLinkActivated: {
                 console.log("Clicked on link:" + link)
                 Qt.openUrlExternally(link);
@@ -103,7 +101,7 @@ Item {
                 }
                 clip: true
                 Behavior on height {
-                    NumberAnimation{ easing.type: Easing.OutBack}
+                    NumberAnimation{}
                 }
 
                 BusyIndicator{
@@ -160,7 +158,7 @@ Item {
             text: "thanks: " + model.thanks
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: 18
-            color: UI.LIST_SUBTITLE_COLOR
+            color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
         }
     }
 }

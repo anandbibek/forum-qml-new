@@ -15,6 +15,7 @@ PageStackWindow {
     initialPage: MainPage { }
 
     Component.onCompleted: {
+        theme.inverted = themeSetting.value
         loadForumStyle()
         if (!forumSession.provider)
             Qt.createComponent("ForumSelectionDialog.qml").createObject(initialPage, {"selectedIndex": 0}).open()
@@ -38,6 +39,12 @@ PageStackWindow {
         titleText: "Session error"
         icon: "image://theme/icon-l-error"
         acceptButtonText: "Ok"
+    }
+
+    GConfItem {
+       id: themeSetting
+       key: "/apps/forum-qml/settings/themeSetting"
+       defaultValue: false
     }
 
     function loadForumStyle() {

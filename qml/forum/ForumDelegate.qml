@@ -16,7 +16,7 @@ Item {
     property int subtitleSize: UI.LIST_SUBTILE_SIZE
     property color subtitleColor: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
 
-    height: UI.LIST_ITEM_HEIGHT
+    height: column.height +  UI.LIST_ITEM_SPACING
     width: parent.width
 
     BorderImage {
@@ -30,6 +30,7 @@ Item {
     }
 
     Column {
+        id:column
         anchors { left: parent.left; right: parent.right; verticalCenter: parent.verticalCenter }
 
         Label {

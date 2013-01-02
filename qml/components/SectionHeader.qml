@@ -14,7 +14,7 @@ Item {
         anchors.rightMargin: UI.DEFAULT_MARGIN
         anchors.verticalCenter: parent.verticalCenter
 
-        source: "image://theme/meegotouch-groupheader-background"
+        source: "image://theme/meegotouch-groupheader"+(theme.inverted?"-inverted":"")+"-background"
     }
 
     Label {

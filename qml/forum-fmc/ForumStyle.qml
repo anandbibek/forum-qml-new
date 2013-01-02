@@ -35,5 +35,8 @@ Style {
                            '<a href="http://linuxfoundation.org" style="color:#cc09ba">The&nbsp;Linux&nbsp;Foundation</a>.<br /><br />' +
 
                            'The source code of this program can be downloaded from Gitorious: ' +
-                           '<a href="https://gitorious.org/forum-qml" style="color:#cc09ba">https://gitorious.org/forum-qml</a><br /><br />'
+                           '<a href="https://gitorious.org/forum-qml" style="color:#cc09ba">https://gitorious.org/forum-qml</a><br /><br />' +
+
+                           'The newer source code of this program (above 0.0.6) can be downloaded from Github: ' +
+                           '<a href="https://github.com/anandbibek/forum-qml-new" style="color:#ea650a">https://github.com/anandbibek/forum-qml-new</a><br /><br />'
 }

@@ -14,8 +14,8 @@ Page {
         id: postList
 
         anchors.fill: parent
-        cacheBuffer: 4000
-        pressDelay: 100
+        cacheBuffer: contentHeight
+        pressDelay: 300
 
         section.delegate: SectionHeader { }
         section.property: "section"

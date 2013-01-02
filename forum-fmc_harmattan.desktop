@@ -4,7 +4,7 @@ Version=1.0
 Type=Application
 Terminal=false
 Name=Forum
-Exec=/usr/bin/invoker --single-instance --type=d --splash=/usr/share/themes/blanco/meegotouch/images/splash/forum-fmc-splash.jpg -s /opt/forum-qml/bin/forum-qml --fmc
+Exec=/usr/bin/invoker --single-instance --type=d --splash=/usr/share/themes/blanco/meegotouch/images/splash/forum-fmc-splash.png -s /opt/forum-qml/bin/forum-qml --fmc
 Icon=/usr/share/icons/hicolor/80x80/apps/forum-fmc80.png
 X-Window-Icon=
 X-HildonDesk-ShowInToolbar=true

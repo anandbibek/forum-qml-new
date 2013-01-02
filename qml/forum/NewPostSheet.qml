@@ -129,7 +129,7 @@ Sheet {
                     id: actionPanel
                     title: "Action:"
                     visible: divider.expanded
-                    selectedIndex: 0
+                    selectedIndex: 1
                     model: ListModel {
                         ListElement { name: "Preview" }
                         ListElement { name: "Post" }

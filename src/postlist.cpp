@@ -294,10 +294,10 @@ void PostList::onReceived(QWebElement document, int postId)
 
         // a.nextSibling().attribute("alt").endsWith("is offline")
 
-        QStringList temp = (Post::cleanupBody(comment)).split("##splitMarker##");
+        QStringList temp = (Post::cleanupBody(comment)).split("##splitMarker##", QString::SkipEmptyParts);
 
         QString html = temp.at(0);
-        QString img = " ";
+        QString img = "";
         if(temp.length()>1)
             img = temp.at(1);
 
@@ -373,25 +373,34 @@ void PostList::onReceived(QWebElement document, int postId)
 
         // Parse attachments
         if (!fieldset.isNull()) {
-            foreach (QWebElement a, fieldset.findAll("td a")) {
-                QString href = a.attribute("href");
+            foreach (QWebElement b, fieldset.findAll("td")) {
+                foreach (QWebElement a, b.findAll("a")) {
+                    QString href = a.attribute("href");
+                    if (href.startsWith("attachment.php?")) {
+                        if (m_session->provider() == "tmo")
+                            href = "http://talk.maemo.org/" + href;
+                        a.setAttribute("href",href);
+                    }
+                }
+                foreach (QWebElement a, b.findAll("img")) {
+                    a.setAttribute("src","image://theme/icon-s-email-attachment");
+                }
+            }
+
+            foreach (QWebElement a, fieldset.findAll("img")) {
+                QString href = a.attribute("src");
                 if (href.startsWith("attachment.php?")) {
                     if (m_session->provider() == "tmo")
                         href = "http://talk.maemo.org/" + href;
-                    a.setAttribute("href",href);
-                    // TODO: "(name:.*) (([\\.\\d]+) KB, (\\d+) views)"
-                    //qDebug() << "ATTACHMENT:" << a.parent().toPlainText() << href;
+                    a.setAttribute("src",href);
                 }
-            }
-            foreach (QWebElement a, fieldset.findAll("td img")) {
-                a.setAttribute("src","image://theme/icon-s-email-attachment");
             }
         }
 
-        QStringList temp = (Post::cleanupBody(body)).split("##splitMarker##");
+        QStringList temp = (Post::cleanupBody(body)).split("##splitMarker##", QString::SkipEmptyParts);
 
         QString html = temp.at(0);
-        QString img = " ";
+        QString img = "";
         if(temp.length()>1)
             img = temp.at(1);
 

@@ -29,6 +29,9 @@ Style {
                            'along with this program. If not, see ' +
                            '<a href="http://www.gnu.org/licenses" style="color:#ea650a">http://www.gnu.org/licenses</a><br /><br />' +
 
-                           'The source code of this program can be downloaded from Gitorious: ' +
-                           '<a href="https://gitorious.org/forum-qml" style="color:#ea650a">https://gitorious.org/forum-qml</a><br /><br />'
+                           'The source code of this program (upto 0.0.6) can be downloaded from Gitorious: ' +
+                           '<a href="https://gitorious.org/forum-qml" style="color:#ea650a">https://gitorious.org/forum-qml</a><br /><br />' +
+
+                           'The newer source code of this program (above 0.0.6) can be downloaded from Github: ' +
+                           '<a href="https://github.com/anandbibek/forum-qml-new" style="color:#ea650a">https://github.com/anandbibek/forum-qml-new</a><br /><br />'
 }

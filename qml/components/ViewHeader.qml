@@ -25,8 +25,8 @@ Item {
         anchors.fill: parent
         color: platformStyle.backgroundColor
 
-        Rectangle { width: parent.width; height: 2; anchors.bottom: parent.bottom; color: "#000000"; opacity: 0.5 }
-        Rectangle { width: parent.width; height: 1; anchors.bottom: parent.bottom; color: "#ffffff" }
+        Rectangle { width: parent.width; height: 2; anchors.bottom: parent.bottom; color: "#000000"; visible: !theme.inverted; opacity: 0.5 }
+        Rectangle { width: parent.width; height: 1; anchors.bottom: parent.bottom; color: "#ffffff"; opacity: !theme.inverted }
     }
 
     Image {

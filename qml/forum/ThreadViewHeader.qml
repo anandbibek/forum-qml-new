@@ -12,7 +12,7 @@ Item {
 
     property Style platformStyle: ViewHeaderStyle {
         fontFamily: UI.FONT_FAMILY
-        fontPixelSize: UI.FONT_LARGE
+        fontPixelSize: UI.FONT_SLARGE
         textColor: "#000"
     }
 
@@ -30,9 +30,8 @@ Item {
 
         font.family: root.platformStyle.fontFamily
         font.pixelSize: root.platformStyle.fontPixelSize
-        color: root.platformStyle.textColor
         elide: Text.ElideRight
-        maximumLineCount: 2
+        maximumLineCount: 3
     }
 
     Label {
@@ -44,7 +43,7 @@ Item {
 
         font.family: root.platformStyle.fontFamily
         font.pixelSize: UI.FONT_LSMALL
-        color: UI2.LIST_SUBTITLE_COLOR
+        color: "#8c8c8c"
         elide: Text.ElideRight
     }
 

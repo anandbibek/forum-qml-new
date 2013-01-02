@@ -16,14 +16,15 @@ Item {
     BorderImage {
         id: background
         anchors { fill: parent; leftMargin: -UI.MARGIN_XLARGE; rightMargin: -UI.MARGIN_XLARGE }
-        source: textField.activeFocus ? "image://theme/meegotouch-editor-inputfield-panel-background-selected" : ""
+        source: textField.activeFocus ? "image://theme/meegotouch-editor-inputfield-panel"+(theme.inverted?"-inverted":"")+"-background-selected" : ""
         border.left: UI.CORNER_MARGINS
     }
 
     Label {
         id: label
         anchors.verticalCenter: parent.verticalCenter
-        color: textField.activeFocus ? root.selectionColor : UI.COLOR_FOREGROUND
+        color: root.selectionColor
+        opacity: textField.activeFocus ? 1 : 0.5
     }
 
     MouseArea {
@@ -45,6 +46,7 @@ Item {
         font.pixelSize: UI.FONT_DEFAULT
         font.weight: text ? Font.Bold : Font.Normal
         platformStyle: TextFieldStyle {
+            textColor: UI.COLOR_SECONDARY_FOREGROUND
             background: ""
             backgroundSelected: ""
             backgroundDisabled: ""
