@@ -9,10 +9,11 @@ Post::Post(QObject* parent) :
 {
 }
 
-Post::Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, QObject *parent) :
+Post::Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, const QString stat, QObject *parent) :
     QObject(parent),
     m_body(body),
     m_img(img),
+    m_stat(stat),
     m_dateTime(dateTime),
     m_poster(poster),
     m_postId(-1),
@@ -28,6 +29,11 @@ QString Post::body() const
 QString Post::img() const
 {
     return m_img;
+}
+
+QString Post::stat() const
+{
+    return m_stat;
 }
 
 QString Post::dateTime() const {
@@ -469,6 +475,7 @@ QString Post::toBbCode() const
     page.mainFrame()->setHtml(m_body);
     const QWebElement body = page.mainFrame()->documentElement().findFirst("body");
 
+    body.findFirst("div.quote").takeFromDocument();
     //Clean attachments
     body.findFirst("div > fieldset.fieldset").parent().takeFromDocument();
 

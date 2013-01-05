@@ -37,7 +37,7 @@ Item {
     MouseArea {
         id: mouseArea;
         anchors.fill: parent
-        onClicked: console.log(">>"+model.body+ "<<")//root.clicked()
+        onClicked: console.log(">>"+model.stat+ "<<")//root.clicked()
         onPressAndHold:  root.pressAndHold()
     }
 
@@ -58,7 +58,7 @@ Item {
                 id: poster
                 text: model.poster
                 font.family: UI.FONT_FAMILY_BOLD
-                font.pixelSize: UI.FONT_LIGHT_SIZE
+                font.pixelSize: UI.FONT_DEFAULT_SIZE
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
             }
             Label {
@@ -69,6 +69,16 @@ Item {
                 font.pixelSize: 18
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
             }
+        }
+
+        Label {
+            id: userStat
+            text: model.stat
+            font.family: UI.FONT_FAMILY_LIGHT
+            font.pixelSize: 18
+            color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
+            anchors { left: parent.left; right: parent.right;
+                leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
         }
 
 
