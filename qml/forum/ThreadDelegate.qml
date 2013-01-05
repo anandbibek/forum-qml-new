@@ -1,6 +1,7 @@
 import QtQuick 1.0
 import com.nokia.meego 1.1
 import com.nokia.extras 1.1
+import "../components"
 import "../components/constants.js" as UI
 
 Item {
@@ -24,8 +25,8 @@ Item {
         anchors.rightMargin: -UI.MARGIN_XLARGE
         visible: mouseArea.pressed || (root.platformStyle.showUnread && model.unread)
         source: (root.platformStyle.showUnread && model.unread) ?
-                ("image://theme/" + forumStyle.colorThemeString + "meegotouch-unread-inbox-panel-background" + (mouseArea.pressed ? "-pressed" : "")) :
-                "image://theme/meegotouch-list-fullwidth-background-pressed-center"
+                ("image://theme/" + forumStyle.colorThemeString + "meegotouch-unread-inbox-panel"+(theme.inverted?"-inverted":"")+"-background" + (mouseArea.pressed ? "-pressed" : "")) :
+                "image://theme/meegotouch-list-fullwidth"+(theme.inverted?"-inverted":"")+"-background-pressed-center"
     }
 
     Column {
@@ -61,7 +62,7 @@ Item {
                 source: "image://theme/icon-s-email-attachment"
             }
 
-            CountBubble {
+            CustomBubble {
                 id: repliesBubble
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter

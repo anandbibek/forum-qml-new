@@ -21,6 +21,7 @@ PostList::PostList(ForumSession* session, QObject *parent) :
     roles[DateTimeRole] = "dateTime";
     roles[BodyRole] = "body";
     roles[ImgRole] = "img";
+    roles[StatRole] = "stat";
     roles[SectionRole] = "section";
     roles[ThanksRole] = "thanks";
     setRoleNames(roles);
@@ -99,6 +100,8 @@ QVariant PostList::data(const QModelIndex& index, int role) const
         return post->body();
     else if (role == ImgRole)
         return post->img();
+    else if (role == StatRole)
+        return post->stat();
     else if (role == SectionRole)
         return post->section();
     else if (role == ThanksRole)
@@ -319,7 +322,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
         // qDebug() << "BODY:" << html.simplified();
 
-        Post* post = new Post(url, poster, dateTime, html, img);
+        Post* post = new Post(url, poster, dateTime, html, img, "");
         post->setThanks(thanks.join(", "));
         post->setSection(section);
 
@@ -362,7 +365,6 @@ void PostList::onReceived(QWebElement document, int postId)
         QString dateTime = DateTimeHelper::parseDateTime(comment.findFirst(postDateTag).toPlainText());
 
         QString userStats = comment.findFirst("div.userstats").toPlainText();
-        Q_UNUSED(userStats);
 
         // Find the post body
         QWebElement body = comment.findFirst(bodyTag);
@@ -423,7 +425,7 @@ void PostList::onReceived(QWebElement document, int postId)
         QString section;
         section.sprintf("Page %d of %d", page, numPages);
 
-        Post* post = new Post(url, poster, dateTime, html, img);
+        Post* post = new Post(url, poster, dateTime, html, img, userStats);
         post->setThanks(thanks.join(", "));
         post->setSection(section);
         post->setSubject(threadTitle); // talk.maemo.org doesn't show individual post subjects

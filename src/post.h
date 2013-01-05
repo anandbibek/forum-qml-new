@@ -9,6 +9,7 @@ class Post : public QObject
     Q_OBJECT
     Q_PROPERTY(QString body READ body WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(QString img READ img)
+    Q_PROPERTY(QString stat READ stat)
     Q_PROPERTY(QString dateTime READ dateTime)
     Q_PROPERTY(QString poster READ poster)
     Q_PROPERTY(int postId READ postId WRITE setPostId NOTIFY postIdChanged)
@@ -18,10 +19,11 @@ class Post : public QObject
     Q_PROPERTY(QString url READ url)
 public:
     explicit Post(QObject* parent = 0);
-    explicit Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, QObject* parent = 0);
+    explicit Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, const QString stat, QObject* parent = 0);
 
     QString body() const;
     QString img() const;
+    QString stat() const;
     QString dateTime() const;
     QString poster() const;
     int postId() const;
@@ -54,6 +56,7 @@ public slots:
 private:
     QString m_body;
     QString m_img;
+    QString m_stat;
     QString m_dateTime;
     QString m_poster;
     int m_postId;

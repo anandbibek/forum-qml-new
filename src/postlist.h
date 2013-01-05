@@ -24,6 +24,7 @@ public:
         DateTimeRole,
         BodyRole,
         ImgRole,
+        StatRole,
         SectionRole,
         ThanksRole
     };

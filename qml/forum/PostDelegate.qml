@@ -2,6 +2,7 @@ import QtQuick 1.0
 import com.nokia.meego 1.1
 import QtWebKit 1.0
 import "../components/constants.js" as UI
+import "../components"
 
 Item {
     id: root
@@ -37,7 +38,7 @@ Item {
     MouseArea {
         id: mouseArea;
         anchors.fill: parent
-        onClicked: console.log(">>"+model.body+ "<<")//root.clicked()
+        onClicked: console.log(">>"+model.stat+ "<<")//root.clicked()
         onPressAndHold:  root.pressAndHold()
     }
 
@@ -52,13 +53,13 @@ Item {
         Item {
             anchors { left: parent.left; right: parent.right;
                 leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
-            height: poster.height
+            height: poster.height + userStat.height + UI.MARGIN_XLARGE
 
             Label {
                 id: poster
                 text: model.poster
                 font.family: UI.FONT_FAMILY_BOLD
-                font.pixelSize: UI.FONT_LIGHT_SIZE
+                font.pixelSize: UI.FONT_DEFAULT_SIZE
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
             }
             Label {
@@ -68,6 +69,22 @@ Item {
                 font.family: UI.FONT_FAMILY_LIGHT
                 font.pixelSize: 18
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
+            }
+
+            Label {
+                id: userStat
+                text: model.stat
+                font.family: UI.FONT_FAMILY_LIGHT
+                font.pixelSize: 18
+                color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
+                anchors { left: parent.left; right: parent.right; top: poster.bottom
+                    topMargin: UI.MARGIN_XLARGE/2 }
+            }
+            Image {
+                source: "image://theme/meegotouch-groupheader"+(theme.inverted?"-inverted":"")+"-background"
+                anchors { left: parent.left; right: parent.right; top: userStat.bottom
+                    leftMargin: -UI.MARGIN_XLARGE; rightMargin: -UI.MARGIN_XLARGE
+                    topMargin: UI.MARGIN_XLARGE/2}
             }
         }
 

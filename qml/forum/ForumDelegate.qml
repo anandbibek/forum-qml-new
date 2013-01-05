@@ -26,7 +26,7 @@ Item {
         anchors.leftMargin: -UI.MARGIN_XLARGE
         anchors.rightMargin: -UI.MARGIN_XLARGE
         visible: mouseArea.pressed
-        source: "image://theme/meegotouch-list-fullwidth-background-pressed-center"
+        source: "image://theme/meegotouch-list-fullwidth"+(theme.inverted?"-inverted":"")+"-background-pressed-center"
     }
 
     Column {

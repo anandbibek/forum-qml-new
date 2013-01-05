@@ -15,7 +15,7 @@ Page {
 
         anchors.fill: parent
         cacheBuffer: contentHeight
-        pressDelay: 300
+        pressDelay: 100
 
         section.delegate: SectionHeader { }
         section.property: "section"
