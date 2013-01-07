@@ -29,6 +29,7 @@ class ForumSession : public QObject
     Q_PROPERTY(QString provider READ provider WRITE setProvider NOTIFY providerChanged)
     Q_PROPERTY(QString sessionId READ sessionId NOTIFY sessionIdChanged)
     Q_PROPERTY(QString url READ url WRITE setUrl NOTIFY urlChanged)
+    Q_PROPERTY(QString notif READ notif WRITE setNotif)
     Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
 public:
     enum LoginStatus {
@@ -47,6 +48,7 @@ public:
     QString provider(void) const;
     QString sessionId(void) const;
     QString url(void) const;
+    QString notif(void) const;
     QString userName(void) const;
 
     void setLoginUrl(const QString loginUrl);
@@ -69,6 +71,7 @@ public:
     Q_INVOKABLE void thank(QObject* post);
     Q_INVOKABLE void unsubscribe(QObject* thread);
     Q_INVOKABLE void unThank(QObject* post);
+    Q_INVOKABLE void setNotif(const QString notif);
     Q_INVOKABLE void markRead(QObject* forum);
 
 private:
@@ -131,6 +134,7 @@ private:
     QString m_provider;
     QString m_sessionId;
     QString m_url;
+    QString m_notif;  //email notification setting
     QString m_userName;
 
     QUrl rep_url;

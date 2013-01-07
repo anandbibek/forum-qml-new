@@ -156,7 +156,7 @@ void ForumSession::webElementFunc(bool status)
     const QWebElement document = m_webPage.mainFrame()->documentElement();
 
     if (rep_url == (m_loginUrl.startsWith("http") ? QUrl(m_loginUrl)
-                : QUrl(m_url + "/" + m_loginUrl))) {
+                    : QUrl(m_url + "/" + m_loginUrl))) {
         // This is a reply to the login POST request
 
         // For talk.maemo.org: The first <form name="postvarform"> element
@@ -266,6 +266,7 @@ void ForumSession::webElementFunc(bool status)
     if (!form.isNull()) {
         if (!m_userName.isEmpty())
             qDebug() << "Found login form --> logged out";
+        qDebug() << "DUMPPP" << document.toPlainText();
         userName = "";
         if (m_securityToken != "guest") {
             qDebug() << "SETTING SECURITY TOKEN TO \"guest\"";
@@ -359,7 +360,7 @@ void ForumSession::webElementFunc(bool status)
                 data.addQueryItem("threadid", threadId);
                 data.addQueryItem("url", "index.php");
                 // QString emailUpdate = document.findFirst("select[name=emailupdate] > option[selected=selected]").attribute("value");
-                data.addQueryItem("emailupdate", "0"); // No email notification
+                data.addQueryItem("emailupdate", m_notif); // Implemented custom email notification!! Yaaay!!
                 QString folderId = document.findFirst("select[name=folderid] > option[selected=selected]").attribute("value");
                 data.addQueryItem("folderid", folderId); // Subscriptions
                 data.addQueryItem("submit", "Add Subscription");
@@ -567,6 +568,11 @@ QString ForumSession::url(void) const
     return m_url;
 }
 
+QString ForumSession::notif(void) const
+{
+    return m_notif;
+}
+
 QString ForumSession::userName(void) const
 {
     return m_userName;
@@ -662,6 +668,11 @@ void ForumSession::setUserName(const QString userName)
         m_userName = userName;
         emit userNameChanged();
     }
+}
+
+void ForumSession::setNotif(QString notif)
+{
+    m_notif = notif;
 }
 
 QObject* ForumSession::createNewPost(void)
@@ -906,6 +917,8 @@ void ForumSession::unsubscribe(QObject* thread)
 
     get(url);
 }
+
+
 
 void ForumSession::unThank(QObject* post)
 {

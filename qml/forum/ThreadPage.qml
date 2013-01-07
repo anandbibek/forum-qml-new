@@ -153,7 +153,8 @@ Page {
             MenuItem {
                 text: thread.subscribed ? "Unsubscribe" : "Subscribe"
                 visible: forumSession.sessionId
-                onClicked: thread.subscribed ? forumSession.unsubscribe(thread) : forumSession.subscribe(thread)
+                onClicked: thread.subscribed ? forumSession.unsubscribe(thread) : Qt.createComponent("EmailNotification.qml").createObject(root, {"thread": thread}).open()
+                //forumSession.subscribe(thread)
             }
 
             MenuItem {
@@ -161,6 +162,11 @@ Page {
                 visible: thread.model.firstPage > 1
                 onClicked: thread.model.load(1)
             }
+
+            MenuItem{
+                text: "Jump to page : "
+            }
+
             MenuItem {
                 text: "Last page"
                 visible: thread.model.lastPage < thread.model.numPages

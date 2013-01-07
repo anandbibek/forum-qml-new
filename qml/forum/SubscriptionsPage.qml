@@ -24,6 +24,17 @@ Page {
             }
         }
 
+        ToolIcon{
+            platformIconId: "toolbar-refresh"
+            onClicked: {
+                if (forumSession.sessionId) {
+                    threadListView.threads = forumSession.subscribedThreads()
+                } else {
+                    forumSession.sessionIdChanged.connect(function() { threadListView.threads = forumSession.subscribedThreads() })
+                }
+            }
+        }
+
         ToolIcon {
             platformIconId: "toolbar-directory"
             onClicked: folderDialog.open()
