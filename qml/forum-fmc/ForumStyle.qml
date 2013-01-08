@@ -6,7 +6,7 @@ Style {
     property color viewHeaderTextColor: "#333333"
     property color viewHeaderBackgroundColor: "#ffffff"
 
-    property color forumTitleTextColor: "#333333"
+    property color forumTitleTextColor: "#cc09ba" //"#333333"
     property color highlightTextColor: "#cc09ba"
     property color selectionColor: "#cc09ba"
 

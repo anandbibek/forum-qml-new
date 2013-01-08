@@ -164,7 +164,9 @@ Page {
             }
 
             MenuItem{
-                text: "Jump to page : "
+                visible: thread.model.count > 1
+                text: "Jump to page"
+                onClicked: Qt.createComponent("PageJump.qml").createObject(root, {"thread": thread})
             }
 
             MenuItem {

@@ -30,6 +30,7 @@ ForumSession::ForumSession(QObject *parent) :
     // Disable JavaScript and loading of external objects
     m_webPage.settings()->setAttribute(QWebSettings::AutoLoadImages, false);
     m_webPage.settings()->setAttribute(QWebSettings::JavascriptEnabled, false);
+    m_webPage.settings()->setAttribute(QWebSettings::PrintElementBackgrounds, false);
     m_webPage.settings()->setAttribute(QWebSettings::LocalContentCanAccessRemoteUrls, false);
     m_webPage.settings()->setAttribute(QWebSettings::LocalContentCanAccessFileUrls, false);
 
@@ -266,8 +267,8 @@ void ForumSession::webElementFunc(bool status)
     if (!form.isNull()) {
         if (!m_userName.isEmpty())
             qDebug() << "Found login form --> logged out";
-        qDebug() << "DUMPPP" << document.toPlainText();
-        userName = "";
+        if (path != "/subscription.php")
+            userName = "";
         if (m_securityToken != "guest") {
             qDebug() << "SETTING SECURITY TOKEN TO \"guest\"";
             m_securityToken = "guest";
@@ -342,6 +343,7 @@ void ForumSession::webElementFunc(bool status)
             qDebug() << "Unknown search result";
         }
         disconnect(this, SIGNAL(receivedSearchResultThreadList(QWebElement, int)));
+
     } else if (path == "/subscription.php") {
         const QString mode = rep_url.queryItemValue("do");
         if (mode == "addsubscription") {

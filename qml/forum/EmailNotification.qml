@@ -16,7 +16,7 @@ SelectionDialog {
         ListElement { name: "Daily updates by email" }
         ListElement { name: "Weekly updates by email" }
     }
-    onSelectedIndexChanged: {
+    onAccepted: {
         if(model){
         forumSession.setNotif(selectedIndex);
         forumSession.subscribe(thread)
