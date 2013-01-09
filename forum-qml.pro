@@ -55,8 +55,8 @@ qtcAddDeployment()
 
 unix {
     !isEmpty(MEEGO_VERSION_MAJOR) {
-        desktopfile.files += forum-tmo_harmattan.desktop forum-fmc_harmattan.desktop
-        icon.files += forum-tmo80.png forum-fmc80.png
+        desktopfile.files += forum-tmo_harmattan.desktop
+        icon.files += forum-tmo80.png
     }
 }
 
