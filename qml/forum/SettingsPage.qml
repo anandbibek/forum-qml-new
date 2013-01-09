@@ -19,11 +19,11 @@ Page {
     Flickable {
         id: flick
         anchors { left: parent.left; right: parent.right; top: header.bottom; bottom: parent.bottom }
-        contentHeight: column.height + UI.DEFAULT_MARGIN
+        contentHeight: column.height + 2*UI.DEFAULT_MARGIN
 
         Column {
             id: column
-            y: UI.DEFAULT_MARGIN
+            y: 2*UI.DEFAULT_MARGIN
             anchors { left: parent.left; right: parent.right }
             spacing: UI.DEFAULT_MARGIN
 
@@ -33,6 +33,14 @@ Page {
                 onClicked: {
                     theme.inverted = checked
                     themeSetting.value = checked
+                }
+            }
+            CheckBox{
+                text: "Show profile avatars"
+                checked: dispAvatar
+                onClicked: {
+                    dispAvatar = checked
+                    avatarSetting.value = checked
                 }
             }
         }

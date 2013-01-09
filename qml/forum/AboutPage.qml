@@ -35,7 +35,7 @@ Page {
                 horizontalAlignment: Text.Center
                 text: "Copyright (c) 2011 Philipp Zabel<br />" +
                       "&lt;<a href='mailto:Philipp Zabel <philipp.zabel@gmail.com>' style='color:" + UI.COLOR_SECONDARY_FOREGROUND + "'>philipp.zabel@gmail.com</a>&gt;"
-                + "<br />Copyright (c) 2013 Anand Bibek<br />" +
+                + "<br /><br />Copyright (c) 2013 Anand Bibek<br />" +
                       "&lt;<a href='mailto:Anand Bibek <ananda.bibek@gmail.com>' style='color:" + UI.COLOR_SECONDARY_FOREGROUND + "'>ananda.bibek@gmail.com</a>&gt;"
                 onLinkActivated: Qt.openUrlExternally(link)
             }

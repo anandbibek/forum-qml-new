@@ -24,6 +24,8 @@ public:
         DateTimeRole,
         BodyRole,
         ImgRole,
+        AvatarRole,
+        StatusRole,
         StatRole,
         SectionRole,
         ThanksRole

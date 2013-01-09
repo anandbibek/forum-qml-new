@@ -23,14 +23,14 @@ Item {
 
     height: column.height + 4 * UI.MARGIN_XLARGE
     width: parent.width
-    scale: mouseArea.pressed? 0.98 : 1.00
+    //scale: mouseArea.pressed? 0.98 : 1.00
 
 
     BorderImage {
         id: background
         anchors { fill: parent; topMargin: UI.MARGIN_XLARGE / 2; bottomMargin: UI.MARGIN_XLARGE / 2 }
 
-        source: "image://theme/meegotouch-list"+(theme.inverted?"-inverted":"")+"-background"
+        source: "theme/meegotouch-list"+(theme.inverted?"-inverted":"")+"-background.png"
         border { left: 21; right: 21; top: 21; bottom: 21 }
     }
 
@@ -38,7 +38,7 @@ Item {
     MouseArea {
         id: mouseArea;
         anchors.fill: parent
-        onClicked: console.log(">>"+model.stat+ "<<")//root.clicked()
+        onClicked: root.clicked()
         onPressAndHold:  root.pressAndHold()
     }
 
@@ -53,12 +53,28 @@ Item {
         Item {
             anchors { left: parent.left; right: parent.right;
                 leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
-            height: poster.height + userStat.height + UI.MARGIN_XLARGE
+            height: Math.max( avatar.height,(poster.height + userStat.height)) + UI.MARGIN_XLARGE
+
+            Image {
+                id: avatar
+                source: dispAvatar ? (model.avatar) : ""
+                anchors.verticalCenter: parent.verticalCenter
+            }
+
+            Image{
+                id : statusRect
+                source: model.status? "image://theme/icon-s-common-presence-online" : "image://theme/icon-s-common-presence-offline"
+                anchors.left: avatar.right
+                anchors.leftMargin: avatar.width ? UI.MARGIN_XLARGE : 0
+                anchors.verticalCenter: poster.verticalCenter
+            }
 
             Label {
                 id: poster
                 text: model.poster
                 font.family: UI.FONT_FAMILY_BOLD
+                anchors.left: statusRect.right
+                anchors.leftMargin: UI.MARGIN_XLARGE/2
                 font.pixelSize: UI.FONT_DEFAULT_SIZE
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
             }
@@ -77,8 +93,8 @@ Item {
                 font.family: UI.FONT_FAMILY_LIGHT
                 font.pixelSize: 18
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
-                anchors { left: parent.left; right: parent.right; top: poster.bottom
-                    topMargin: UI.MARGIN_XLARGE/2 }
+                anchors { left: avatar.right; right: parent.right; top: poster.bottom
+                    topMargin: UI.MARGIN_XLARGE/2; leftMargin: avatar.width ? UI.MARGIN_XLARGE : 0 }
             }
             Image {
                 source: "image://theme/meegotouch-groupheader"+(theme.inverted?"-inverted":"")+"-background"

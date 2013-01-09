@@ -6,6 +6,7 @@ PageStackWindow {
     id: appWindow
 
     property Style forumStyle
+    property bool dispAvatar
 
     onOrientationChangeFinished: {
         showStatusBar = screen.currentOrientation == Screen.Portrait ||
@@ -16,6 +17,7 @@ PageStackWindow {
 
     Component.onCompleted: {
         theme.inverted = themeSetting.value
+        dispAvatar = avatarSetting.value
         loadForumStyle()
         if (!forumSession.provider)
             Qt.createComponent("ForumSelectionDialog.qml").createObject(initialPage, {"selectedIndex": 0}).open()
@@ -45,6 +47,12 @@ PageStackWindow {
        id: themeSetting
        key: "/apps/forum-qml/settings/themeSetting"
        defaultValue: false
+    }
+
+    GConfItem {
+       id: avatarSetting
+       key: "/apps/forum-qml/settings/avatarSetting"
+       defaultValue: true
     }
 
     function loadForumStyle() {

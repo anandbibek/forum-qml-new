@@ -21,6 +21,8 @@ PostList::PostList(ForumSession* session, QObject *parent) :
     roles[DateTimeRole] = "dateTime";
     roles[BodyRole] = "body";
     roles[ImgRole] = "img";
+    roles[AvatarRole] = "avatar";
+    roles[StatusRole] = "status";
     roles[StatRole] = "stat";
     roles[SectionRole] = "section";
     roles[ThanksRole] = "thanks";
@@ -100,6 +102,10 @@ QVariant PostList::data(const QModelIndex& index, int role) const
         return post->body();
     else if (role == ImgRole)
         return post->img();
+    else if (role == StatusRole)
+        return post->status();
+    else if (role == AvatarRole)
+        return post->avatar();
     else if (role == StatRole)
         return post->stat();
     else if (role == SectionRole)
@@ -322,7 +328,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
         // qDebug() << "BODY:" << html.simplified();
 
-        Post* post = new Post(url, poster, dateTime, html, img, "");
+        Post* post = new Post(url, poster, dateTime, html, img, "", "", 0);
         post->setThanks(thanks.join(", "));
         post->setSection(section);
 
@@ -359,7 +365,17 @@ void PostList::onReceived(QWebElement document, int postId)
 
     foreach (QWebElement comment, document.findAll(commentTags)) {
         QString url = "showpost.php?p=" + comment.attribute("id").replace("edit", "").replace("post", "");
-        // qDebug() << "AVATAR:" << comment.findFirst("div.useravatar > a > img.photo").attribute("alt");
+
+        //AVATAR
+        QString avatar = comment.findFirst("div.useravatar > a > img.photo").attribute("src");
+        if(avatar.isNull())
+            avatar = "";
+        else
+            avatar = "http://talk.maemo.org/" + avatar;
+
+        //Online-offline
+        int status = (comment.findFirst("div.username > img.inlineimg").attribute("alt")).indexOf("online")==-1 ? 0 : 1;
+        //qDebug() << "AVATAR:" << avatar << status;
 
         QString poster = comment.findFirst(posterTag).toPlainText();
         QString dateTime = DateTimeHelper::parseDateTime(comment.findFirst(postDateTag).toPlainText());
@@ -425,7 +441,7 @@ void PostList::onReceived(QWebElement document, int postId)
         QString section;
         section.sprintf("Page %d of %d", page, numPages);
 
-        Post* post = new Post(url, poster, dateTime, html, img, userStats);
+        Post* post = new Post(url, poster, dateTime, html, img, userStats, avatar, status);
         post->setThanks(thanks.join(", "));
         post->setSection(section);
         post->setSubject(threadTitle); // talk.maemo.org doesn't show individual post subjects

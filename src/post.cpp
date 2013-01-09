@@ -9,13 +9,15 @@ Post::Post(QObject* parent) :
 {
 }
 
-Post::Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, const QString stat, QObject *parent) :
+Post::Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, const QString stat, const QString avatar, const int status, QObject *parent) :
     QObject(parent),
     m_body(body),
     m_img(img),
     m_stat(stat),
     m_dateTime(dateTime),
     m_poster(poster),
+    m_avatar(avatar),
+    m_status(status),
     m_postId(-1),
     m_url(url)
 {
@@ -29,6 +31,16 @@ QString Post::body() const
 QString Post::img() const
 {
     return m_img;
+}
+
+QString Post::avatar() const
+{
+    return m_avatar;
+}
+
+int Post::status() const
+{
+    return m_status;
 }
 
 QString Post::stat() const

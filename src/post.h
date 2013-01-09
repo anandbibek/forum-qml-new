@@ -9,6 +9,8 @@ class Post : public QObject
     Q_OBJECT
     Q_PROPERTY(QString body READ body WRITE setBody NOTIFY bodyChanged)
     Q_PROPERTY(QString img READ img)
+    Q_PROPERTY(QString avatar READ avatar)
+    Q_PROPERTY(int status READ status)
     Q_PROPERTY(QString stat READ stat)
     Q_PROPERTY(QString dateTime READ dateTime)
     Q_PROPERTY(QString poster READ poster)
@@ -19,14 +21,16 @@ class Post : public QObject
     Q_PROPERTY(QString url READ url)
 public:
     explicit Post(QObject* parent = 0);
-    explicit Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, const QString stat, QObject* parent = 0);
+    explicit Post(const QString url, const QString poster, const QString dateTime, const QString body, const QString img, const QString stat, const QString avatar, const int status, QObject* parent = 0);
 
     QString body() const;
     QString img() const;
     QString stat() const;
+    QString avatar() const;
     QString dateTime() const;
     QString poster() const;
     int postId() const;
+    int status() const;
     QString section() const;
     QString subject() const;
     QString thanks() const;
@@ -59,6 +63,8 @@ private:
     QString m_stat;
     QString m_dateTime;
     QString m_poster;
+    QString m_avatar;
+    int m_status;
     int m_postId;
     QString m_section;
     QString m_subject;
