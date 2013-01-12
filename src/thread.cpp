@@ -8,7 +8,7 @@ Thread::Thread(const QString url, const QString title, int replies, const QStrin
     m_attachments(0),
     m_dateTime(dateTime),
     m_model(0),
-    m_openMode(FirstPost),
+    m_openMode(FirstUnreadPost),
     m_poster(poster),
     m_ratingValue(0.0),
     m_replies(replies),
@@ -29,7 +29,7 @@ Thread::Thread(const Thread& other, QObject *parent) :
     m_forum(other.m_forum),
     m_lastPostUrl(other.m_lastPostUrl),
     m_model(other.m_model),
-    m_openMode(FirstPost),
+    m_openMode(FirstUnreadPost),
     m_poster(other.m_poster),
     m_ratingValue(other.m_ratingValue),
     m_replies(other.m_replies),
@@ -157,7 +157,8 @@ void Thread::setLastPostUrl(const QString lastPostUrl)
 
 void Thread::setOpenMode(OpenMode openMode)
 {
-    if (m_openMode != openMode) {
+    if (m_openMode != openMode)
+    {
         m_openMode = openMode;
         if (m_model) {
             if (m_openMode == FirstPost)

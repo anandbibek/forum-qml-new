@@ -36,7 +36,7 @@ Menu {
     function openThread(thread, openMode) {
         if (openMode)
             thread.openMode = openMode
-
+        thread.setOpenMode(openMode)
         pageStack.push(Qt.createComponent("ThreadPage.qml"), {"thread": thread});
     }
 }

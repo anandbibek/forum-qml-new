@@ -54,7 +54,7 @@ public:
     void setAttachments(int attachments);
     void setForum(const QString forum);
     void setLastPostUrl(const QString lastPostUrl);
-    void setOpenMode(OpenMode openMode);
+    Q_INVOKABLE void setOpenMode(OpenMode openMode);
     void setRatingValue(float ratingValue);
     void setSubscribed(bool subscribed);
     void setThreadId(int threadId);
