@@ -5,13 +5,14 @@ import "UIConstants.js" as UI
 
 Sheet {
     id: root
-    rejectButtonText: "Cancel"
- // acceptButtonText: "Post" // This one is blue
+    // rejectButtonText: "Cancel"
+    // acceptButtonText: "Post" // This one is blue
 
     property QtObject forum: null
     property QtObject thread: null
     property QtObject post: null
     property QtObject newPost: null
+    property bool editPost: false
 
     Connections {
         target: newPost
@@ -33,9 +34,14 @@ Sheet {
             else
                 forumLabel.text = "New reply to <span style='color:" + forumStyle.highlightTextColor + "'>" + post.poster + "</span>"
             topicField.text = "Re: " + post.subject
-            var body ="[quote=" + post.poster + (post.postId ? (";" + post.postId + "]") : "]") + post.toBbCode() + "[/quote]"
+            var body
+            if(editPost)
+                body = post.toBbCode()
+            else
+                body ="[quote=" + post.poster + (post.postId ? (";" + post.postId + "]") : "]") + post.toBbCode() + "[/quote]"
             bodyArea.text = body
             newPost = forumSession.createNewPost()
+            newPost.setEditPost(editPost)
             newPost.postId = post.postId
             if (thread)
                 newPost.threadId = thread.model.threadId
@@ -53,37 +59,59 @@ Sheet {
     }
 
     buttons: [
-        BusyIndicator {
-            anchors.centerIn: parent
-            running: visible
-            visible: forumSession.busy
-        },
-        SheetButton {
-            id: acceptButton
-            objectName: "acceptButton"
-            anchors.right: parent.right
-            anchors.rightMargin: root.platformStyle.acceptButtonRightMargin
-            anchors.verticalCenter: parent.verticalCenter
+        MouseArea{
+            //anchors.fill: parent
+            height: parent.height
+            width: parent.width
+            drag.target: root
+            drag.axis: Drag.XAxis
+            drag.maximumX: root.width-48
+            onClicked: root.z++
 
-            // Work around missing color theme support in QML
-            platformStyle: SheetButtonAccentStyle {
-                background: "image://theme/" + forumStyle.colorThemeString + "meegotouch-sheet-button-accent"+__invertedString+"-background"
-                pressedBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-sheet-button-accent"+__invertedString+"-background-pressed"
-                disabledBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-sheet-button-accent"+__invertedString+"-background-disabled"
+            SheetButton {
+                id: rejectButton
+                objectName: "rejectButton"
+                anchors.left: parent.left
+                anchors.leftMargin: root.platformStyle.rejectButtonLeftMargin
+                anchors.verticalCenter: parent.verticalCenter
+                text: "Cancel"
+                onClicked: reject()
             }
+            BusyIndicator {
+                anchors.centerIn: parent
+                running: visible
+                visible: forumSession.busy
+            }
+            SheetButton {
+                id: acceptButton
+                objectName: "acceptButton"
+                anchors.right: parent.right
+                anchors.rightMargin: root.platformStyle.acceptButtonRightMargin
+                anchors.verticalCenter: parent.verticalCenter
 
-            text: (actionPanel.selectedIndex == 1) ? "Post" : "Preview"
+                // Work around missing color theme support in QML
+                platformStyle: SheetButtonAccentStyle {
+                    background: "image://theme/" + forumStyle.colorThemeString + "meegotouch-sheet-button-accent"+__invertedString+"-background"
+                    pressedBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-sheet-button-accent"+__invertedString+"-background-pressed"
+                    disabledBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-sheet-button-accent"+__invertedString+"-background-disabled"
+                }
 
-            enabled: newPost != null && !forumSession.busy
+                text: (actionPanel.selectedIndex == 1) ? "Post" : "Preview"
 
-            onClicked: {
-                newPost.subject = topicField.text
-                newPost.body = bodyArea.text
-                if (actionPanel.selectedIndex == 1) {
-                    newPost.submit();
-                    accept();
-                } else {
-                    newPost.requestPreview();
+                enabled: newPost != null && !forumSession.busy
+
+                onClicked: {
+                    newPost.subject = topicField.text
+                    newPost.body = bodyArea.text
+                    if (actionPanel.selectedIndex == 1) {
+                        if(editPost)
+                            newPost.edit();
+                        else
+                            newPost.submit();
+                        accept();
+                    } else {
+                        newPost.requestPreview();
+                    }
                 }
             }
         }
@@ -127,12 +155,22 @@ Sheet {
 
                 ComboPanel {
                     id: actionPanel
-                    title: "Action:"
+                    title: "Action:  "
                     visible: divider.expanded
                     selectedIndex: 1
                     model: ListModel {
                         ListElement { name: "Preview" }
                         ListElement { name: "Post" }
+                    }
+                }
+                Label {
+                    id: toolbarLabel
+                    text: "Tools:  <B>Open</B>"
+                    anchors { left: parent.left; right: parent.right;}
+                    visible: divider.expanded
+                    MouseArea{
+                        anchors.fill: parent
+                        onClicked: loader.sourceComponent = toolbar
                     }
                 }
 
@@ -151,7 +189,7 @@ Sheet {
                 TextArea {
                     id: bodyArea
                     anchors { left: parent.left; right: parent.right;
-                              leftMargin: -UI.DEFAULT_MARGIN ; rightMargin: -UI.DEFAULT_MARGIN }
+                        leftMargin: -UI.DEFAULT_MARGIN ; rightMargin: -UI.DEFAULT_MARGIN }
 
                     platformStyle: TextFieldStyle {
                         selectionColor: forumStyle.selectionColor
@@ -188,6 +226,55 @@ Sheet {
         acceptButtonText: "Ok"
     }
 
+    Loader{
+        id: loader
+        x:24
+        y:48
+    }
+
+    Component{
+        id : toolbar
+
+        ButtonRow{
+            id : row
+            exclusive: false
+            Button{
+                iconSource: "image://theme/icon-m-toolbar-stop"+(theme.inverted?"-white":"")+""
+
+                MouseArea{
+                    anchors.fill: parent
+                    drag.target: row
+                    onClicked: loader.sourceComponent = undefined
+                    drag.filterChildren: true
+                }
+            }
+            Button{
+                text: "B"
+                onClicked: bodyArea.text +="[B][/B]"
+            }
+            Button{
+                text: "I"
+                onClicked: bodyArea.text +="[I][/I]"
+            }
+            Button{
+                text: "U"
+                onClicked: bodyArea.text +="[U][/U]"
+            }
+            Button{
+                text: "IMG"
+                onClicked: bodyArea.text +="[IMG][/IMG]"
+            }
+            Button{
+                text: "\" \""
+                onClicked: bodyArea.text +="[QUOTE][/QUOTE]"
+            }
+            Button{
+                text: "< >"
+                onClicked: bodyArea.text +="[CODE][/CODE]"
+            }
+        }
+    }
+
     Transition {
         id: columnTransition
         NumberAnimation {
@@ -199,7 +286,7 @@ Sheet {
 
     onStatusChanged: {
         if (status == DialogStatus.Open) {
-            topicField.forceActiveFocus();
+            bodyArea.forceActiveFocus();
             column.move = columnTransition
         }
     }

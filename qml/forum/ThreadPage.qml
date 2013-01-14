@@ -131,7 +131,7 @@ Page {
         ToolIcon {
             platformIconId: "toolbar-add"
             visible: forumSession.sessionId
-            onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root, {"thread": thread}).open()
+            onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root, {"thread": thread, "editPost": false}).open()
         }
 
         BusyToolIcon {
@@ -178,7 +178,7 @@ Page {
                 text: "Open webpage"
                 onClicked: {
                     console.log(thread.model.url)
-                    Qt.openUrlExternally(thread.model.url)
+                    Qt.openUrlExternally(forumSession.url + "/" + thread.model.url)
                 }
             }
         }

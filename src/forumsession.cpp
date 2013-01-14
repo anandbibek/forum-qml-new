@@ -323,7 +323,7 @@ void ForumSession::webElementFunc(bool status)
             postId = rep_url.queryItemValue("p").toInt();
         // Parse the post list
         emit receivedPostList(document, postId);
-    } else if (path == "/newthread.php" || path == "/newreply.php") {
+    } else if (path == "/newthread.php" || path == "/newreply.php" || path == "/editpost.php") {
         QWebElement div = document.findFirst("table.tborder div.panel > div > blockquote > p");
         if (!div.isNull()) {
             qDebug() << "Error message:" << div.toPlainText();

@@ -3,7 +3,7 @@ import QtQuick 1.1
 Image {
     id: root
     anchors { left: parent.left; right: parent.right }
-    height: 28
+    height: 48
 
     property bool expanded
     property alias pressed: mouseArea.pressed

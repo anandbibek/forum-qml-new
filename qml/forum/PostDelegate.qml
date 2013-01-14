@@ -23,6 +23,7 @@ Item {
 
     height: column.height + 4 * UI.MARGIN_XLARGE
     width: parent.width
+    smooth: true
     //scale: mouseArea.pressed? 0.98 : 1.00
 
 
@@ -110,7 +111,7 @@ Item {
             anchors { left: parent.left; right: parent.right;
                 leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
-            text: model.body
+            text: "<style>a {color:#"+(theme.inverted?"a0a0ff":"4040ff")+"}</style>"+model.body
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: UI.FONT_LIGHT_SIZE
             onLinkActivated: {

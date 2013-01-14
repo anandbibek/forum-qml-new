@@ -7,6 +7,7 @@ NewPost::NewPost(ForumSession* session, QObject* parent) :
     m_loggedInUser(0),
     m_postStartTime(0),
     m_forumId(-1),
+    m_editPost(false),
     m_threadId(-1)
 {
     QObject::connect(this, SIGNAL(postIdChanged(void)),
@@ -16,6 +17,11 @@ NewPost::NewPost(ForumSession* session, QObject* parent) :
 int NewPost::forumId() const
 {
     return m_forumId;
+}
+
+bool NewPost::editPost() const
+{
+    return m_editPost;
 }
 
 QString NewPost::preview() const
@@ -31,6 +37,12 @@ QString NewPost::securityToken() const
 int NewPost::threadId() const
 {
     return m_threadId;
+}
+
+void NewPost::setEditPost(bool editPost)
+{
+    m_editPost = editPost;
+    qDebug() << "setting edit to " << m_editPost;
 }
 
 void NewPost::setForumId(int forumId)
@@ -76,9 +88,21 @@ void NewPost::setThreadId(int threadId)
 
 void NewPost::onPostIdChanged(void)
 {
+    QString path;
+    if(m_editPost)
+        path = "editpost.php";
+    else
+        path = "newreply.php";
+
     // Generate a securityToken
-    QUrl url("newreply.php");
-    url.addQueryItem("do", "newreply");
+    QUrl url(path);
+
+    if(m_editPost) {
+        url.addQueryItem("do", "editpost");
+    }
+    else {
+        url.addQueryItem("do", "newreply");
+    }
     url.addQueryItem("p", QString("%1").arg(postId()));
 
     QObject::connect(m_session, SIGNAL(receivedNewPost(QWebElement)),
@@ -97,10 +121,19 @@ void NewPost::onReceived(QWebElement document)
         QWebElement form = document.findFirst("form[name=vbform]");
         qDebug() << form.attribute("action");
         //
-        QRegExp actionExpression("newreply.php\\?do=postreply&t=(\\d+)");
-        if (actionExpression.exactMatch(form.attribute("action"))) {
-            m_threadId = actionExpression.cap(1).toInt();
-            qDebug() << "setting thread id to" << m_threadId;
+        if(m_editPost){
+            QRegExp editExpression("editpost.php\\?do=updatepost&p=(\\d+)");
+            if (editExpression.exactMatch(form.attribute("action"))) {
+                m_threadId = editExpression.cap(1).toInt();
+                qDebug() << "setting thread id to" << m_threadId;
+            }
+        }
+        else {
+            QRegExp actionExpression("newreply.php\\?do=postreply&t=(\\d+)");
+            if (actionExpression.exactMatch(form.attribute("action"))) {
+                m_threadId = actionExpression.cap(1).toInt();
+                qDebug() << "setting thread id to" << m_threadId;
+            }
         }
 
         m_securityToken = document.findFirst("input[name=securitytoken]").attribute("value");
@@ -122,8 +155,8 @@ void NewPost::onReceived(QWebElement document)
         m_loggedInUser = document.findFirst("input[name=loggedinuser]").attribute("value").toInt();
     } else {
         QWebElement preview = document.findFirst("script + table.tborder tr > td.tcat");
-     // if (preview.isNull())
-     //     preview = document.findFirst("table.tborder > tbody > tr > td.tcat");
+        // if (preview.isNull())
+        //     preview = document.findFirst("table.tborder > tbody > tr > td.tcat");
         if (!preview.isNull()) {
             if (preview.toPlainText() == "Preview") {
                 QWebElement body = preview.parent().nextSibling().firstChild();
@@ -259,6 +292,42 @@ void NewPost::submit()
         data.addQueryItem("sbutton", "Submit+Reply");
     else
         data.addQueryItem("sbutton", "Submit+New+Thread");
+    data.addQueryItem("parseurl", "1");
+    data.addQueryItem("emailupdate", m_emailUpdate);
+    data.addQueryItem("polloptions", "4");
+
+    QObject::connect(m_session, SIGNAL(receivedNewPost(QWebElement)),
+                     this, SLOT(onReceived(QWebElement)));
+    m_session->post(url, data.encodedQuery());
+}
+
+void NewPost::edit()
+{
+    QUrl url;
+    if (m_threadId > 0) {
+        url = QUrl("editpost.php");
+        url.addQueryItem("do", "updatepost");
+        url.addQueryItem("p", QString("%1").arg(m_threadId));
+    }  else {
+        return;
+    }
+
+    QUrl data;
+    data.addQueryItem("subject", subject());
+    data.addEncodedQueryItem("message", toHtml(body())); // TODO: bbCode()
+    data.addQueryItem("wysiwyg", "0");
+    data.addQueryItem("iconid", "0");
+    data.addQueryItem("s", "");
+    data.addQueryItem("securitytoken", m_securityToken);
+    if (m_threadId > 0) {
+        data.addQueryItem("p", QString("%1").arg(m_threadId));
+        data.addQueryItem("do", "updatepost");
+    }
+    data.addQueryItem("posthash", m_postHash);
+    data.addQueryItem("poststarttime", QString("%1").arg(m_postStartTime));
+    data.addQueryItem("loggedinuser", QString("%1").arg(m_loggedInUser));
+    if (m_threadId > 0)
+        data.addQueryItem("sbutton", "Save+Changes");
     data.addQueryItem("parseurl", "1");
     data.addQueryItem("emailupdate", m_emailUpdate);
     data.addQueryItem("polloptions", "4");

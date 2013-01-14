@@ -12,6 +12,7 @@ class NewPost : public Post
 {
     Q_OBJECT
     Q_PROPERTY(int forumId READ forumId WRITE setForumId NOTIFY forumIdChanged)
+    Q_PROPERTY(bool editPost READ editPost WRITE setEditPost )
     Q_PROPERTY(QString securityToken READ securityToken WRITE setSecurityToken)
     Q_PROPERTY(QString preview READ preview NOTIFY previewChanged)
     Q_PROPERTY(int threadId READ threadId WRITE setThreadId NOTIFY threadIdChanged)
@@ -22,6 +23,7 @@ public:
     QString securityToken() const;
     QString preview() const;
     int threadId() const;
+    bool editPost() const;
 
     void setForumId(int forumId);
     void setSecurityToken(const QString securityToken);
@@ -29,6 +31,8 @@ public:
 
     Q_INVOKABLE void requestPreview();
     Q_INVOKABLE void submit();
+    Q_INVOKABLE void edit();
+    Q_INVOKABLE void setEditPost(bool editPost);
 
 signals:
     void forumIdChanged(void);
@@ -49,6 +53,7 @@ private:
 
     QString m_emailUpdate;
     int m_forumId;
+    bool m_editPost;
     QString m_preview;
     QString m_securityToken;
     int m_threadId;
