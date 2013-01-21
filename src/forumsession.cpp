@@ -745,6 +745,9 @@ void ForumSession::login(void)
     if (m_url == "http://talk.maemo.org" || m_url == "http://forum.xda-developers.com") {
         QString passwordMd5 = QString(QCryptographicHash::hash(m_password.toUtf8(), QCryptographicHash::Md5).toHex());
 
+        //TODO: Verify space in username bug fix
+        m_userName = m_userName.replace(" ","+");
+
         data.addQueryItem("vb_login_username", m_userName);
         data.addQueryItem("vb_login_password", "");
         data.addQueryItem("s", "");

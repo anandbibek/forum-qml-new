@@ -11,6 +11,9 @@ Item {
     signal pressAndHold
     property alias pressed: mouseArea.pressed
 
+    property bool copyEnabled : false
+    property string modelBody : ""
+
     property string imgModel : model.img
 
     property int titleSize: UI.LIST_TILE_SIZE
@@ -48,7 +51,7 @@ Item {
 
         anchors { top: parent.top; left: parent.left; right: parent.right;
             topMargin: 1.5 * UI.MARGIN_XLARGE }
-        height: childrenRect.height
+        //height: childrenRect.height
         spacing: UI.MARGIN_XLARGE
 
         Item {
@@ -64,6 +67,7 @@ Item {
 
             Image{
                 id : statusRect
+                asynchronous: true
                 source: model.status? "image://theme/icon-s-common-presence-online" : "image://theme/icon-s-common-presence-offline"
                 anchors.left: avatar.right
                 anchors.leftMargin: avatar.width ? UI.MARGIN_XLARGE : 0
@@ -98,6 +102,7 @@ Item {
                     topMargin: UI.MARGIN_XLARGE/2; leftMargin: avatar.width ? UI.MARGIN_XLARGE : 0 }
             }
             Image {
+                asynchronous: true
                 source: "image://theme/meegotouch-groupheader"+(theme.inverted?"-inverted":"")+"-background"
                 anchors { left: parent.left; right: parent.right; top: userStat.bottom
                     leftMargin: -UI.MARGIN_XLARGE; rightMargin: -UI.MARGIN_XLARGE
@@ -105,19 +110,36 @@ Item {
             }
         }
 
+        Item {
+            anchors { left: parent.left; right: parent.right}
+            height: copyEnabled ? copyLoader.height : body.paintedHeight
+
+        Loader {
+            id: copyLoader
+            anchors { left: parent.left; right: parent.right }
+            height: body.height //if(!sourceComponent) 0
+            sourceComponent: copyEnabled ? copyTool : undefined
+            onLoaded: item.selectAll()
+        }
+
 
         Label {
             id: body
+            visible: !copyEnabled
             anchors { left: parent.left; right: parent.right;
                 leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
-            text: "<style>a {color:#"+(theme.inverted?"a0a0ff":"4040ff")+"}</style>"+model.body
+            text: "<style>a {color:#"
+                  + (theme.inverted?"a0a0ff":"4040ff")
+                  + "}</style>"
+                  + model.body
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: UI.FONT_LIGHT_SIZE
             onLinkActivated: {
                 console.log("Clicked on link:" + link)
                 Qt.openUrlExternally(link);
             }
+        }
         }
 
         Repeater {
@@ -141,7 +163,7 @@ Item {
                 BusyIndicator{
                     anchors.centerIn: parent
                     visible: running
-                    running: img.status != Image.Ready
+                    running: img.status == Image.Loading
                     implicitHeight : 32
                 }
 
@@ -160,24 +182,24 @@ Item {
 
 
         //Too much memory intensive, although improves smooth scrooling
-        //        WebView {
-        //            id: body
-        //            anchors { left: parent.left; right: parent.right;
-        //                      leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
+        /*WebView {
+            id: body
+            anchors { left: parent.left; right: parent.right;
+                leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
-        //            html: " <html><head>"
-        //                  + "</head><body bgcolor=\"#f4f5f5\"><font color=\"#000000\">"
-        //                  + model.body
-        //                  + "</body></html>"
-        //            clip: true
-        //            settings.minimumFontSize : 16
-        //            settings.defaultFontSize: 22
-        //            settings.standardFontFamily: UI.FONT_FAMILY_LIGHT
-        //            preferredWidth: width
-        //            preferredHeight: 5
-        //            settings.javascriptEnabled: false
-        //            settings.pluginsEnabled: false
-        //        }
+            html: " <html><head>"
+                  + "</head><body bgcolor=\"#f4f5f5\"><font color=\"#000000\">"
+                  + model.body
+                  + "</body></html>"
+            clip: true
+            settings.minimumFontSize : 16
+            settings.defaultFontSize: 22
+            settings.standardFontFamily: UI.FONT_FAMILY_LIGHT
+            preferredWidth: width
+            preferredHeight: 5
+            settings.javascriptEnabled: false
+            settings.pluginsEnabled: false
+        }*/
 
 
 
@@ -193,6 +215,24 @@ Item {
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: 18
             color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
+        }
+    }
+
+    Component {
+        id : copyTool
+
+        TextArea{
+            text: model.body
+            anchors.fill: parent
+            font.family: UI.FONT_FAMILY_LIGHT
+            font.pixelSize: UI.FONT_LIGHT_SIZE
+            readOnly: true
+            style: TextAreaStyle{
+                background: ""
+                backgroundSelected: ""
+                textColor: theme.inverted ? "white" : "black"
+                backgroundDisabled: ""
+            }
         }
     }
 }

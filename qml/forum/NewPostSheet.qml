@@ -14,6 +14,8 @@ Sheet {
     property QtObject newPost: null
     property bool editPost: false
 
+    opacity: Math.max((1-(Math.abs(x)+Math.abs(y))/(1200)),0.4)
+
     Connections {
         target: newPost
         onPreviewChanged: {
@@ -58,14 +60,41 @@ Sheet {
         }
     }
 
-    buttons: [
+    Rectangle{
+        height: 70
+        color: "#ea650a"
+        width: 70
+        radius: 5
+        x : root.x>=0 ? -70 : root.width
+        //anchors.right: parent.left
+        anchors.top: parent.top
+        Image{
+            asynchronous: true
+            anchors.centerIn: parent
+            source: "image://theme/icon-m-image-edit-resize"
+        }
         MouseArea{
             //anchors.fill: parent
-            height: parent.height
-            width: parent.width
+            anchors.fill: parent
             drag.target: root
-            drag.axis: Drag.XAxis
+            drag.axis: Drag.XandYAxis
+            drag.maximumX: root.width
+            drag.minimumX: -root.width
+            drag.maximumY: root.height-70
+            drag.minimumY: 0
+            onClicked: root.z++
+        }
+    }
+
+    buttons: [
+        MouseArea{
+            anchors.fill: parent
+            drag.target: root
+            drag.axis: Drag.XandYAxis
             drag.maximumX: root.width-48
+            drag.minimumX: 48-root.width
+            drag.maximumY: root.height-70
+            drag.minimumY: 0
             onClicked: root.z++
 
             SheetButton {
@@ -82,6 +111,12 @@ Sheet {
                 running: visible
                 visible: forumSession.busy
             }
+            Image{
+                asynchronous: true
+                anchors.centerIn: parent
+                visible: !forumSession.busy
+                source: "image://theme/icon-m-image-edit-resize"
+            }
             SheetButton {
                 id: acceptButton
                 objectName: "acceptButton"
@@ -96,7 +131,7 @@ Sheet {
                     disabledBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-sheet-button-accent"+__invertedString+"-background-disabled"
                 }
 
-                text: (actionPanel.selectedIndex == 1) ? "Post" : "Preview"
+                text: (actionPanel.selectedIndex == 1) ? (editPost? "Save" : "Post") : "Preview"
 
                 enabled: newPost != null && !forumSession.busy
 
@@ -105,12 +140,15 @@ Sheet {
                     newPost.body = bodyArea.text
                     if (actionPanel.selectedIndex == 1) {
                         if(editPost)
-                            newPost.edit();
+                            newPost.edit(false);
                         else
                             newPost.submit();
                         accept();
                     } else {
-                        newPost.requestPreview();
+                        if(editPost)
+                            newPost.edit(true)
+                        else
+                            newPost.requestPreview();
                     }
                 }
             }
@@ -155,7 +193,7 @@ Sheet {
 
                 ComboPanel {
                     id: actionPanel
-                    title: "Action:  "
+                    title: "Action: "
                     visible: divider.expanded
                     selectedIndex: 1
                     model: ListModel {
@@ -165,12 +203,21 @@ Sheet {
                 }
                 Label {
                     id: toolbarLabel
-                    text: "Tools:  <B>Open</B>"
+                    height: 56
+                    text: "Tools: "
+                    verticalAlignment: Text.AlignVCenter
                     anchors { left: parent.left; right: parent.right;}
                     visible: divider.expanded
+                    Label {
+                        text: "\tOpen"
+                        anchors.verticalCenter: parent.verticalCenter
+                        font.weight: Font.Bold
+                    }
                     MouseArea{
                         anchors.fill: parent
-                        onClicked: loader.sourceComponent = toolbar
+                        onClicked: {
+                            loader.sourceComponent = toolbar
+                        }
                     }
                 }
 
@@ -229,7 +276,8 @@ Sheet {
     Loader{
         id: loader
         x:24
-        y:48
+        y:toolbarLabel.y
+        width: 0
     }
 
     Component{
@@ -238,6 +286,10 @@ Sheet {
         ButtonRow{
             id : row
             exclusive: false
+            opacity: 0
+            Component.onCompleted: opacity = 1
+            Behavior on opacity {NumberAnimation{}}
+
             Button{
                 iconSource: "image://theme/icon-m-toolbar-stop"+(theme.inverted?"-white":"")+""
 

@@ -471,15 +471,15 @@ static QString smileyToBbCode(QString src)
 
 bool Post::thankedBy(const QString userName) const
 {
-    return m_thanks == userName ||
-            m_thanks.startsWith(userName + ",") ||
-            m_thanks.contains(" " + userName + ",") ||
-            m_thanks.endsWith(" " + userName);
+    return m_thanks.toLower() == userName.toLower() ||
+            m_thanks.startsWith(userName + ",", Qt::CaseInsensitive) ||
+            m_thanks.contains(" " + userName + ",", Qt::CaseInsensitive) ||
+            m_thanks.endsWith(" " + userName, Qt::CaseInsensitive);
 }
 
 QString Post::toBbCode() const
 {
-    qDebug() << "M_BODY" << m_body.simplified();
+    //qDebug() << "M_BODY" << m_body.simplified();
 
     // Do we really have to create a whole QWebPage instance just because
     // QWebElement::setOuterXml doesn't work for empty elements?

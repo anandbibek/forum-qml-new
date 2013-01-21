@@ -6,7 +6,6 @@ import "../forum/UIConstants.js" as UI
 Page {
     id: aboutPage
     anchors.margins: UI.DEFAULT_MARGIN
-    orientationLock: PageOrientation.LockPortrait
 
     ViewHeader {
         id: header

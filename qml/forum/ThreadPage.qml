@@ -9,24 +9,30 @@ Page {
     anchors.margins: UI.DEFAULT_MARGIN
 
     property QtObject thread
+    property int copyIndex : -1
+    property string bbCode : ""
 
     ListView {
         id: postList
 
         anchors.fill: parent
-        cacheBuffer: contentHeight
-        pressDelay: 100
+        cacheBuffer: 5*height //contentHeight
+        //pressDelay: 100
 
         section.delegate: SectionHeader { }
         section.property: "section"
 
         delegate: PostDelegate {
+            copyEnabled: (copyIndex === index)
+            modelBody: bbCode
             onClicked: {
-                console.debug(thread.model.get(index).toBbCode())
+                copyIndex = -1
+                bbCode = ""
+                //console.debug(thread.model.get(index).toBbCode())
             }
             onPressAndHold: {
                 if (forumSession.sessionId)
-                    Qt.createComponent("PostMenu.qml").createObject(root, {"post": thread.model.get(index), "parentPage": root}).open()
+                    Qt.createComponent("PostMenu.qml").createObject(root, {"post": thread.model.get(index), "parentPage": root, "menuIndex": index}).open()
             }
         }
 
@@ -178,7 +184,10 @@ Page {
                 text: "Open webpage"
                 onClicked: {
                     console.log(thread.model.url)
-                    Qt.openUrlExternally(forumSession.url + "/" + thread.model.url)
+                    if((thread.model.url).indexOf("http")>=0)
+                        Qt.openUrlExternally(thread.model.url)
+                    else
+                        Qt.openUrlExternally(forumSession.url + "/" + thread.model.url)
                 }
             }
         }

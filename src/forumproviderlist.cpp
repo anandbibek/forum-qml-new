@@ -43,6 +43,9 @@ ForumProviderList::ForumProviderList(QObject *parent) :
         if (provider->name() == "tmo" || provider->name() == "fmc" || provider->name() == "nokia" || provider->name() == "xda")
             providers.append(new Provider(provider->name(), provider->displayName(), provider->iconName()));
     }
+    //Providers not fully supported
+    //providers.append(new Provider("nokia", "Nokia Developer Discussions", "icon-m-service-nokia-developer"));
+    //providers.append(new Provider("xda", "xda-developers Forum", "icon-m-service-xda-developer"));
 #endif
 }
 

@@ -6,15 +6,23 @@ Menu {
 
     property QtObject post
     property Item parentPage
+    property int menuIndex
 
     MenuLayout {
+        MenuItem {
+            text: "Copy text"
+            onClicked: {
+                parentPage.copyIndex = index
+                parentPage.bbCode = post.toBbCode();
+            }
+        }
         MenuItem {
             text: "Quote and reply"
             onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root.parentPage, {"post": post, "editPost": false}).open()
         }
         MenuItem {
             text: "Edit"
-            visible: forumSession.userName == post.poster
+            visible: (forumSession.userName).toLowerCase == (post.poster).toLowerCase
             onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root.parentPage, {"post": post, "editPost": true}).open()
         }
         MenuItem {

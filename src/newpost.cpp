@@ -301,7 +301,7 @@ void NewPost::submit()
     m_session->post(url, data.encodedQuery());
 }
 
-void NewPost::edit()
+void NewPost::edit(const bool preview)
 {
     QUrl url;
     if (m_threadId > 0) {
@@ -326,8 +326,12 @@ void NewPost::edit()
     data.addQueryItem("posthash", m_postHash);
     data.addQueryItem("poststarttime", QString("%1").arg(m_postStartTime));
     data.addQueryItem("loggedinuser", QString("%1").arg(m_loggedInUser));
-    if (m_threadId > 0)
-        data.addQueryItem("sbutton", "Save+Changes");
+    if (m_threadId > 0) {
+        if(preview)
+            data.addQueryItem("preview", "Preview+Changes");
+        else
+            data.addQueryItem("sbutton", "Save+Changes");
+    }
     data.addQueryItem("parseurl", "1");
     data.addQueryItem("emailupdate", m_emailUpdate);
     data.addQueryItem("polloptions", "4");

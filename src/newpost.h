@@ -31,7 +31,7 @@ public:
 
     Q_INVOKABLE void requestPreview();
     Q_INVOKABLE void submit();
-    Q_INVOKABLE void edit();
+    Q_INVOKABLE void edit(const bool preview);
     Q_INVOKABLE void setEditPost(bool editPost);
 
 signals:
