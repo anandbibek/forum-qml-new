@@ -42,7 +42,10 @@ Item {
     MouseArea {
         id: mouseArea;
         anchors.fill: parent
-        onClicked: root.clicked()
+        onClicked: {
+            console.log(model.body)
+            root.clicked()
+        }
         onPressAndHold:  root.pressAndHold()
     }
 

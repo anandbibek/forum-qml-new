@@ -28,6 +28,10 @@ QString NewPost::preview() const
 {
     return m_preview;
 }
+QString NewPost::editText() const
+{
+    return m_editText;
+}
 
 QString NewPost::securityToken() const
 {
@@ -127,6 +131,9 @@ void NewPost::onReceived(QWebElement document)
                 m_threadId = editExpression.cap(1).toInt();
                 qDebug() << "setting thread id to" << m_threadId;
             }
+            m_editText = document.findFirst("textarea[name=message]").toInnerXml();
+            emit editTextChanged();
+
         }
         else {
             QRegExp actionExpression("newreply.php\\?do=postreply&t=(\\d+)");

@@ -10,18 +10,23 @@ DateTimeHelper::DateTimeHelper()
 
 QString DateTimeHelper::parseDateTime(const QString dateTime)
 {
-    static QRegExp dateTimeExpression("\\s*(Today|Yesterday|\\d{2}-\\d{2}-\\d{2,4}|\\d+[tsnr][htd] [A-Z][a-z]+ \\d{4}) ?, (\\d{2}:\\d{2}(.[AP]M|))");
-    if (dateTimeExpression.exactMatch(dateTime)) {
-        QString date = DateTimeHelper::parseDate(dateTimeExpression.cap(1));
-        QString time = DateTimeHelper::parseTime(dateTimeExpression.cap(2));
-        if (date == "Today")
-            return time;
-        else
-            return date + " | " + time;
-    }
-
-    qDebug() << "Failed to parse date / time string:" << dateTime;
+    //avoiding the processing to keep things simple and preserve formats to user selected style
     return dateTime;
+
+//    static QRegExp dateTimeExpression("\\s*(Today|Yesterday|\\d{2}-\\d{2}-\\d{2,4}|\\d+[tsnr][htd] [A-Z][a-z]+ \\d{4}) ?, (\\d{2}:\\d{2}(.[AP]M|))");
+//    if (dateTimeExpression.exactMatch(dateTime)) {
+//        //no way to differentiate US and EU expressions
+//        //QString date = DateTimeHelper::parseDate(dateTimeExpression.cap(1));
+//        QString date = dateTimeExpression.cap(1);
+//        QString time = DateTimeHelper::parseTime(dateTimeExpression.cap(2));
+//        if (date == "Today")
+//            return time;
+//        else
+//            return date + " | " + time;
+//    }
+
+//    qDebug() << "Failed to parse date / time string:" << dateTime;
+//    return dateTime;
 }
 
 QString DateTimeHelper::parseDate(const QString date)
@@ -72,7 +77,7 @@ QString DateTimeHelper::parseDate(const QString date)
             int year = 2000 + euDateExpression.cap(3).toInt();
             return QDate(year, month, day).toString("dd.MM.yy");
         }
-        static QRegExp usDateExpression("(\\d\\d)-(\\d\\d)-(\\d{4})");
+        static QRegExp usDateExpression("(\\d\\d)-(\\d\\d)-(\\d{4})"); //only works if extended date is selected
         if (usDateExpression.exactMatch(date)) {
             int month = usDateExpression.cap(1).toInt();
             int day = usDateExpression.cap(2).toInt();

@@ -487,7 +487,9 @@ QString Post::toBbCode() const
     page.mainFrame()->setHtml(m_body);
     const QWebElement body = page.mainFrame()->documentElement().findFirst("body");
 
+    //if(!edit)
     body.findFirst("div.quote").takeFromDocument();
+
     //Clean attachments
     body.findFirst("div > fieldset.fieldset").parent().takeFromDocument();
 

@@ -13,16 +13,28 @@ Sheet {
     property QtObject post: null
     property QtObject newPost: null
     property bool editPost: false
+    property bool setFromWebPage : true
 
-    opacity: Math.max((1-(Math.abs(x)+Math.abs(y))/(1200)),0.4)
+    opacity: Math.max((1-(Math.abs(x)+Math.abs(y))/(1200)),0.5)
 
     Connections {
         target: newPost
         onPreviewChanged: {
-            model.body = "<html>" + newPost.preview + "</html>"
+            var temp = newPost.preview.split("##splitMarker##")
+            model.body = "<html>" + temp[0] + "</html>"
+
+            if(temp.length>1)
+                model.img = temp[1]
+
             previewDelegate.opacity = 1
             divider.expanded = true
         }
+        onEditTextChanged : {
+            if(editPost && setFromWebPage)
+                bodyArea.text = newPost.editText
+            setFromWebPage = false
+        }
+
         onErrorMessage: {
             errorDialog.message = message
             errorDialog.open()
@@ -137,6 +149,8 @@ Sheet {
 
                 onClicked: {
                     newPost.subject = topicField.text
+                    if(bodyArea.text.length<10)
+                        bodyArea.text += "\n-via Meamo Talk app"
                     newPost.body = bodyArea.text
                     if (actionPanel.selectedIndex == 1) {
                         if(editPost)
@@ -186,6 +200,7 @@ Sheet {
                         property string poster: "Preview"
                         property string dateTime: "Today"
                         property string body: ""
+                        property string img
                     }
 
                     onClicked: destroy()
@@ -250,10 +265,28 @@ Sheet {
                     textFormat: Text.PlainText
 
                     Rectangle {
-                        anchors { top: parent.top; left: parent.left; right: parent.right }
+                        anchors { top: parent.top; left: parent.left; right: parent.right; topMargin: -1 }
                         height: Math.max(parent.height, parent.height + flickable.height - column.height + 16)
                         color: "white"
                         z: -1
+                    }
+
+                    MouseArea{
+                        anchors.fill: parent
+                        visible: (forumSession.busy && editPost && setFromWebPage)
+                        Rectangle{
+                            color: "black"
+                            anchors.fill: parent
+                            anchors.topMargin: -48
+                            opacity: 0.75
+                        }
+                        BusyIndicator{
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 100
+                            running: true
+                            implicitWidth: 96
+                        }
                     }
                 }
             }
@@ -338,7 +371,8 @@ Sheet {
 
     onStatusChanged: {
         if (status == DialogStatus.Open) {
-            bodyArea.forceActiveFocus();
+            if(!editPost)
+                bodyArea.forceActiveFocus();
             column.move = columnTransition
         }
     }

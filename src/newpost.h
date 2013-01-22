@@ -15,6 +15,7 @@ class NewPost : public Post
     Q_PROPERTY(bool editPost READ editPost WRITE setEditPost )
     Q_PROPERTY(QString securityToken READ securityToken WRITE setSecurityToken)
     Q_PROPERTY(QString preview READ preview NOTIFY previewChanged)
+    Q_PROPERTY(QString editText READ editText NOTIFY editTextChanged)
     Q_PROPERTY(int threadId READ threadId WRITE setThreadId NOTIFY threadIdChanged)
 public:
     explicit NewPost(ForumSession* session, QObject* parent = 0);
@@ -22,6 +23,7 @@ public:
     int forumId() const;
     QString securityToken() const;
     QString preview() const;
+    QString editText() const;
     int threadId() const;
     bool editPost() const;
 
@@ -37,6 +39,7 @@ public:
 signals:
     void forumIdChanged(void);
     void previewChanged(void);
+    void editTextChanged(void);
     void threadIdChanged(void);
 
     void errorMessage(QString message);
@@ -55,6 +58,7 @@ private:
     int m_forumId;
     bool m_editPost;
     QString m_preview;
+    QString m_editText;
     QString m_securityToken;
     int m_threadId;
 };
