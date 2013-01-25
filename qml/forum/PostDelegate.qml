@@ -43,7 +43,6 @@ Item {
         id: mouseArea;
         anchors.fill: parent
         onClicked: {
-            console.log(model.body)
             root.clicked()
         }
         onPressAndHold:  root.pressAndHold()
@@ -132,10 +131,10 @@ Item {
             anchors { left: parent.left; right: parent.right;
                 leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
-            text: "<style>a {color:#"
-                  + (theme.inverted?"a0a0ff":"4040ff")
-                  + "}</style>"
-                  + model.body
+            text: //"<style>a {color:#"
+                  //+ (theme.inverted?"a0a0ff":"4040ff")
+                  //+ "}</style>"+
+                  model.body
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: UI.FONT_LIGHT_SIZE
             onLinkActivated: {

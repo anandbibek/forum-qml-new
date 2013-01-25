@@ -12,7 +12,7 @@ Item {
 
     property Style platformStyle: ViewHeaderStyle {
         fontFamily: UI.FONT_FAMILY
-        fontPixelSize: UI.FONT_SLARGE
+        fontPixelSize: UI.FONT_LARGE
         textColor: "#000"
     }
 

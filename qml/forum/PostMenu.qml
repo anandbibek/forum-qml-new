@@ -22,7 +22,7 @@ Menu {
         }
         MenuItem {
             text: "Edit"
-            visible: (forumSession.userName).toLowerCase == (post.poster).toLowerCase
+            visible: (forumSession.userName).toLowerCase() == (post.poster).toLowerCase()
             onClicked: Qt.createComponent("NewPostSheet.qml").createObject(root.parentPage, {"post": post, "editPost": true}).open()
         }
         MenuItem {

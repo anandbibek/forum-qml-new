@@ -269,23 +269,24 @@ Sheet {
                         height: Math.max(parent.height, parent.height + flickable.height - column.height + 16)
                         color: "white"
                         z: -1
-                    }
 
-                    MouseArea{
-                        anchors.fill: parent
-                        visible: (forumSession.busy && editPost && setFromWebPage)
-                        Rectangle{
-                            color: "black"
+                        MouseArea{
                             anchors.fill: parent
-                            anchors.topMargin: -48
-                            opacity: 0.75
-                        }
-                        BusyIndicator{
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            anchors.top: parent.top
-                            anchors.topMargin: 100
-                            running: true
-                            implicitWidth: 96
+                            enabled: visible
+                            visible: (forumSession.busy && editPost && setFromWebPage)
+                            Rectangle{
+                                color: "black"
+                                anchors.fill: parent
+                                anchors.topMargin: -48
+                                opacity: 0.75
+                            }
+                            BusyIndicator{
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                anchors.top: parent.top
+                                anchors.topMargin: 100
+                                running: true
+                                implicitWidth: 96
+                            }
                         }
                     }
                 }

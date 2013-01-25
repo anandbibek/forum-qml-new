@@ -305,7 +305,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
         QStringList temp = (Post::cleanupBody(comment)).split("##splitMarker##", QString::SkipEmptyParts);
 
-        QString html = temp.at(0);
+        QString html = "<style>a {color:#cc09ba}</style>" + temp.at(0);
         QString img = "";
         if(temp.length()>1)
             img = temp.at(1);
@@ -417,7 +417,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
         QStringList temp = (Post::cleanupBody(body)).split("##splitMarker##", QString::SkipEmptyParts);
 
-        QString html = temp.at(0);
+        QString html = "<style>a {color:#ea650a}</style>" + temp.at(0);
         QString img = "";
         if(temp.length()>1)
             img = temp.at(1);

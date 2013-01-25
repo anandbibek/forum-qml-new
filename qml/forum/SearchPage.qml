@@ -44,10 +44,10 @@ Page {
                     onClicked: {
                         if (searchField.text) {
                             searchField.text = ""
-                            if (threads) {
-                                threads.destroy()
-                                threads = null
-                            }
+//                            if (threads) {
+//                                threads.destroy()
+//                                threads = null
+//                            }
                         }
                     }
                 }
