@@ -317,7 +317,7 @@ void ForumSession::webElementFunc(bool status)
             // Parse the thread list
             emit receivedThreadList(document);
         }
-    } else if (path == "/showthread.php") {
+    } else if (path == "/showthread.php" || path =="/announcement.php") {
         int postId = -1;
         if (rep_url.hasQueryItem("p"))
             postId = rep_url.queryItemValue("p").toInt();
