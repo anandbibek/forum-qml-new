@@ -7,6 +7,12 @@ Page {
     id: aboutPage
     anchors.margins: UI.DEFAULT_MARGIN
 
+    onStatusChanged: {
+        if(status == PageStatus.Deactivating)
+            if(fontSetting != slider.value)
+                fontSetting.value = slider.value
+    }
+
     ViewHeader {
         id: header
         z: 1
@@ -41,6 +47,17 @@ Page {
                     dispAvatar = checked
                     avatarSetting.value = checked
                 }
+            }
+            SectionHeader{
+                property string section : "Increase font size"
+            }
+            Slider{
+                id: slider
+                anchors { left: parent.left; right: parent.right }
+                maximumValue: 5
+                stepSize: 1
+                value: fontSetting.value
+                valueIndicatorVisible: true
             }
         }
     }

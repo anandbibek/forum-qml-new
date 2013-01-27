@@ -1,12 +1,14 @@
 import QtQuick 1.1
 import com.nokia.meego 1.1
+import com.nokia.extras 1.1
 import Forum 1.0
 
 PageStackWindow {
     id: appWindow
 
     property Style forumStyle
-    property bool dispAvatar
+    property bool dispAvatar : avatarSetting.value
+    property int fontSize : fontSetting.value
 
     onOrientationChangeFinished: {
         showStatusBar = screen.currentOrientation == Screen.Portrait ||
@@ -17,7 +19,6 @@ PageStackWindow {
 
     Component.onCompleted: {
         theme.inverted = themeSetting.value
-        dispAvatar = avatarSetting.value
         loadForumStyle()
         if (!forumSession.provider)
             Qt.createComponent("ForumSelectionDialog.qml").createObject(initialPage, {"selectedIndex": 0}).open()
@@ -42,6 +43,11 @@ PageStackWindow {
         icon: "image://theme/icon-l-error"
         acceptButtonText: "Ok"
     }
+    InfoBanner{
+        id : infoBanner
+        topMargin : 50
+        text: "Opening browser..."
+    }
 
     GConfItem {
        id: themeSetting
@@ -53,6 +59,12 @@ PageStackWindow {
        id: avatarSetting
        key: "/apps/forum-qml/settings/avatarSetting"
        defaultValue: true
+    }
+
+    GConfItem {
+       id: fontSetting
+       key: "/apps/forum-qml/settings/fontSetting"
+       defaultValue: 0
     }
 
     function loadForumStyle() {

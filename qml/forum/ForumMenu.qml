@@ -21,7 +21,10 @@ Menu {
 
         MenuItem {
             text: "Open webpage"
-            onClicked: Qt.openUrlExternally(forumSession.externalUrl(forum.url))
+            onClicked: {
+                infoBanner.show()
+                Qt.openUrlExternally(forumSession.externalUrl(forum.url))
+            }
         }
     }
 }

@@ -82,7 +82,7 @@ Item {
                 font.family: UI.FONT_FAMILY_BOLD
                 anchors.left: statusRect.right
                 anchors.leftMargin: UI.MARGIN_XLARGE/2
-                font.pixelSize: UI.FONT_DEFAULT_SIZE
+                font.pixelSize: UI.FONT_DEFAULT_SIZE + fontSize
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
             }
             Label {
@@ -90,7 +90,7 @@ Item {
                 text: model.dateTime
                 anchors.right: parent.right
                 font.family: UI.FONT_FAMILY_LIGHT
-                font.pixelSize: 18
+                font.pixelSize: 18 + fontSize/2
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
             }
 
@@ -98,7 +98,7 @@ Item {
                 id: userStat
                 text: model.stat
                 font.family: UI.FONT_FAMILY_LIGHT
-                font.pixelSize: 18
+                font.pixelSize: 18 + fontSize/2
                 color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
                 anchors { left: avatar.right; right: parent.right; top: poster.bottom
                     topMargin: UI.MARGIN_XLARGE/2; leftMargin: avatar.width ? UI.MARGIN_XLARGE : 0 }
@@ -136,9 +136,10 @@ Item {
                   //+ "}</style>"+
                   model.body
             font.family: UI.FONT_FAMILY_LIGHT
-            font.pixelSize: UI.FONT_LIGHT_SIZE
+            font.pixelSize: UI.FONT_LIGHT_SIZE + fontSize
             onLinkActivated: {
                 console.log("Clicked on link:" + link)
+                infoBanner.show()
                 Qt.openUrlExternally(link);
             }
         }
@@ -155,6 +156,7 @@ Item {
                 height: check? UI.LIST_ITEM_HEIGHT : childrenRect.height
                 onClicked: check = !check
                 onPressAndHold: {
+                    infoBanner.show()
                     Qt.openUrlExternally(modelData);
                 }
                 clip: true
@@ -215,7 +217,7 @@ Item {
             horizontalAlignment: Text.AlignRight
             text: "thanks: " + model.thanks
             font.family: UI.FONT_FAMILY_LIGHT
-            font.pixelSize: 18
+            font.pixelSize: 18 + fontSize/2
             color: theme.inverted ? UI.LIST_SUBTITLE_COLOR_INVERTED : UI.LIST_SUBTITLE_COLOR
         }
     }
@@ -227,7 +229,7 @@ Item {
             text: model.body
             anchors.fill: parent
             font.family: UI.FONT_FAMILY_LIGHT
-            font.pixelSize: UI.FONT_LIGHT_SIZE
+            font.pixelSize: UI.FONT_LIGHT_SIZE + fontSize
             readOnly: true
             style: TextAreaStyle{
                 background: ""

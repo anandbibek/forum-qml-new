@@ -184,6 +184,7 @@ Page {
                 text: "Open webpage"
                 onClicked: {
                     console.log(thread.model.url)
+                    infoBanner.show()
                     if((thread.model.url).indexOf("http")>=0)
                         Qt.openUrlExternally(thread.model.url)
                     else

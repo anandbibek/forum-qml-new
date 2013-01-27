@@ -29,5 +29,12 @@ Menu {
             text: post.thankedBy(forumSession.userName) ? "Remove your thanks" : "Thanks"
             onClicked: post.thankedBy(forumSession.userName) ? forumSession.unThank(post) : forumSession.thank(post)
         }
+        MenuItem {
+            text: "Open webpage"
+            onClicked: {
+                Qt.openUrlExternally(forumSession.url + "/" + post.url)
+                infoBanner.show()
+            }
+        }
     }
 }
