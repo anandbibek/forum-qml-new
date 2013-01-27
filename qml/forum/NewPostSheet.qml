@@ -275,7 +275,7 @@ Sheet {
                             enabled: visible
                             visible: (forumSession.busy && editPost && setFromWebPage)
                             Rectangle{
-                                color: "black"
+                                color: theme.inverted? "black" : "white"
                                 anchors.fill: parent
                                 anchors.topMargin: -48
                                 opacity: 0.75
@@ -336,27 +336,27 @@ Sheet {
             }
             Button{
                 text: "B"
-                onClicked: bodyArea.text +="[B][/B]"
+                onClicked: insertText("[B]","[/B]")
             }
             Button{
                 text: "I"
-                onClicked: bodyArea.text +="[I][/I]"
+                onClicked: insertText("[I]","[/I]")
             }
             Button{
                 text: "U"
-                onClicked: bodyArea.text +="[U][/U]"
+                onClicked: insertText("[U]","[/U]")
             }
             Button{
                 text: "IMG"
-                onClicked: bodyArea.text +="[IMG][/IMG]"
+                onClicked: insertText("[IMG]","[/IMG]")
             }
             Button{
                 text: "\" \""
-                onClicked: bodyArea.text +="[QUOTE][/QUOTE]"
+                onClicked: insertText("[QUOTE]","[/QUOTE]")
             }
             Button{
                 text: "< >"
-                onClicked: bodyArea.text +="[CODE][/CODE]"
+                onClicked: insertText("[CODE]","[/CODE]")
             }
         }
     }
@@ -376,5 +376,27 @@ Sheet {
                 bodyArea.forceActiveFocus();
             column.move = columnTransition
         }
+    }
+
+    function insertText(string1,string2) {
+        var start = bodyArea.selectionStart
+        var end = bodyArea.selectionEnd
+
+        if(start==end){
+            if(start==0)
+                bodyArea.text = string1 + string2 + bodyArea.text
+            else if(start==bodyArea.text.length)
+                bodyArea.text = bodyArea.text + string1 + string2
+            else
+                bodyArea.text = bodyArea.text.substring(0, start) + string1 + string2 + bodyArea.text.substring(end, bodyArea.text.length)
+        }
+        else{
+            //FIXME : does not work as losing focus on button press cancels selection
+            //Works if the buttons are situated above textArea's focus area
+            var selected = bodyArea.selectedText
+            bodyArea.text = bodyArea.text.substring(0, start) + string1 + selected + string2 + bodyArea.text.substring(end, bodyArea.text.length)
+        }
+        bodyArea.cursorPosition = end + string1.length
+        bodyArea.forceActiveFocus()
     }
 }
