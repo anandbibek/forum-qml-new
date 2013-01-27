@@ -16,7 +16,7 @@ Page {
         id: postList
 
         anchors.fill: parent
-        cacheBuffer: 5*height //contentHeight
+        cacheBuffer: 10*height
         //pressDelay: 100
 
         section.delegate: SectionHeader { }
@@ -117,8 +117,10 @@ Page {
         }
     }
 
-    ScrollDecorator {
-        flickableItem: postList
+    FastScroll {
+        listView: postList
+        platformStyle : FastScrollStyle{railImage: "image://theme/meegotouch-fast-scroll-rail"}
+        visible: !!thread
     }
 
     BusyIndicator {

@@ -20,6 +20,11 @@ Menu {
         }
 
         MenuItem {
+            text: "Settings"
+            onClicked: pageStack.push(Qt.createComponent("SettingsPage.qml"))
+        }
+
+        MenuItem {
             text: "Open webpage"
             onClicked: {
                 infoBanner.show()
