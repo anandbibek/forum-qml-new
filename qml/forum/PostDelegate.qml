@@ -1,6 +1,5 @@
 import QtQuick 1.0
 import com.nokia.meego 1.1
-import QtWebKit 1.0
 import "../components/constants.js" as UI
 import "../components"
 

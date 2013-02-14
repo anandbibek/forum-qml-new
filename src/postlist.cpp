@@ -305,7 +305,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
         QStringList temp = (Post::cleanupBody(comment)).split("##splitMarker##", QString::SkipEmptyParts);
 
-        QString html = "<style>a {color:#cc09ba}</style>" + temp.at(0);
+        QString html = "<div style>a {color:#cc09ba}</style>" + temp.at(0) + "</div>";
         QString img = "";
         if(temp.length()>1)
             img = temp.at(1);

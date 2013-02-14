@@ -16,6 +16,7 @@ Page {
         id: postList
 
         anchors.fill: parent
+        //does cacheBuffer have any relation to crashes?
         cacheBuffer: 10*height
         //pressDelay: 100
 

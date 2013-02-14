@@ -284,6 +284,7 @@ void NewPost::submit()
     data.addQueryItem("wysiwyg", "0");
     data.addQueryItem("iconid", "0");
     data.addQueryItem("s", "");
+    data.addQueryItem("signature", "1");
     data.addQueryItem("securitytoken", m_securityToken);
     if (m_threadId > 0) {
         data.addQueryItem("t", QString("%1").arg(m_threadId));

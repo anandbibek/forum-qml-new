@@ -150,7 +150,7 @@ Sheet {
                 onClicked: {
                     newPost.subject = topicField.text
                     if(bodyArea.text.length<10)
-                        bodyArea.text += "\n-via Meamo Talk app"
+                        bodyArea.text += "\n\n-via Maemo Talk app"
                     newPost.body = bodyArea.text
                     if (actionPanel.selectedIndex == 1) {
                         if(editPost)
