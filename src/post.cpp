@@ -265,8 +265,10 @@ QString Post::cleanupBody(QWebElement& body)
         foreach (QString attribute, div.attributeNames()) {
             div.removeAttribute(attribute);
         }
-        div.setAttribute("style", "margin-left:16px");
-        pre.setAttribute("style", "font-size:13px;font-family:monospace");
+        div.setAttribute("style", "margin-left:16px;");
+        //override pre tags as it messes up text wrapping
+        pre.replace("<div style=\"font-size:14px;font-family:monospace;\">"+ pre.toPlainText() +"</div><br>");
+        //pre.setAttribute("style", "font-size:10px;font-family:monospace;");
     }
 
     // TODO: Parse "ul.midcom_toolbar" for reply link and thanks
@@ -328,12 +330,10 @@ static QString innerXmlToBbCode(QWebElement element)
                     tag.replace("[" + align + "]" + innerXmlToBbCode(tag) + "[/" + align + "]");
             }
             // talk.maemo.org
-            else if (tag.firstChild().tagName() == "DIV" && innerXmlToBbCode(tag.firstChild()) == "Code:") {
+            else if (tag.firstChild().tagName() == "DIV" && tag.firstChild().toPlainText() == "Code:") {
                 // TODO: Handle [php] / "PHP Code:" and [html] / "HTML Code:", remove all <span style=color> tags
                 const QWebElement pre = tag.firstChild().nextSibling();
-                if (pre == tag.lastChild()) {
-                    tag.replace("[code]\n" + innerXmlToBbCode(pre) + "\n[/code]");
-                }
+                tag.replace("[code]\n" + innerXmlToBbCode(pre) + "\n[/code]");
             }
             // talk.maemo.org
             else if (tag.hasClass("quote")) {
@@ -438,6 +438,7 @@ static QString innerXmlToBbCode(QWebElement element)
     }
 
     return element.toInnerXml();
+    //return element.toPlainText();
 }
 
 static QString smileyToBbCode(QString src)

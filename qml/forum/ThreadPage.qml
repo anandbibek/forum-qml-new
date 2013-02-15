@@ -118,11 +118,11 @@ Page {
         }
     }
 
-    FastScroll {
-        listView: postList
-        platformStyle : FastScrollStyle{railImage: "image://theme/meegotouch-fast-scroll-rail"}
-        visible: !!thread
-    }
+//    FastScroll {
+//        listView: postList
+//        platformStyle : FastScrollStyle{railImage: "image://theme/meegotouch-fast-scroll-rail"}
+//        visible: !!thread
+//    }
 
     BusyIndicator {
         anchors.centerIn: postList
