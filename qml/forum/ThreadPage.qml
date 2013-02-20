@@ -11,14 +11,18 @@ Page {
     property QtObject thread
     property int copyIndex : -1
     property string bbCode : ""
+    property bool appendFlag : true
+
+    ListModel{
+        id: listModel
+    }
 
     ListView {
         id: postList
 
         anchors.fill: parent
         //does cacheBuffer have any relation to crashes?
-        cacheBuffer: 10*height
-        //pressDelay: 100
+        cacheBuffer: 20000 //contentHeight
 
         section.delegate: SectionHeader { }
         section.property: "section"
@@ -29,7 +33,6 @@ Page {
             onClicked: {
                 copyIndex = -1
                 bbCode = ""
-                //console.debug(thread.model.get(index).toBbCode())
             }
             onPressAndHold: {
                 if (forumSession.sessionId)
@@ -37,7 +40,7 @@ Page {
             }
         }
 
-        model: thread.model
+        model: listModel //thread.model
 
         header: Item {
             width: postList.width
@@ -60,7 +63,10 @@ Page {
                 enabled: !forumSession.busy
                 visible: thread.model.count > 0 && thread.model.firstPage > 1
                 text: "Older posts"
-                onClicked: thread.model.load(thread.model.firstPage - 1)
+                onClicked: {
+                    thread.model.load(thread.model.firstPage - 1)
+                    appendFlag = false
+                }
             }
         }
 
@@ -77,7 +83,10 @@ Page {
                 enabled: !forumSession.busy
                 visible: thread.model.count > 0 && thread.model.lastPage < thread.model.numPages
                 text: "Newer posts"
-                onClicked: thread.model.load(thread.model.lastPage + 1)
+                onClicked: {
+                    thread.model.load(thread.model.lastPage + 1)
+                    appendFlag = true
+                }
             }
         }
 
@@ -92,10 +101,30 @@ Page {
     }
 
     Connections {
+
         target: thread.model
+        onRowsAboutToBeInserted : {
+            console.log("ABOUT TO BE INSERTED")
+        }
+
         onRowsInserted: {
+
+            //non-recomended workarounds to avoid segfault crash
+            if(thread.model.firstPage == thread.model.lastPage)
+                listModel.clear();
+
+            for(var i=0;i<thread.model.count;i++){
+                //console.log(i + " " + thread.model.get(i).poster)
+
+                if(appendFlag)
+                    listModel.append(thread.model.get(i))
+                else
+                    listModel.insert(i,(thread.model.get(i)))
+            }
+
             if (postList.contentY == 0)
                 postList.positionViewAtBeginning()
+
             if (thread.model.jumpToIndex > 0) {
                 console.log("Rows inserted, jumping to index " + thread.model.jumpToIndex)
                 // FIXME - Smooth scrolling list views does not work properly.
@@ -118,11 +147,11 @@ Page {
         }
     }
 
-//    FastScroll {
-//        listView: postList
-//        platformStyle : FastScrollStyle{railImage: "image://theme/meegotouch-fast-scroll-rail"}
-//        visible: !!thread
-//    }
+    FastScroll {
+        listView: postList
+        platformStyle : FastScrollStyle{railImage: "image://theme/meegotouch-fast-scroll-rail"}
+        visible: !!thread
+    }
 
     BusyIndicator {
         anchors.centerIn: postList
@@ -134,7 +163,9 @@ Page {
     tools: ToolBarLayout {
         ToolIcon {
             platformIconId: "toolbar-back"
-            onClicked: pageStack.pop()
+            onClicked: {
+                pageStack.pop()
+            }
         }
 
         ToolIcon {
@@ -195,6 +226,12 @@ Page {
                 }
             }
         }
+    }
+
+    onStatusChanged: {
+        if(status == PageStatus.Activating && !listModel.count)
+            for(var i=0;i<thread.model.count;i++)
+                listModel.append(thread.model.get(i))
     }
 
     // Make sure the thread doesn't get deleted while the thread page is opened

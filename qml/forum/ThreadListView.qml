@@ -11,6 +11,8 @@ Item {
     property QtObject threads
     property alias title: header.text
     property bool showForum: false
+    property bool longPress : true
+    property alias footerButton : threadList.footer
 
     ViewHeader {
         id: header
@@ -33,7 +35,7 @@ Item {
         delegate: ThreadDelegate {
             platformStyle: ThreadDelegateStyle { showForum: root.showForum }
             onClicked: openThread(threads.get(index))
-            onPressAndHold: Qt.createComponent("ThreadMenu.qml").createObject(root, {thread: threads.get(index)}).open()
+            onPressAndHold: if (longPress) Qt.createComponent("ThreadMenu.qml").createObject(root, {thread: threads.get(index)}).open()
         }
         model: threads
 

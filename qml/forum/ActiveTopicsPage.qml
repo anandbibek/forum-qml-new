@@ -16,6 +16,16 @@ Page {
         title: "Active Topics"
         threads: forumSession.activeTopics
         showForum: true
+        longPress: false
+        footerButton: Button {
+                          anchors.horizontalCenter: parent.horizontalCenter
+                          platformStyle: ButtonStyle { pressedBackground: "image://theme/" + forumStyle.colorThemeString + "meegotouch-button-background-pressed" }
+                          enabled: !forumSession.busy
+                          text: "More..."
+                          onClicked: {
+                              pageStack.push(Qt.createComponent(forumSession.sessionId ? "NewPostsPage.qml" : "TodaysPostsPage.qml"),null,true)
+                          }
+                      }
     }
 
     ToolBarLayout {

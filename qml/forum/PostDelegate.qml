@@ -130,10 +130,7 @@ Item {
             anchors { left: parent.left; right: parent.right;
                 leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
-            text: //"<style>a {color:#"
-                  //+ (theme.inverted?"a0a0ff":"4040ff")
-                  //+ "}</style>"+
-                  model.body
+            text: model.body
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: UI.FONT_LIGHT_SIZE + fontSize
             onLinkActivated: {
@@ -168,6 +165,7 @@ Item {
                     visible: running
                     running: img.status == Image.Loading
                     implicitHeight : 32
+                    Label{opacity: 0.5; text: (img.progress*100).toFixed(0); font.pixelSize: 16; anchors.centerIn: parent}
                 }
 
                 Image{

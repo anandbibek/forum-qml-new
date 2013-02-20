@@ -8,11 +8,11 @@ Menu {
             onClicked: pageStack.push(Qt.createComponent(forumSession.sessionId ? "NewPostsPage.qml" : "TodaysPostsPage.qml"))
         }
 
-        MenuItem {
-            text: "Subscribed threads"
-            visible: forumSession.sessionId
-            onClicked: pageStack.push(Qt.createComponent("SubscriptionsPage.qml"))
-        }
+//        MenuItem {
+//            text: "Subscribed threads"
+//            visible: forumSession.sessionId
+//            onClicked: pageStack.push(Qt.createComponent("SubscriptionsPage.qml"))
+//        }
 
         MenuItem {
             text: "Open webpage"

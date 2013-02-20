@@ -80,10 +80,7 @@ Page {
         delegate: ThreadDelegate {
             platformStyle: ThreadDelegateStyle { showForum: true }
             onClicked: openThread(threads.get(index))
-            onPressAndHold: {
-                threadMenu.index = index
-                threadMenu.open()
-            }
+            onPressAndHold: Qt.createComponent("ThreadMenu.qml").createObject(root, {thread: threads.get(index)}).open()
         }
         model: threads
 
