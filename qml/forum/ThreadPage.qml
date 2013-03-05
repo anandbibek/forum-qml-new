@@ -11,11 +11,11 @@ Page {
     property QtObject thread
     property int copyIndex : -1
     property string bbCode : ""
-    property bool appendFlag : true
+    //property bool appendFlag : true
 
-    ListModel{
-        id: listModel
-    }
+//    ListModel{
+//        id: listModel
+//    }
 
     ListView {
         id: postList
@@ -40,7 +40,7 @@ Page {
             }
         }
 
-        model: listModel //thread.model
+        model: thread.model
 
         header: Item {
             width: postList.width
@@ -65,7 +65,7 @@ Page {
                 text: "Older posts"
                 onClicked: {
                     thread.model.load(thread.model.firstPage - 1)
-                    appendFlag = false
+                    //appendFlag = false
                 }
             }
         }
@@ -85,7 +85,7 @@ Page {
                 text: "Newer posts"
                 onClicked: {
                     thread.model.load(thread.model.lastPage + 1)
-                    appendFlag = true
+                    //appendFlag = true
                 }
             }
         }
@@ -100,58 +100,58 @@ Page {
         */
     }
 
-    Connections {
+//    Connections {
 
-        target: thread.model
-        onRowsAboutToBeInserted : {
-            console.log("ABOUT TO BE INSERTED")
-        }
+//        target: thread.model
+//        onRowsAboutToBeInserted : {
+//            console.log("ABOUT TO BE INSERTED")
+//        }
 
-        onRowsInserted: {
+//        onRowsInserted: {
 
-            //non-recomended workarounds to avoid segfault crash
-            if(thread.model.firstPage == thread.model.lastPage)
-                listModel.clear();
+//            //non-recomended workarounds to avoid segfault crash
+////            if(thread.model.firstPage == thread.model.lastPage)
+////                listModel.clear();
 
-            for(var i=0;i<thread.model.count;i++){
-                //console.log(i + " " + thread.model.get(i).poster)
+////            for(var i=0;i<thread.model.count;i++){
+////                //console.log(i + " " + thread.model.get(i).poster)
 
-                if(appendFlag)
-                    listModel.append(thread.model.get(i))
-                else
-                    listModel.insert(i,(thread.model.get(i)))
-            }
+////                if(appendFlag)
+////                    listModel.append(thread.model.get(i))
+////                else
+////                    listModel.insert(i,(thread.model.get(i)))
+////            }
 
-            if (postList.contentY == 0)
-                postList.positionViewAtBeginning()
+//            if (postList.contentY == 0)
+//                postList.positionViewAtBeginning()
 
-            if (thread.model.jumpToIndex > 0) {
-                console.log("Rows inserted, jumping to index " + thread.model.jumpToIndex)
-                // FIXME - Smooth scrolling list views does not work properly.
-                // contentY jumps around wildly when delegates of different height appear in the view.
-                /*
-                scroll.from = postList.contentY
-                if (thread.model.jumpToIndex == thread.model.count - 1)
-                    postList.positionViewAtEnd()
-                else
-                    postList.positionViewAtIndex(thread.model.jumpToIndex, ListView.Beginning)
-                scroll.to = postList.contentY
-                postList.positionViewAtBeginning()
-                scroll.start()
-                */
-                if (thread.model.jumpToIndex == thread.model.count - 1)
-                    postList.positionViewAtEnd()
-                else
-                    postList.positionViewAtIndex(thread.model.jumpToIndex, ListView.Beginning)
-            }
-        }
-    }
+//            if (thread.model.jumpToIndex > 0) {
+//                console.log("Rows inserted, jumping to index " + thread.model.jumpToIndex)
+//                // FIXME - Smooth scrolling list views does not work properly.
+//                // contentY jumps around wildly when delegates of different height appear in the view.
+//                /*
+//                scroll.from = postList.contentY
+//                if (thread.model.jumpToIndex == thread.model.count - 1)
+//                    postList.positionViewAtEnd()
+//                else
+//                    postList.positionViewAtIndex(thread.model.jumpToIndex, ListView.Beginning)
+//                scroll.to = postList.contentY
+//                postList.positionViewAtBeginning()
+//                scroll.start()
+//                */
+//                if (thread.model.jumpToIndex == thread.model.count - 1)
+//                    postList.positionViewAtEnd()
+//                else
+//                    postList.positionViewAtIndex(thread.model.jumpToIndex, ListView.Beginning)
+//            }
+//        }
+//    }
 
-    FastScroll {
-        listView: postList
-        platformStyle : FastScrollStyle{railImage: "image://theme/meegotouch-fast-scroll-rail"}
-        visible: !!thread
-    }
+//    FastScroll {
+//        listView: postList
+//        platformStyle : FastScrollStyle{railImage: "image://theme/meegotouch-fast-scroll-rail"}
+//        visible: !!thread
+//    }
 
     BusyIndicator {
         anchors.centerIn: postList
@@ -228,11 +228,11 @@ Page {
         }
     }
 
-    onStatusChanged: {
-        if(status == PageStatus.Activating && !listModel.count)
-            for(var i=0;i<thread.model.count;i++)
-                listModel.append(thread.model.get(i))
-    }
+//    onStatusChanged: {
+//        if(status == PageStatus.Activating && !listModel.count)
+//            for(var i=0;i<thread.model.count;i++)
+//                listModel.append(thread.model.get(i))
+//    }
 
     // Make sure the thread doesn't get deleted while the thread page is opened
     Component.onCompleted: thread.take()

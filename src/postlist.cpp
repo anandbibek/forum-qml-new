@@ -305,7 +305,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
         QStringList temp = (Post::cleanupBody(comment)).split("##splitMarker##", QString::SkipEmptyParts);
 
-        QString html = "<style>a {color:#cc09ba}</style>" + temp.at(0);
+        QString html = temp.at(0);
         QString img = "";
         if(temp.length()>1)
             img = temp.at(1);
@@ -417,7 +417,7 @@ void PostList::onReceived(QWebElement document, int postId)
 
         QStringList temp = (Post::cleanupBody(body)).split("##splitMarker##", QString::SkipEmptyParts);
 
-        QString html = "<style>a {color:#ea650a}</style>" + temp.at(0);
+        QString html =temp.at(0);
         QString img = "";
         if(temp.length()>1)
             img = temp.at(1);
@@ -463,34 +463,24 @@ void PostList::onReceived(QWebElement document, int postId)
 
     // Add entries to the list model in the correct place and order
     if (list.count() > 0) {
-
-        //m_posts.clear();
-
-        if (page == m_firstPage) {
-            beginInsertRows(QModelIndex(), 0, m_posts.count() + list.count());
-            m_posts.clear();
-            while (!list.empty()) {
-                Post* post = list.takeLast();
-                connect(post, SIGNAL(thanksChanged()),
-                        this, SLOT(onPostChanged()));
-                m_posts.prepend(post);
+            if (page == m_firstPage) {
+                beginInsertRows(QModelIndex(), 0, list.count() - 1);
+                while (!list.empty()) {
+                    Post* post = list.takeLast();
+                    connect(post, SIGNAL(thanksChanged()),
+                            this, SLOT(onPostChanged()));
+                    m_posts.prepend(post);
+                }
+            } else {
+                beginInsertRows(QModelIndex(), m_posts.count(), m_posts.count() + list.count() - 1);
+                m_posts.append(list);
             }
-        } else {
-            beginInsertRows(QModelIndex(), 0, m_posts.count() + list.count());
-            m_posts.clear();
-            while (!list.empty()) {
-                Post* post = list.takeFirst();
-                connect(post, SIGNAL(thanksChanged()),
-                        this, SLOT(onPostChanged()));
-                m_posts.append(post);
-            }
+
+            // Export index of the post the URL told us to jump to
+            m_jumpToIndex = jumpToPost ? m_posts.indexOf(jumpToPost) : -1;
+
+            endInsertRows();
         }
-
-        // Export index of the post the URL told us to jump to
-        m_jumpToIndex = jumpToPost ? m_posts.indexOf(jumpToPost) : -1;
-
-        endInsertRows();
-    }
     emit countChanged();
     qDebug() << m_posts.count();
 }

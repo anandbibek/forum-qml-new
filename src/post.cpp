@@ -437,8 +437,8 @@ static QString innerXmlToBbCode(QWebElement element)
         }
     }
 
-    return element.toInnerXml();
-    //return element.toPlainText();
+    //return element.toInnerXml();
+    return element.toPlainText();
 }
 
 static QString smileyToBbCode(QString src)

@@ -42,7 +42,8 @@ Item {
         id: mouseArea;
         anchors.fill: parent
         onClicked: {
-            root.clicked()
+            //root.clicked()
+            console.log(model.body)
         }
         onPressAndHold:  root.pressAndHold()
     }
@@ -130,7 +131,7 @@ Item {
             anchors { left: parent.left; right: parent.right;
                 leftMargin: UI.MARGIN_XLARGE; rightMargin: UI.MARGIN_XLARGE }
 
-            text: model.body
+            text:  "<style>a {color:"+ forumStyle.highlightTextColor +"}</style>" + model.body
             font.family: UI.FONT_FAMILY_LIGHT
             font.pixelSize: UI.FONT_LIGHT_SIZE + fontSize
             onLinkActivated: {
