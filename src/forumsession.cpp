@@ -163,9 +163,14 @@ void ForumSession::webElementFunc(bool status)
         // For talk.maemo.org: The first <form name="postvarform"> element
         const QWebElement form = document.findFirst("form[name=\"postvarform\"]");
         if (form.attribute("name") == "postvarform") {
-            QRegExp urlExpression(m_url + "/index.php\\?s=([a-f\\d]+)");
+            QRegExp urlExpressionOld(m_url + "/index.php\\?s=([a-f\\d]+)");
+            QRegExp urlExpression("http://213.128.137.28/index.php\\?s=([a-f\\d]+)");
             if (urlExpression.exactMatch(form.attribute("action"))) {
                 c_sessionId = urlExpression.cap(1);
+                qDebug() << "c_sessionid :" << c_sessionId;
+            } else if (urlExpressionOld.exactMatch(form.attribute("action"))) {
+                c_sessionId = urlExpressionOld.cap(1);
+                qDebug() << "c_sessionid Old :" << c_sessionId;
             } else {
                 qDebug() << "Form action URL does not match:" << form.attribute("action");
             }
@@ -174,6 +179,7 @@ void ForumSession::webElementFunc(bool status)
             QRegExp messageExpression("Thank you for logging in, (.+)\\.");
             if (messageExpression.exactMatch(strong.toPlainText())) {
                 userName = messageExpression.cap(1);
+                qDebug() << "userName :" << userName;
             } else {
                 qDebug() << "Login message does not match:" << strong.toPlainText();
             }
@@ -208,8 +214,10 @@ void ForumSession::webElementFunc(bool status)
         if (!meta.isNull()) {
             QRegExp refreshExpression("\\d+; URL=(.+)");
             if (refreshExpression.exactMatch(meta.attribute("content"))
-                    && refreshExpression.cap(1).startsWith(m_url)) {
+                    //&& refreshExpression.cap(1).startsWith(m_url)) {
+                    ){
                 QUrl url(refreshExpression.cap(1));
+                qDebug() << refreshExpression.cap(1);
                 qDebug() << "Redirect - requesting " << url.toString() << "to login ...";
                 QNetworkRequest request(url);
                 m_networkAccess.get(request);
@@ -267,8 +275,8 @@ void ForumSession::webElementFunc(bool status)
     if (!form.isNull()) {
         if (!m_userName.isEmpty())
             qDebug() << "Found login form --> logged out";
-        if (path != "/subscription.php")
-            userName = "";
+        if (path != "/subscription.php");
+            //userName = "";
         if (m_securityToken != "guest") {
             qDebug() << "SETTING SECURITY TOKEN TO \"guest\"";
             m_securityToken = "guest";
