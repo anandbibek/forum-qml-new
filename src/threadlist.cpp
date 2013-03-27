@@ -611,6 +611,17 @@ void ThreadList::load(int page)
     m_session->get(QUrl(url));
 }
 
+void ThreadList::load(QString page)
+{
+    QString url = m_url + (page);
+    qDebug() << "Requesting" << url << "for thread list ...";
+
+    QObject::connect(m_session, SIGNAL(receivedThreadList(QWebElement)),
+                     this, SLOT(onReceived(QWebElement)));
+
+    m_session->get(QUrl(url));
+}
+
 ForumSession* ThreadList::forumSession() const
 {
     return m_session;

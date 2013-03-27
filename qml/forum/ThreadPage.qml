@@ -11,13 +11,10 @@ Page {
     property QtObject thread
     property int copyIndex : -1
     property string bbCode : ""
-    //property bool appendFlag : true
 
-//    ListModel{
-//        id: listModel
-//    }
 
     ListView {
+        enabled: !forumSession.busy
         id: postList
 
         anchors.fill: parent
@@ -90,37 +87,23 @@ Page {
             }
         }
 
-        /*
-        NumberAnimation on contentY {
-            id: scroll
-            running: false
-            duration: 500
-            easing.type: Easing.InOutExpo
-        }
-        */
+
+//        Behavior on contentY {
+//            NumberAnimation {
+//            id: scroll
+//            running: false
+//            duration: 500
+//            easing.type: Easing.InOutExpo
+//        }
+//        }
+
     }
 
 //    Connections {
 
 //        target: thread.model
-//        onRowsAboutToBeInserted : {
-//            console.log("ABOUT TO BE INSERTED")
-//        }
 
 //        onRowsInserted: {
-
-//            //non-recomended workarounds to avoid segfault crash
-////            if(thread.model.firstPage == thread.model.lastPage)
-////                listModel.clear();
-
-////            for(var i=0;i<thread.model.count;i++){
-////                //console.log(i + " " + thread.model.get(i).poster)
-
-////                if(appendFlag)
-////                    listModel.append(thread.model.get(i))
-////                else
-////                    listModel.insert(i,(thread.model.get(i)))
-////            }
 
 //            if (postList.contentY == 0)
 //                postList.positionViewAtBeginning()
@@ -148,6 +131,7 @@ Page {
 //    }
 
 //    FastScroll {
+//        id : fScroll
 //        listView: postList
 //        platformStyle : FastScrollStyle{railImage: "image://theme/meegotouch-fast-scroll-rail"}
 //        visible: !!thread

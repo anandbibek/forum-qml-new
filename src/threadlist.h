@@ -44,6 +44,7 @@ public:
     Q_INVOKABLE void clear(void);
     Q_INVOKABLE QObject* get(int index) const;
     Q_INVOKABLE void load(int page);
+    Q_INVOKABLE void load(QString page);
 
 signals:
     void countChanged();

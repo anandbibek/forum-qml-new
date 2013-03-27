@@ -45,7 +45,12 @@ Item {
             visible: !!threads && threads.count > 0 && threads.lastPage < threads.numPages
             enabled: !forumSession.busy
             text: "Older threads"
-            onClicked: threads.load(threads.lastPage + 1)
+            onClicked: {
+                if(header.text == "Subscriptions")
+                    threads.load("subscription.php?&page=" + (threads.lastPage + 1))
+                else
+                    threads.load(threads.lastPage + 1)
+            }
         }
     }
 

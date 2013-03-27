@@ -1,5 +1,6 @@
 import QtQuick 1.1
 import com.nokia.meego 1.1
+import "../components"
 import "UIConstants.js" as UI
 
 Page {
@@ -24,8 +25,10 @@ Page {
             }
         }
 
-        ToolIcon{
+        BusyToolIcon {
+            anchors.centerIn: parent
             platformIconId: "toolbar-refresh"
+            busy: forumSession.busy && threadListView.threads.count > 0
             onClicked: {
                 if (forumSession.sessionId) {
                     threadListView.threads = forumSession.subscribedThreads()
