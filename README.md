@@ -9,3 +9,5 @@ some minor bugs and usability issues hampered daily use of this app, and the app
 
 Carrying over from http://talk.maemo.org/showthread.php...hlight=tmo+app ,
 This is forum-qml's new home, and the repo where the action is ;)
+
+You can find the discussion thread here at http://talk.maemo.org/showthread.php?t=88475
